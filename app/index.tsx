@@ -2,7 +2,6 @@ import { useRouter } from 'expo-router';
 import { ArrowRight, Globe, Key, Server } from 'lucide-react-native';
 import React, { useEffect, useState } from 'react';
 import {
-  Alert,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
