@@ -186,9 +186,7 @@
       "indexes": {
         "summaries_date_unique": {
           "name": "summaries_date_unique",
-          "columns": [
-            "date"
-          ],
+          "columns": ["date"],
           "isUnique": true
         }
       },

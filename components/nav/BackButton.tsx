@@ -1,5 +1,5 @@
 import { useTheme } from '@/hooks/useTheme';
-import { Ionicons } from '@expo/vector-icons';
+import { Feather } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { StyleSheet, TouchableOpacity } from 'react-native';
 
@@ -32,8 +32,8 @@ export const BackButton = ({ onPress, tintColor }: BackButtonProps) => {
         },
       ]}
     >
-      <Ionicons
-        name="chevron-back"
+      <Feather
+        name="arrow-left"
         size={20}
         color={tintColor || theme.colors.text}
       />

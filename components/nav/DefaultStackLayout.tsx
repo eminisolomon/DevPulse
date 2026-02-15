@@ -15,7 +15,7 @@ export default function DefaultStackLayout({
     <Stack
       screenOptions={{
         headerShown: true,
-        headerTitleAlign: 'center',
+        headerTitleAlign: 'left',
         headerBackTitle: '',
         headerTransparent: false,
         headerStyle: {

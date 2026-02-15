@@ -1,11 +1,10 @@
 import DefaultStackLayout from '@/components/nav/DefaultStackLayout';
 import { Stack } from 'expo-router';
 
-export default function SettingsLayout() {
+export default function UserLayout() {
   return (
     <DefaultStackLayout>
-      <Stack.Screen name="index" options={{ title: 'Settings' }} />
-      <Stack.Screen name="theme" options={{ title: 'Theme' }} />
+      <Stack.Screen name="[id]" options={{ title: 'Profile' }} />
     </DefaultStackLayout>
   );
 }

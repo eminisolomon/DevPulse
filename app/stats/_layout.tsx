@@ -1,11 +1,10 @@
-import { DefaultStackLayout } from '@/components';
+import DefaultStackLayout from '@/components/nav/DefaultStackLayout';
 import { Stack } from 'expo-router';
-import React from 'react';
 
 export default function StatsLayout() {
   return (
     <DefaultStackLayout>
-      <Stack.Screen name="index" options={{ title: 'Stats' }} />
+      <Stack.Screen name="numbers" options={{ title: 'The Numbers' }} />
     </DefaultStackLayout>
   );
 }

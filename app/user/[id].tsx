@@ -27,18 +27,11 @@ export default function UserProfileScreen() {
     return (
       <SafeAreaView
         style={[styles.container, { backgroundColor: theme.colors.background }]}
+        edges={['bottom', 'left', 'right']}
       >
-        <View style={styles.header}>
-          <TouchableOpacity
-            onPress={() => router.back()}
-            style={styles.backButton}
-          >
-            <Feather name="arrow-left" size={24} color={theme.colors.text} />
-          </TouchableOpacity>
-          <Typography variant="headline" weight="bold">
-            User Not Found
-          </Typography>
-        </View>
+        <Typography variant="headline" weight="bold" style={{ margin: 16 }}>
+          User Not Found
+        </Typography>
       </SafeAreaView>
     );
   }
@@ -48,19 +41,8 @@ export default function UserProfileScreen() {
   return (
     <SafeAreaView
       style={[styles.container, { backgroundColor: theme.colors.background }]}
+      edges={['bottom', 'left', 'right']}
     >
-      <View style={styles.header}>
-        <TouchableOpacity
-          onPress={() => router.back()}
-          style={styles.backButton}
-        >
-          <Feather name="arrow-left" size={24} color={theme.colors.text} />
-        </TouchableOpacity>
-        <Typography variant="headline" weight="bold">
-          Profile
-        </Typography>
-      </View>
-
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <View style={styles.profileSection}>
           <View style={styles.avatarContainer}>
@@ -198,14 +180,6 @@ export default function UserProfileScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 16,
-  },
-  backButton: {
-    marginRight: 16,
   },
   scrollContent: {
     padding: 16,

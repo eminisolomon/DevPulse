@@ -153,19 +153,8 @@ export default function SettingsScreen() {
   return (
     <SafeAreaView
       style={[styles.container, { backgroundColor: theme.colors.background }]}
+      edges={['bottom', 'left', 'right']}
     >
-      <View style={styles.header}>
-        <TouchableOpacity
-          onPress={() => router.back()}
-          style={styles.backButton}
-        >
-          <Feather name="arrow-left" size={24} color={theme.colors.text} />
-        </TouchableOpacity>
-        <Typography variant="headline" weight="bold">
-          Settings
-        </Typography>
-      </View>
-
       <ScrollView contentContainerStyle={styles.scrollContent}>
         {/* Profile Header Card */}
         <Card style={styles.profileCard}>
@@ -393,14 +382,6 @@ export default function SettingsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 16,
-  },
-  backButton: {
-    marginRight: 16,
   },
   scrollContent: {
     padding: 16,
