@@ -32,16 +32,6 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
   const [isDark, setIsDark] = useState(systemColorScheme === 'dark');
 
   useEffect(() => {
-    const loadTheme = async () => {
-      const savedTheme = await getThemePreference();
-      if (savedTheme) {
-        setThemeModeState(savedTheme);
-      }
-    };
-    loadTheme();
-  }, []);
-
-  useEffect(() => {
     if (themeMode === 'system') {
       setIsDark(systemColorScheme === 'dark');
     } else {
@@ -60,7 +50,6 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
 
   const setThemeMode = (mode: 'light' | 'dark' | 'system') => {
     setThemeModeState(mode);
-    setThemePreference(mode);
   };
 
   const toggleTheme = () => {

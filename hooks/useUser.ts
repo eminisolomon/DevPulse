@@ -1,9 +1,10 @@
-import { api } from '@/services/api';
+import { User } from '@/interfaces/user';
+import { wakaService } from '@/services/waka.service';
 import { useQuery } from '@tanstack/react-query';
 
 export function useUser() {
-  return useQuery({
+  return useQuery<User>({
     queryKey: ['user'],
-    queryFn: api.getUser,
+    queryFn: () => wakaService.getUser(),
   });
 }

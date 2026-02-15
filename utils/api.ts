@@ -1,8 +1,6 @@
-import { WakaTimeStats } from '@/interfaces/stats';
-import { WakaTimeSummaries } from '@/interfaces/summary';
 import { useAuthStore } from '@/stores/useAuthStore';
 
-const getAuth = () => {
+export const getAuth = () => {
   const { apiKey, apiUrl } = useAuthStore.getState();
   if (!apiKey) {
     throw new Error('No API Key found');
@@ -10,7 +8,7 @@ const getAuth = () => {
   return { apiKey, apiUrl };
 };
 
-const getHeaders = (apiKey: string) => {
+export const getHeaders = (apiKey: string) => {
   const encodedKey = btoa(apiKey);
   return {
     Authorization: `Basic ${encodedKey}`,
@@ -18,7 +16,7 @@ const getHeaders = (apiKey: string) => {
   };
 };
 
-async function fetchWithAuth<T>(endpoint: string): Promise<T> {
+export async function fetchWithAuth<T>(endpoint: string): Promise<T> {
   const { apiKey, apiUrl } = getAuth();
   const baseUrl = apiUrl.replace(/\/$/, '');
   const url = `${baseUrl}${endpoint}`;
@@ -38,16 +36,3 @@ async function fetchWithAuth<T>(endpoint: string): Promise<T> {
 
   return response.json();
 }
-
-export const api = {
-  getAuth,
-  getHeaders,
-  fetchWithAuth,
-  getStats: (range: string = 'last_7_days'): Promise<WakaTimeStats> =>
-    fetchWithAuth<WakaTimeStats>(`/users/current/stats/${range}`),
-  getSummaries: (start: string, end: string): Promise<WakaTimeSummaries> =>
-    fetchWithAuth<WakaTimeSummaries>(
-      `/users/current/summaries?start=${start}&end=${end}`,
-    ),
-  getUser: () => fetchWithAuth('/users/current'),
-};

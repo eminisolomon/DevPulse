@@ -1,20 +1,23 @@
+import { useTheme } from '@/hooks/useTheme';
 import { Tabs } from 'expo-router';
 import { Activity, FolderCode, Target } from 'lucide-react-native';
 
 export default function TabLayout() {
+  const { theme } = useTheme();
+
   return (
     <Tabs
       screenOptions={{
         headerShown: false,
         tabBarStyle: {
-          backgroundColor: '#171717', // neutral-900
-          borderTopColor: '#262626', // neutral-800
+          backgroundColor: theme.colors.surface,
+          borderTopColor: theme.colors.border,
           height: 60,
           paddingBottom: 8,
           paddingTop: 8,
         },
-        tabBarActiveTintColor: '#10b981', // emerald-500
-        tabBarInactiveTintColor: '#525252', // neutral-600
+        tabBarActiveTintColor: theme.colors.primary,
+        tabBarInactiveTintColor: theme.colors.textSecondary,
         tabBarShowLabel: true,
         tabBarLabelStyle: {
           fontSize: 12,
