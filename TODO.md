@@ -49,19 +49,33 @@
 - [x] Punch Card activity insights
 - [x] Logout Confirmation Bottom Sheet
 
+## 🏗 Phase 4: Storage & Persistence [COMPLETED]
+
+- [x] **Drizzle ORM Integration**: Set up SQLite for local data persistence.
+- [x] **Offline-First Goals**: Cache WakaTime goals locally for instant viewing.
+- [x] **Sync Engine**: Automated background synchronization for offline fidelity.
+
+## � Phase 5: Advanced Visualizations [COMPLETED]
+
+- [x] **Skia Activity Rhythm**: Circular 24h clock visualizing coding density.
+- [x] **High-Density Segmented Stats**: Detailed bars for Languages, Categories, Editors, and OS.
+- [x] **The Numbers Screen**: Comprehensive lifetime analytics deep-dive.
+- [x] **Global Time-Range Filtering**: Dynamic filtering (Week, Month, Year, All-Time).
+
 ---
 
-## 🏗 Post-MVP / Future Roadmap
+## 🚀 Future Roadmap
 
 ### Features
 
 - [ ] **Write Access for Goals**: Create/Edit goals in-app.
-- [ ] **Advanced Filtering**: Filter leaderboards by language/project.
-- [ ] **Session Details**: Start/End times for individual coding blocks.
-- [ ] **Push Notifications**: Goal reminders & rank changes.
+- [ ] **Detailed Session Timeline**: Visual breakdown of individual coding sessions.
+- [ ] **Advanced Organization filtering**: Filter metrics by organization or team.
+- [ ] **Push Notifications**: Milestone alerts and goal reminders.
 
 ### Technical
 
-- [ ] **Native Widgets**: Android home screen widgets for daily progress.
-- [ ] **Offline Mode**: Local caching of latest stats for offline viewing.
-- [ ] **Performance Audit**: Fine-tune Reanimated and Skia performance.
+- [ ] **Performance Audit**: Optimize Skia and Drizzle query performance for massive datasets.
+- [ ] **Native Widgets**: Android home screen widgets for at-a-glance daily progress.
+- [ ] **Unit & E2E Testing**: Implement robust testing for data transformations and sync logic.
+- [ ] **Stabilize UI**: Fix intermittent crashes on dashboard rendering.

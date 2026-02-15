@@ -30,6 +30,9 @@ export const RadialClockChart = ({
   sessions = [],
   size = 280,
 }: RadialClockChartProps) => {
+  if (!sessions || !Array.isArray(sessions)) {
+    return null;
+  }
   const { theme, isDark } = useTheme();
 
   const center = size / 2;
