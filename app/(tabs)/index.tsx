@@ -1,19 +1,23 @@
 import { Typography } from '@/components/Typography';
 import { useTheme } from '@/hooks/useTheme';
+import { Ionicons } from '@expo/vector-icons';
 import { subDays } from 'date-fns';
-import { Redirect } from 'expo-router';
+import { Redirect, useRouter } from 'expo-router';
 import React from 'react';
 import {
   ActivityIndicator,
   RefreshControl,
   ScrollView,
   StyleSheet,
+  TouchableOpacity,
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import ActivityChart from '@/components/ActivityChart';
 import LanguageChart from '@/components/LanguageChart';
+import { PunchCard } from '@/components/PunchCard';
+import { usePunchCardData } from '@/hooks/usePunchCardData';
 import { useStats } from '@/hooks/useStats';
 import { useSummaries } from '@/hooks/useSummaries';
 import { useUser } from '@/hooks/useUser';
@@ -21,6 +25,7 @@ import { useAuthStore } from '@/stores/useAuthStore';
 
 export default function Dashboard() {
   const { theme } = useTheme();
+  const router = useRouter();
   const { apiKey } = useAuthStore();
 
   if (!apiKey) {
@@ -45,6 +50,8 @@ export default function Dashboard() {
     refetch: refetchSummaries,
     isRefetching: isSummariesRefetching,
   } = useSummaries(start, today);
+
+  const { data: punchData, isLoading: punchLoading } = usePunchCardData(7);
 
   const isLoading = userLoading || statsLoading || summariesLoading;
   const isRefetching = isStatsRefetching || isSummariesRefetching;
@@ -83,17 +90,36 @@ export default function Dashboard() {
         }
       >
         <View style={styles.header}>
-          <Typography
-            variant="caption"
-            weight="semibold"
-            color={theme.colors.textSecondary}
-            style={styles.greeting}
-          >
-            Welcome back
-          </Typography>
-          <Typography variant="headline" weight="bold">
-            {user?.data?.display_name || user?.data?.username || 'Developer'}
-          </Typography>
+          <View style={styles.headerTop}>
+            <View>
+              <Typography
+                variant="caption"
+                weight="semibold"
+                color={theme.colors.textSecondary}
+                style={styles.greeting}
+              >
+                Welcome back
+              </Typography>
+              <Typography variant="headline" weight="bold">
+                {user?.data?.display_name ||
+                  user?.data?.username ||
+                  'Developer'}
+              </Typography>
+            </View>
+            <TouchableOpacity
+              onPress={() => router.push('/settings')}
+              style={[
+                styles.settingsButton,
+                { backgroundColor: theme.colors.surface },
+              ]}
+            >
+              <Ionicons
+                name="settings-outline"
+                size={24}
+                color={theme.colors.text}
+              />
+            </TouchableOpacity>
+          </View>
         </View>
 
         {/* Quick Stats Grid */}
@@ -174,6 +200,8 @@ export default function Dashboard() {
           </View>
         </View>
 
+        {!punchLoading && punchData && <PunchCard data={punchData} />}
+
         <View style={styles.chartSection}>
           <Typography variant="title" weight="bold" style={styles.chartTitle}>
             Daily Activity
@@ -216,6 +244,18 @@ const styles = StyleSheet.create({
   },
   header: {
     marginBottom: 24,
+  },
+  headerTop: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  settingsButton: {
+    width: 44,
+    height: 44,
+    borderRadius: 12,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   greeting: {
     textTransform: 'uppercase',

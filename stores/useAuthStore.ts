@@ -8,6 +8,7 @@ interface AuthState {
   setApiKey: (apiKey: string) => void;
   setApiUrl: (apiUrl: string) => void;
   reset: () => void;
+  logout: () => void;
 }
 
 export const useAuthStore = create<AuthState>()(
@@ -18,6 +19,12 @@ export const useAuthStore = create<AuthState>()(
       setApiKey: (apiKey) => set({ apiKey }),
       setApiUrl: (apiUrl) => set({ apiUrl }),
       reset: () =>
+        set({
+          apiKey: null,
+          apiUrl:
+            process.env.EXPO_PUBLIC_API_URL || 'https://wakatime.com/api/v1',
+        }),
+      logout: () =>
         set({
           apiKey: null,
           apiUrl:

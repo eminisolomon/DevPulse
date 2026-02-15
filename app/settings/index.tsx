@@ -1,0 +1,400 @@
+import { Card } from '@/components/Card';
+import { Typography } from '@/components/Typography';
+import { useTheme, useUser } from '@/hooks';
+import { useAuthStore } from '@/stores/useAuthStore';
+import { Feather, MaterialIcons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
+import React from 'react';
+import {
+  Image,
+  ScrollView,
+  StyleSheet,
+  Switch,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+
+export default function SettingsScreen() {
+  const { theme } = useTheme();
+  const { data: user } = useUser();
+  const { logout } = useAuthStore();
+  const router = useRouter();
+
+  const handleLogout = () => {
+    logout();
+    router.replace('/');
+  };
+
+  const SettingItem = ({
+    icon,
+    label,
+    value,
+    onPress,
+    isSwitch,
+    switchValue,
+    onSwitchChange,
+    color,
+    description,
+  }: any) => (
+    <TouchableOpacity
+      style={styles.settingItem}
+      onPress={onPress}
+      disabled={isSwitch}
+    >
+      <View
+        style={[
+          styles.settingIcon,
+          { backgroundColor: (color || theme.colors.primary) + '15' },
+        ]}
+      >
+        <Feather name={icon} size={20} color={color || theme.colors.primary} />
+      </View>
+      <View style={styles.settingText}>
+        <Typography weight="medium">{label}</Typography>
+        {description && (
+          <Typography variant="micro" color={theme.colors.textSecondary}>
+            {description}
+          </Typography>
+        )}
+      </View>
+      {isSwitch ? (
+        <Switch
+          value={switchValue}
+          onValueChange={onSwitchChange}
+          trackColor={{
+            false: theme.colors.border,
+            true: theme.colors.primary,
+          }}
+          thumbColor={theme.colors.surface}
+        />
+      ) : (
+        <View style={styles.settingValue}>
+          {value && (
+            <Typography
+              variant="caption"
+              color={theme.colors.textSecondary}
+              style={{ marginRight: 8 }}
+            >
+              {value}
+            </Typography>
+          )}
+          <Feather
+            name="chevron-right"
+            size={18}
+            color={theme.colors.textSecondary}
+          />
+        </View>
+      )}
+    </TouchableOpacity>
+  );
+
+  const SectionHeader = ({ title }: { title: string }) => (
+    <Typography
+      variant="micro"
+      weight="bold"
+      color={theme.colors.textSecondary}
+      style={styles.sectionHeader}
+    >
+      {title.toUpperCase()}
+    </Typography>
+  );
+
+  const userData = user?.data;
+
+  return (
+    <SafeAreaView
+      style={[styles.container, { backgroundColor: theme.colors.background }]}
+    >
+      <View style={styles.header}>
+        <TouchableOpacity
+          onPress={() => router.back()}
+          style={styles.backButton}
+        >
+          <Feather name="arrow-left" size={24} color={theme.colors.text} />
+        </TouchableOpacity>
+        <Typography variant="headline" weight="bold">
+          Settings
+        </Typography>
+      </View>
+
+      <ScrollView contentContainerStyle={styles.scrollContent}>
+        {/* Profile Header Card */}
+        <Card style={styles.profileCard}>
+          <View style={styles.profileInfo}>
+            <Image
+              source={{
+                uri: userData?.photo || 'https://via.placeholder.com/150',
+              }}
+              style={styles.largeAvatar}
+            />
+            <Typography variant="title" weight="bold" style={styles.userName}>
+              {userData?.display_name || userData?.username || 'Developer'}
+            </Typography>
+            <Typography color={theme.colors.textSecondary}>
+              Software Engineer
+            </Typography>
+          </View>
+
+          <View style={styles.badgesRow}>
+            <View
+              style={[styles.badge, { backgroundColor: theme.colors.surface }]}
+            >
+              <Feather name="zap" size={14} color={theme.colors.primary} />
+              <Typography
+                variant="micro"
+                weight="bold"
+                style={styles.badgeText}
+              >
+                HIREABLE
+              </Typography>
+            </View>
+            <View
+              style={[styles.badge, { backgroundColor: theme.colors.surface }]}
+            >
+              <Feather
+                name="map-pin"
+                size={14}
+                color={theme.colors.textSecondary}
+              />
+              <Typography
+                variant="micro"
+                color={theme.colors.textSecondary}
+                style={styles.badgeText}
+              >
+                {(userData as any)?.city?.name || 'World'}
+              </Typography>
+            </View>
+          </View>
+
+          <View style={styles.socialGrid}>
+            <TouchableOpacity
+              style={[
+                styles.socialButton,
+                { backgroundColor: theme.colors.surface },
+              ]}
+            >
+              <Feather name="mail" size={16} color={theme.colors.text} />
+              <Typography
+                variant="micro"
+                weight="bold"
+                style={{ marginLeft: 8 }}
+              >
+                MAIL ME
+              </Typography>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[
+                styles.socialButton,
+                { backgroundColor: theme.colors.surface },
+              ]}
+            >
+              <Feather name="globe" size={16} color={theme.colors.text} />
+              <Typography
+                variant="micro"
+                weight="bold"
+                style={{ marginLeft: 8 }}
+              >
+                ON THE WEB
+              </Typography>
+            </TouchableOpacity>
+          </View>
+        </Card>
+
+        {/* About Section */}
+        <SectionHeader title="About" />
+        <Card style={styles.sectionCard}>
+          <View style={styles.appInfo}>
+            <View style={styles.appInfoMain}>
+              <Typography weight="bold">DevPulse</Typography>
+              <Typography variant="micro" color={theme.colors.textSecondary}>
+                2026.1.0 (BETA)
+              </Typography>
+            </View>
+            <TouchableOpacity style={styles.infoButton}>
+              <Feather
+                name="info"
+                size={20}
+                color={theme.colors.textSecondary}
+              />
+            </TouchableOpacity>
+          </View>
+
+          <SettingItem icon="star" label="Rate on Google Play Store" />
+          <SettingItem icon="tool" label="Feedback or Bugs" />
+          <SettingItem icon="book" label="Changelog" />
+          <SettingItem icon="file-text" label="Licenses" />
+        </Card>
+
+        {/* Theming Section */}
+        <SectionHeader title="Theming" />
+        <Card style={styles.sectionCard}>
+          <SettingItem icon="edit-2" label="Accent" value="Deep Blue" />
+        </Card>
+
+        {/* Insights Section */}
+        <SectionHeader title="Insights" />
+        <Card style={styles.sectionCard}>
+          <SettingItem
+            icon="alert-circle"
+            label="Crashes"
+            description="Collect log information about bugs and crashes."
+            isSwitch
+            switchValue={true}
+          />
+          <SettingItem
+            icon="activity"
+            label="Performance"
+            description="Collect log information about hiccups, load speeds."
+            isSwitch
+            switchValue={true}
+          />
+          <SettingItem
+            icon="mouse-pointer"
+            label="Analytics"
+            description="Anonymously collect info about app usage."
+            isSwitch
+            switchValue={true}
+          />
+        </Card>
+
+        {/* Account Section */}
+        <SectionHeader title="Account" />
+        <Card style={styles.sectionCard}>
+          <SettingItem
+            icon="trash-2"
+            label="Delete Account"
+            color={theme.colors.error}
+            description="Delete your account and all your data."
+          />
+        </Card>
+
+        <TouchableOpacity
+          style={[styles.logoutButton, { backgroundColor: '#FACC15' }]}
+          onPress={handleLogout}
+        >
+          <MaterialIcons name="logout" size={20} color="#000" />
+          <Typography weight="bold" style={{ color: '#000', marginLeft: 12 }}>
+            LOGOUT
+          </Typography>
+        </TouchableOpacity>
+      </ScrollView>
+    </SafeAreaView>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 16,
+  },
+  backButton: {
+    marginRight: 16,
+  },
+  scrollContent: {
+    padding: 16,
+    paddingBottom: 40,
+  },
+  profileCard: {
+    alignItems: 'center',
+    padding: 24,
+    marginBottom: 24,
+  },
+  profileInfo: {
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  largeAvatar: {
+    width: 120,
+    height: 120,
+    borderRadius: 60,
+    marginBottom: 16,
+  },
+  userName: {
+    marginBottom: 4,
+  },
+  badgesRow: {
+    flexDirection: 'row',
+    gap: 8,
+    marginBottom: 20,
+  },
+  badge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 12,
+  },
+  badgeText: {
+    marginLeft: 6,
+  },
+  socialGrid: {
+    flexDirection: 'row',
+    gap: 8,
+    width: '100%',
+  },
+  socialButton: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 12,
+    borderRadius: 12,
+  },
+  sectionHeader: {
+    marginLeft: 4,
+    marginBottom: 8,
+    marginTop: 16,
+  },
+  sectionCard: {
+    padding: 4,
+    marginBottom: 12,
+  },
+  settingItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 12,
+  },
+  settingIcon: {
+    width: 40,
+    height: 40,
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 12,
+  },
+  settingText: {
+    flex: 1,
+  },
+  settingValue: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  appInfo: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 16,
+    backgroundColor: 'rgba(0,0,0,0.02)',
+    borderRadius: 16,
+    margin: 8,
+  },
+  appInfoMain: {
+    flex: 1,
+  },
+  infoButton: {
+    padding: 4,
+  },
+  logoutButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 16,
+    borderRadius: 16,
+    marginTop: 24,
+  },
+});

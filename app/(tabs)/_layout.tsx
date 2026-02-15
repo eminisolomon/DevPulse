@@ -53,6 +53,15 @@ export default function TabLayout() {
           ),
         }}
       />
+      <Tabs.Screen
+        name="leaderboard"
+        options={{
+          title: 'Leaders',
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="trophy-outline" size={size} color={color} />
+          ),
+        }}
+      />
     </Tabs>
   );
 }
