@@ -36,3 +36,14 @@ async function fetchWithAuth<T>(endpoint: string): Promise<T> {
 
   return response.json();
 }
+
+export const api = {
+  getAuth,
+  getHeaders,
+  fetchWithAuth,
+  getStats: (range: string = 'last_7_days') =>
+    fetchWithAuth(`/users/current/stats/${range}`),
+  getSummaries: (start: string, end: string) =>
+    fetchWithAuth(`/users/current/summaries?start=${start}&end=${end}`),
+  getUser: () => fetchWithAuth('/users/current'),
+};

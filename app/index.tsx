@@ -1,18 +1,27 @@
 import { useRouter } from 'expo-router';
-import { ArrowRight, Globe, Key, Server } from 'lucide-react-native';
+import {
+  ArrowRight,
+  Globe,
+  Key,
+  Server as ServerIcon,
+} from 'lucide-react-native';
 import React, { useEffect, useState } from 'react';
 import {
+  Alert,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
-  Switch,
-  Text,
-  TextInput,
-  TouchableOpacity,
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAuthStore } from '../stores/useAuthStore';
+
+// UI Components
+import { Button } from '@/components/ui/Button';
+import { Card } from '@/components/ui/Card';
+import { Input } from '@/components/ui/Input';
+import { Switch } from '@/components/ui/Switch';
+import { Typography } from '@/components/ui/Typography';
 
 export default function AuthScreen() {
   const router = useRouter();
@@ -28,7 +37,7 @@ export default function AuthScreen() {
     }
   }, [apiKey]);
 
-  const handleConnect = () => {
+  const handleApiKeySubmit = () => {
     if (!keyInput.trim()) {
       Alert.alert('Error', 'Please enter your API Key');
       return;
@@ -44,12 +53,15 @@ export default function AuthScreen() {
     // Save to store
     setApiKey(keyInput.trim());
     setApiUrl(finalUrl.trim());
+  };
 
-    // Navigation happens automatically via useEffect
+  const handleWebConnect = () => {
+    // Placeholder for OAuth/Web flow
+    Alert.alert('Coming Soon', 'Web authentication flow is under development.');
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-neutral-900">
+    <SafeAreaView className="flex-1 bg-background">
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         className="flex-1"
@@ -59,94 +71,99 @@ export default function AuthScreen() {
           className="px-6"
         >
           <View className="items-center mb-12">
-            <View className="w-20 h-20 bg-emerald-500 rounded-3xl items-center justifyContent-center mb-6 shadow-lg shadow-emerald-500/20">
-              <Key size={40} color="#000" />
+            <View className="w-20 h-20 bg-primary/10 rounded-3xl items-center justifyContent-center mb-6 shadow-sm border border-primary/20">
+              <Key size={40} className="text-primary" />
             </View>
-            <Text className="text-4xl font-bold text-white mb-2 tracking-tight">
+            <Typography variant="h1" className="mb-2 text-center">
               DevPulse
-            </Text>
-            <Text className="text-neutral-400 text-lg">
+            </Typography>
+            <Typography variant="lead" className="text-center">
               Your coding stats, beautifully visualized.
-            </Text>
+            </Typography>
           </View>
 
           <View className="space-y-6">
-            {/* Server Toggle */}
-            <View className="flex-row items-center justify-between bg-neutral-800 p-4 rounded-2xl border border-neutral-700">
-              <View className="flex-row items-center space-x-3">
-                <Server size={24} color="#10b981" />
-                <View>
-                  <Text className="text-white font-semibold text-base">
-                    Custom Server
-                  </Text>
-                  <Text className="text-neutral-400 text-xs">
-                    Use a self-hosted Wakapi instance
-                  </Text>
+            <View className="space-y-6">
+              <Card className="flex-row items-center justify-between p-4">
+                <View className="flex-row items-center space-x-3">
+                  <ServerIcon size={24} className="text-primary" />
+                  <View>
+                    <Typography variant="large">Custom Server</Typography>
+                    <Typography variant="muted">
+                      Use a self-hosted Wakapi instance
+                    </Typography>
+                  </View>
                 </View>
-              </View>
-              <Switch
-                value={isCustomServer}
-                onValueChange={setIsCustomServer}
-                trackColor={{ false: '#262626', true: '#10b981' }}
-                thumbColor={isCustomServer ? '#fff' : '#404040'}
-              />
-            </View>
+                <Switch
+                  value={isCustomServer}
+                  onValueChange={setIsCustomServer}
+                />
+              </Card>
 
-            {/* Custom URL Input */}
-            {isCustomServer && (
-              <View className="space-y-2">
-                <Text className="text-neutral-400 ml-1 text-sm font-medium">
-                  Server URL
-                </Text>
-                <View className="flex-row items-center bg-neutral-800 rounded-xl border border-neutral-700 px-4 h-14">
-                  <Globe size={20} color="#9ca3af" />
-                  <TextInput
-                    className="flex-1 text-white ml-3 text-base h-full"
+              {isCustomServer && (
+                <View className="space-y-2">
+                  <Typography variant="small" className="ml-1">
+                    Server URL
+                  </Typography>
+                  <Input
+                    icon={<Globe size={20} className="text-muted-foreground" />}
                     placeholder="https://wakapi.dev/api/v1"
-                    placeholderTextColor="#525252"
                     value={customUrl}
                     onChangeText={setCustomUrl}
                     autoCapitalize="none"
                     autoCorrect={false}
                   />
                 </View>
-              </View>
-            )}
+              )}
 
-            {/* API Key Input */}
-            <View className="space-y-2">
-              <Text className="text-neutral-400 ml-1 text-sm font-medium">
-                API Key
-              </Text>
-              <View className="flex-row items-center bg-neutral-800 rounded-xl border border-neutral-700 px-4 h-14">
-                <Key size={20} color="#9ca3af" />
-                <TextInput
-                  className="flex-1 text-white ml-3 text-base h-full font-mono"
+              <View className="space-y-2">
+                <Typography variant="small" className="ml-1">
+                  API Key
+                </Typography>
+                <Input
+                  icon={<Key size={20} className="text-muted-foreground" />}
                   placeholder="waka_..."
-                  placeholderTextColor="#525252"
                   value={keyInput}
                   onChangeText={setKeyInput}
                   secureTextEntry
                   autoCapitalize="none"
+                  textClassName="font-mono"
+                  rightElement={
+                    <View className="bg-primary/10 p-1.5 rounded-md active:bg-primary/20">
+                      <ArrowRight size={20} className="text-primary" />
+                    </View>
+                  }
+                  onRightElementPress={handleApiKeySubmit}
                 />
               </View>
-            </View>
 
-            {/* Connect Button */}
-            <TouchableOpacity
-              onPress={handleConnect}
-              className="bg-emerald-500 h-14 rounded-xl items-center justify-center flex-row space-x-2 shadow-lg shadow-emerald-500/20 active:bg-emerald-600"
+              <View className="flex-row items-center space-x-4 my-2">
+                <View className="h-[1px] flex-1 bg-border" />
+                <Typography variant="muted" className="text-xs uppercase">
+                  Or continue with
+                </Typography>
+                <View className="h-[1px] flex-1 bg-border" />
+              </View>
+
+              <Button
+                variant="outline"
+                size="lg"
+                onPress={handleWebConnect}
+                className="w-full flex-row space-x-2"
+              >
+                <Globe size={20} className="text-foreground" />
+                <Typography className="font-semibold">
+                  Connect with WakaTime
+                </Typography>
+              </Button>
+
+            <Typography
+              variant="muted"
+              className="text-center text-xs mt-4 px-4"
             >
-              <Text className="text-black font-bold text-lg">
-                Connect Account
-              </Text>
-              <ArrowRight size={20} color="#000" strokeWidth={2.5} />
-            </TouchableOpacity>
-
-            <Text className="text-neutral-500 text-center text-xs mt-4">
               Your API key is stored securely on your device using Expo
               SecureStore.
-            </Text>
+            </Typography>
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
