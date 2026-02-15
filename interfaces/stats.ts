@@ -6,6 +6,7 @@ export interface WakaTimeLanguage {
   text: string;
   hours: number;
   minutes: number;
+  color?: string;
 }
 
 export interface WakaTimeStats {
@@ -13,6 +14,14 @@ export interface WakaTimeStats {
     languages: WakaTimeLanguage[];
     editors: WakaTimeLanguage[];
     operating_systems: WakaTimeLanguage[];
+    categories: WakaTimeLanguage[];
+    machines: WakaTimeLanguage[];
+    projects: WakaTimeLanguage[];
+    best_day?: {
+      date: string;
+      text: string;
+      total_seconds: number;
+    };
     daily_average: number;
     daily_average_including_other_language: number;
     human_readable_daily_average: string;

@@ -1,9 +1,23 @@
+import {
+  RadialClockChart,
+  SegmentedStatsCard,
+  TimeRange,
+  TimeRangeSelector,
+} from '@/components';
+import ActivityChart from '@/components/ActivityChart';
+import { PunchCard } from '@/components/PunchCard';
 import { Typography } from '@/components/Typography';
+import { useDurations } from '@/hooks/useDurations';
+import { usePunchCardData } from '@/hooks/usePunchCardData';
+import { useStats } from '@/hooks/useStats';
+import { useSummaries } from '@/hooks/useSummaries';
 import { useTheme } from '@/hooks/useTheme';
+import { useUser } from '@/hooks/useUser';
+import { useAuthStore } from '@/stores/useAuthStore';
 import { Ionicons } from '@expo/vector-icons';
 import { subDays } from 'date-fns';
 import { Redirect, useRouter } from 'expo-router';
-import React from 'react';
+import React, { useMemo, useState } from 'react';
 import {
   ActivityIndicator,
   RefreshControl,
@@ -14,14 +28,28 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import ActivityChart from '@/components/ActivityChart';
-import LanguageChart from '@/components/LanguageChart';
-import { PunchCard } from '@/components/PunchCard';
-import { usePunchCardData } from '@/hooks/usePunchCardData';
-import { useStats } from '@/hooks/useStats';
-import { useSummaries } from '@/hooks/useSummaries';
-import { useUser } from '@/hooks/useUser';
-import { useAuthStore } from '@/stores/useAuthStore';
+const rangeApiMap: Record<TimeRange, string> = {
+  '7_days': 'last_7_days',
+  '30_days': 'last_30_days',
+  year: 'last_year',
+  all_time: 'all_time',
+};
+
+const getDates = (r: TimeRange) => {
+  const today = new Date();
+  switch (r) {
+    case '7_days':
+      return { start: subDays(today, 6), end: today };
+    case '30_days':
+      return { start: subDays(today, 29), end: today };
+    case 'year':
+      return { start: subDays(today, 364), end: today };
+    case 'all_time':
+      return { start: subDays(today, 3650), end: today };
+    default:
+      return { start: subDays(today, 6), end: today };
+  }
+};
 
 export default function Dashboard() {
   const { theme } = useTheme();
@@ -32,6 +60,9 @@ export default function Dashboard() {
     return <Redirect href="/" />;
   }
 
+  const [range, setRange] = useState<TimeRange>('7_days');
+  const { start, end } = useMemo(() => getDates(range), [range]);
+
   const { data: user, isLoading: userLoading } = useUser();
 
   const {
@@ -39,21 +70,24 @@ export default function Dashboard() {
     isLoading: statsLoading,
     refetch: refetchStats,
     isRefetching: isStatsRefetching,
-  } = useStats();
-
-  const today = new Date();
-  const start = subDays(today, 6);
+  } = useStats(rangeApiMap[range]);
 
   const {
     data: summaries,
     isLoading: summariesLoading,
     refetch: refetchSummaries,
     isRefetching: isSummariesRefetching,
-  } = useSummaries(start, today);
+  } = useSummaries(start, end);
 
-  const { data: punchData, isLoading: punchLoading } = usePunchCardData(7);
+  const { data: punchData, isLoading: punchLoading } = usePunchCardData(
+    range === '7_days' ? 7 : range === '30_days' ? 30 : 90,
+  );
 
-  const isLoading = userLoading || statsLoading || summariesLoading;
+  const { data: durationSessions, isLoading: durationsLoading } =
+    useDurations();
+
+  const isLoading =
+    userLoading || statsLoading || summariesLoading || durationsLoading;
   const isRefetching = isStatsRefetching || isSummariesRefetching;
 
   const handleRefresh = () => {
@@ -122,6 +156,34 @@ export default function Dashboard() {
           </View>
         </View>
 
+        <TouchableOpacity
+          style={[
+            styles.banner,
+            { backgroundColor: theme.colors.primary + '10' },
+          ]}
+          onPress={() => router.push('/stats/numbers' as any)}
+        >
+          <View>
+            <Typography
+              variant="body"
+              weight="bold"
+              color={theme.colors.primary}
+            >
+              The Numbers
+            </Typography>
+            <Typography variant="caption" color={theme.colors.textSecondary}>
+              Tap for cumulative lifetime analytics
+            </Typography>
+          </View>
+          <Ionicons
+            name="chevron-forward"
+            size={20}
+            color={theme.colors.primary}
+          />
+        </TouchableOpacity>
+
+        <TimeRangeSelector value={range} onChange={setRange} />
+
         {/* Quick Stats Grid */}
         <View style={styles.statsGrid}>
           <View
@@ -174,31 +236,55 @@ export default function Dashboard() {
           </View>
         </View>
 
-        <View style={styles.chartSection}>
-          <Typography variant="title" weight="bold" style={styles.chartTitle}>
-            Top Languages
-          </Typography>
-          <View
-            style={[
-              styles.chartCard,
-              {
-                backgroundColor: theme.colors.surface,
-                borderColor: theme.colors.border,
-              },
-            ]}
-          >
-            {stats?.data?.languages ? (
-              <LanguageChart data={stats.data.languages} />
-            ) : (
-              <Typography
-                color={theme.colors.textSecondary}
-                style={styles.noDataText}
-              >
-                No language data available
-              </Typography>
-            )}
-          </View>
-        </View>
+        {stats?.data?.languages && (
+          <SegmentedStatsCard
+            title="Top Languages"
+            segments={stats.data.languages.slice(0, 5).map((l) => ({
+              label: l.name,
+              percent: l.percent,
+              color: l.color || theme.colors.primary,
+              valueText: l.text,
+            }))}
+          />
+        )}
+
+        {stats?.data?.categories && (
+          <SegmentedStatsCard
+            title="Categories"
+            segments={stats.data.categories.slice(0, 5).map((c) => ({
+              label: c.name,
+              percent: c.percent,
+              color: theme.colors.secondary,
+              valueText: c.text,
+            }))}
+          />
+        )}
+
+        {stats?.data?.editors && (
+          <SegmentedStatsCard
+            title="Editors"
+            segments={stats.data.editors.slice(0, 5).map((e) => ({
+              label: e.name,
+              percent: e.percent,
+              color: theme.colors.accent,
+              valueText: e.text,
+            }))}
+          />
+        )}
+
+        {stats?.data?.operating_systems && (
+          <SegmentedStatsCard
+            title="Operating Systems"
+            segments={stats.data.operating_systems.slice(0, 5).map((o) => ({
+              label: o.name,
+              percent: o.percent,
+              color: theme.colors.primary,
+              valueText: o.text,
+            }))}
+          />
+        )}
+
+        {durationSessions && <RadialClockChart sessions={durationSessions} />}
 
         {!punchLoading && punchData && <PunchCard data={punchData} />}
 
@@ -261,6 +347,14 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase',
     letterSpacing: 1,
     marginBottom: 4,
+  },
+  banner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: 16,
+    borderRadius: 16,
+    marginBottom: 24,
   },
   statsGrid: {
     flexDirection: 'row',

@@ -3,10 +3,9 @@
 import journal from './meta/_journal.json';
 import m0000 from './0000_spooky_carlie_cooper.sql';
 
-  export default {
-    journal,
-    migrations: {
-      m0000
-    }
-  }
-  
+export default {
+  journal,
+  migrations: {
+    m0000,
+  },
+};
