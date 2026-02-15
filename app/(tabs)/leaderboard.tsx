@@ -3,6 +3,7 @@ import { Typography } from '@/components/Typography';
 import { useLeaderboard, useTheme } from '@/hooks';
 import { LeaderboardUser } from '@/interfaces/leaderboard';
 import { Feather } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
 import React from 'react';
 import {
   ActivityIndicator,
@@ -10,62 +11,68 @@ import {
   Image,
   RefreshControl,
   StyleSheet,
+  TouchableOpacity,
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function LeaderboardScreen() {
   const { theme } = useTheme();
-  // For now, fetching global leaderboard. Language filtering could be added later.
+  const router = useRouter();
   const { data, isLoading, refetch, isRefetching } = useLeaderboard();
 
   const renderLeaderboardItem = ({ item }: { item: LeaderboardUser }) => (
-    <Card
-      style={[
-        styles.userCard,
-        item.rank === 1 && { borderColor: '#FFD700', borderWidth: 2 },
-      ]}
+    <TouchableOpacity
+      activeOpacity={0.7}
+      onPress={() => router.push(`/user/${item.user.id}`)}
     >
-      <View style={styles.rankContainer}>
-        <Typography
-          variant="title"
-          weight="bold"
-          color={
-            item.rank <= 3 ? theme.colors.primary : theme.colors.textSecondary
-          }
-        >
-          #{item.rank}
-        </Typography>
-      </View>
+      <Card
+        style={[
+          styles.userCard,
+          item.rank === 1 && { borderColor: '#FFD700', borderWidth: 2 },
+        ]}
+      >
+        <View style={styles.rankContainer}>
+          <Typography
+            variant="title"
+            weight="bold"
+            color={
+              item.rank <= 3 ? theme.colors.primary : theme.colors.textSecondary
+            }
+          >
+            #{item.rank}
+          </Typography>
+        </View>
 
-      <Image
-        source={{ uri: item.user.photo || 'https://via.placeholder.com/150' }}
-        style={styles.avatar}
-      />
-
-      <View style={styles.userInfo}>
-        <Typography variant="caption" weight="bold">
-          {item.user.display_name || item.user.username || 'Anonymous'}
-        </Typography>
-        <Typography variant="micro" color={theme.colors.textSecondary}>
-          {item.running_total.human_readable_total}
-        </Typography>
-      </View>
-
-      {item.rank <= 3 && (
-        <Feather
-          name="award"
-          size={20}
-          color={
-            item.rank === 1
-              ? '#FFD700'
-              : item.rank === 2
-                ? '#C0C0C0'
-                : '#CD7F32'
-          }
+        <Image
+          source={{ uri: item.user.photo || 'https://via.placeholder.com/150' }}
+          style={styles.avatar}
         />
-      )}
-    </Card>
+
+        <View style={styles.userInfo}>
+          <Typography variant="caption" weight="bold">
+            {item.user.display_name || item.user.username || 'Anonymous'}
+          </Typography>
+          <Typography variant="micro" color={theme.colors.textSecondary}>
+            {item.running_total.human_readable_total}
+          </Typography>
+        </View>
+
+        {item.rank <= 3 && (
+          <Feather
+            name="award"
+            size={20}
+            color={
+              item.rank === 1
+                ? '#FFD700'
+                : item.rank === 2
+                  ? '#C0C0C0'
+                  : '#CD7F32'
+            }
+          />
+        )}
+      </Card>
+    </TouchableOpacity>
   );
 
   if (isLoading && !data) {

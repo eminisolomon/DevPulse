@@ -20,6 +20,7 @@ import { Redirect, useRouter } from 'expo-router';
 import React, { useMemo, useState } from 'react';
 import {
   ActivityIndicator,
+  Image,
   RefreshControl,
   ScrollView,
   StyleSheet,
@@ -140,17 +141,12 @@ export default function Dashboard() {
                   'Developer'}
               </Typography>
             </View>
-            <TouchableOpacity
-              onPress={() => router.push('/settings')}
-              style={[
-                styles.settingsButton,
-                { backgroundColor: theme.colors.surface },
-              ]}
-            >
-              <Ionicons
-                name="settings-outline"
-                size={24}
-                color={theme.colors.text}
+            <TouchableOpacity onPress={() => router.push('/settings')}>
+              <Image
+                source={{
+                  uri: user?.data?.photo || 'https://via.placeholder.com/150',
+                }}
+                style={styles.avatar}
               />
             </TouchableOpacity>
           </View>
@@ -342,6 +338,12 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  avatar: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: 'rgba(0,0,0,0.05)',
   },
   greeting: {
     textTransform: 'uppercase',

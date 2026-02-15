@@ -1,6 +1,7 @@
 import { BottomSheet, Card } from '@/components';
 import { Typography } from '@/components/Typography';
 import { useTheme, useUser } from '@/hooks';
+import { settingsService } from '@/services/settings.service';
 import { useAuthStore } from '@/stores/useAuthStore';
 import { Feather, MaterialIcons } from '@expo/vector-icons';
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
@@ -17,11 +18,51 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function SettingsScreen() {
-  const { theme } = useTheme();
+  const { theme, themeMode, accentColor } = useTheme();
   const { data: user } = useUser();
   const { logout } = useAuthStore();
   const router = useRouter();
   const logoutBottomSheetRef = useRef<BottomSheetModal>(null);
+
+  const [settingsState, setSettingsState] = React.useState({
+    collectCrashes: true,
+    collectPerformance: true,
+    collectAnalytics: true,
+  });
+
+  React.useEffect(() => {
+    const loadSettings = async () => {
+      const s = await settingsService.getSettings();
+      setSettingsState({
+        collectCrashes: s.collectCrashes,
+        collectPerformance: s.collectPerformance,
+        collectAnalytics: s.collectAnalytics,
+      });
+    };
+    loadSettings();
+  }, []);
+
+  const toggleSetting = async (key: keyof typeof settingsState) => {
+    const newValue = !settingsState[key];
+    setSettingsState((prev) => ({ ...prev, [key]: newValue }));
+    await settingsService.updateSettings({ [key]: newValue });
+  };
+
+  const ACCENT_COLORS = [
+    { name: 'Deep Blue', color: '#3B82F6' },
+    { name: 'Royal Purple', color: '#8B5CF6' },
+    { name: 'Emerald', color: '#10B981' },
+    { name: 'Crimson', color: '#EF4444' },
+    { name: 'Amber', color: '#F59E0B' },
+    { name: 'Rose', color: '#F43F5E' },
+    { name: 'Indigo', color: '#6366F1' },
+    { name: 'Slate', color: '#475569' },
+  ];
+
+  const currentAccentName =
+    ACCENT_COLORS.find((c) => c.color === accentColor)?.name || 'Custom';
+  const currentModeLabel =
+    themeMode.charAt(0).toUpperCase() + themeMode.slice(1);
 
   const handleLogout = () => {
     logoutBottomSheetRef.current?.present();
@@ -236,7 +277,12 @@ export default function SettingsScreen() {
         {/* Theming Section */}
         <SectionHeader title="Theming" />
         <Card style={styles.sectionCard}>
-          <SettingItem icon="edit-2" label="Accent" value="Deep Blue" />
+          <SettingItem
+            icon="edit-2"
+            label="Appearance"
+            value={`${currentModeLabel} • ${currentAccentName}`}
+            onPress={() => router.push('/settings/theme')}
+          />
         </Card>
 
         {/* Insights Section */}
@@ -247,21 +293,24 @@ export default function SettingsScreen() {
             label="Crashes"
             description="Collect log information about bugs and crashes."
             isSwitch
-            switchValue={true}
+            switchValue={settingsState.collectCrashes}
+            onSwitchChange={() => toggleSetting('collectCrashes')}
           />
           <SettingItem
             icon="activity"
             label="Performance"
             description="Collect log information about hiccups, load speeds."
             isSwitch
-            switchValue={true}
+            switchValue={settingsState.collectPerformance}
+            onSwitchChange={() => toggleSetting('collectPerformance')}
           />
           <SettingItem
             icon="mouse-pointer"
             label="Analytics"
             description="Anonymously collect info about app usage."
             isSwitch
-            switchValue={true}
+            switchValue={settingsState.collectAnalytics}
+            onSwitchChange={() => toggleSetting('collectAnalytics')}
           />
         </Card>
 

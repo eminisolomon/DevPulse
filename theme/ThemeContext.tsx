@@ -1,3 +1,4 @@
+import { settingsService } from '@/services/settings.service';
 import React, { createContext, ReactNode, useEffect, useState } from 'react';
 import { useColorScheme } from 'react-native';
 import { darkTheme } from './dark';
@@ -18,6 +19,8 @@ interface ThemeContextType {
   themeMode: 'light' | 'dark' | 'system';
   toggleTheme: () => void;
   setThemeMode: (mode: 'light' | 'dark' | 'system') => void;
+  accentColor: string;
+  setAccentColor: (color: string) => void;
 }
 
 export const ThemeContext = createContext<ThemeContextType | undefined>(
@@ -29,7 +32,17 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
   const [themeMode, setThemeModeState] = useState<'light' | 'dark' | 'system'>(
     'system',
   );
+  const [accentColor, setAccentColorState] = useState('#3B82F6');
   const [isDark, setIsDark] = useState(systemColorScheme === 'dark');
+
+  useEffect(() => {
+    const loadSettings = async () => {
+      const settings = await settingsService.getSettings();
+      setThemeModeState(settings.themeMode);
+      setAccentColorState(settings.accentColor);
+    };
+    loadSettings();
+  }, []);
 
   useEffect(() => {
     if (themeMode === 'system') {
@@ -43,13 +56,23 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
 
   const theme = {
     ...themeColors,
+    colors: {
+      ...themeColors.colors,
+      primary: accentColor,
+    },
     spacing,
     typography,
     tokens,
   };
 
-  const setThemeMode = (mode: 'light' | 'dark' | 'system') => {
+  const setThemeMode = async (mode: 'light' | 'dark' | 'system') => {
     setThemeModeState(mode);
+    await settingsService.updateSettings({ themeMode: mode });
+  };
+
+  const setAccentColor = async (color: string) => {
+    setAccentColorState(color);
+    await settingsService.updateSettings({ accentColor: color });
   };
 
   const toggleTheme = () => {
@@ -58,7 +81,15 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
 
   return (
     <ThemeContext.Provider
-      value={{ theme, isDark, themeMode, toggleTheme, setThemeMode }}
+      value={{
+        theme,
+        isDark,
+        themeMode,
+        toggleTheme,
+        setThemeMode,
+        accentColor,
+        setAccentColor,
+      }}
     >
       {children}
     </ThemeContext.Provider>
