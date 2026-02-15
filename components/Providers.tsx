@@ -1,3 +1,4 @@
+import { DatabaseProvider } from '@/db/DatabaseProvider';
 import { ThemeProvider } from '@/theme';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -27,15 +28,17 @@ interface AppProvidersProps {
 export function AppProviders({ children }: AppProvidersProps) {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <KeyboardProvider>
-        <SafeAreaProvider>
-          <QueryClientProvider client={queryClient}>
-            <ThemeProvider>
-              <BottomSheetModalProvider>{children}</BottomSheetModalProvider>
-            </ThemeProvider>
-          </QueryClientProvider>
-        </SafeAreaProvider>
-      </KeyboardProvider>
+      <DatabaseProvider>
+        <KeyboardProvider>
+          <SafeAreaProvider>
+            <QueryClientProvider client={queryClient}>
+              <ThemeProvider>
+                <BottomSheetModalProvider>{children}</BottomSheetModalProvider>
+              </ThemeProvider>
+            </QueryClientProvider>
+          </SafeAreaProvider>
+        </KeyboardProvider>
+      </DatabaseProvider>
     </GestureHandlerRootView>
   );
 }

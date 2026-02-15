@@ -1,3 +1,14 @@
+export interface WakaTimeSummaryItem {
+  name: string;
+  total_seconds: number;
+  percent: number;
+  digital: string;
+  text: string;
+  hours: number;
+  minutes: number;
+  color?: string;
+}
+
 export interface WakaTimeSummary {
   grand_total: {
     digital: string;
@@ -13,15 +24,12 @@ export interface WakaTimeSummary {
     text: string;
     timezone: string;
   };
-  projects: {
-    name: string;
-    total_seconds: number;
-    percent: number;
-    digital: string;
-    text: string;
-    hours: number;
-    minutes: number;
-  }[];
+  projects: WakaTimeSummaryItem[];
+  languages: WakaTimeSummaryItem[];
+  categories: WakaTimeSummaryItem[];
+  editors: WakaTimeSummaryItem[];
+  operating_systems: WakaTimeSummaryItem[];
+  machines?: WakaTimeSummaryItem[];
 }
 
 export interface WakaTimeSummaries {
