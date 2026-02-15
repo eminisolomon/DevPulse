@@ -3,6 +3,7 @@ import { Card } from '@/components/Card';
 import { TextInput } from '@/components/Input';
 import { Switch } from '@/components/Switch';
 import { Typography } from '@/components/Typography';
+import { useTheme } from '@/hooks';
 import { useAuthStore } from '@/stores/useAuthStore';
 import { toastError, toastInfo } from '@/utilities/toast';
 import { Ionicons } from '@expo/vector-icons';
@@ -18,6 +19,7 @@ export default function AuthScreen() {
   const [keyInput, setKeyInput] = useState('');
   const [isCustomServer, setIsCustomServer] = useState(false);
   const [customUrl, setCustomUrl] = useState('https://wakapi.dev/api/v1');
+  const { theme } = useTheme();
 
   useEffect(() => {
     if (apiKey) {
@@ -48,7 +50,7 @@ export default function AuthScreen() {
   };
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: '#FFFFFF' }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: theme.colors.background }}>
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={{ flex: 1 }}
@@ -67,22 +69,29 @@ export default function AuthScreen() {
                 justifyContent: 'center',
                 marginBottom: 24,
                 borderWidth: 1,
-                borderColor: 'rgba(57, 189, 248, 0.2)', // brand-400 with opacity
-                backgroundColor: 'rgba(57, 189, 248, 0.1)', // brand-400 with opacity
+                borderColor: theme.colors.primaryContainer,
+                backgroundColor: theme.colors.primaryContainer,
               }}
             >
-              <Ionicons name="key-outline" size={40} color="#38BDF8" />
+              <Ionicons
+                name="key-outline"
+                size={40}
+                color={theme.colors.primary}
+              />
             </View>
             <Typography
               variant="display"
-              style={{ marginBottom: 8, textAlign: 'center' }}
+              style={{
+                marginBottom: 8,
+                textAlign: 'center',
+                color: theme.colors.text,
+              }}
             >
               DevPulse
             </Typography>
             <Typography
               variant="body"
-              color="#94A3B8"
-              style={{ textAlign: 'center' }}
+              style={{ textAlign: 'center', color: theme.colors.textSecondary }}
             >
               Your coding stats, beautifully visualized.
             </Typography>
@@ -97,6 +106,8 @@ export default function AuthScreen() {
                   alignItems: 'center',
                   justifyContent: 'space-between',
                   padding: 16,
+                  backgroundColor: theme.colors.surface,
+                  borderColor: theme.colors.border,
                 }}
               >
                 <View
@@ -106,12 +117,23 @@ export default function AuthScreen() {
                     gap: 12,
                   }}
                 >
-                  <Ionicons name="server-outline" size={24} color="#38BDF8" />
+                  <Ionicons
+                    name="server-outline"
+                    size={24}
+                    color={theme.colors.primary}
+                  />
                   <View>
-                    <Typography variant="body" weight="medium">
+                    <Typography
+                      variant="body"
+                      weight="medium"
+                      style={{ color: theme.colors.text }}
+                    >
                       Custom Server
                     </Typography>
-                    <Typography variant="caption" color="#94A3B8">
+                    <Typography
+                      variant="caption"
+                      style={{ color: theme.colors.textSecondary }}
+                    >
                       Use a self-hosted Wakapi instance
                     </Typography>
                   </View>
@@ -121,7 +143,10 @@ export default function AuthScreen() {
 
               {isCustomServer && (
                 <View style={{ gap: 8 }}>
-                  <Typography variant="caption" style={{ marginLeft: 4 }}>
+                  <Typography
+                    variant="caption"
+                    style={{ marginLeft: 4, color: theme.colors.textSecondary }}
+                  >
                     Server URL
                   </Typography>
                   <TextInput
@@ -129,7 +154,7 @@ export default function AuthScreen() {
                       <Ionicons
                         name="globe-outline"
                         size={20}
-                        color="#94A3B8"
+                        color={theme.colors.textTertiary}
                       />
                     }
                     placeholder="https://wakapi.dev/api/v1"
@@ -142,12 +167,19 @@ export default function AuthScreen() {
               )}
 
               <View style={{ gap: 8 }}>
-                <Typography variant="caption" style={{ marginLeft: 4 }}>
+                <Typography
+                  variant="caption"
+                  style={{ marginLeft: 4, color: theme.colors.textSecondary }}
+                >
                   API Key
                 </Typography>
                 <TextInput
                   leftIcon={
-                    <Ionicons name="key-outline" size={20} color="#94A3B8" />
+                    <Ionicons
+                      name="key-outline"
+                      size={20}
+                      color={theme.colors.textTertiary}
+                    />
                   }
                   placeholder="waka_..."
                   value={keyInput}
@@ -158,7 +190,7 @@ export default function AuthScreen() {
                   rightIcon={
                     <View
                       style={{
-                        backgroundColor: 'rgba(57, 189, 248, 0.1)',
+                        backgroundColor: theme.colors.primaryContainer,
                         padding: 6,
                         borderRadius: 6,
                       }}
@@ -166,7 +198,7 @@ export default function AuthScreen() {
                       <Ionicons
                         name="arrow-forward"
                         size={20}
-                        color="#38BDF8"
+                        color={theme.colors.primary}
                         onPress={handleApiKeySubmit}
                       />
                     </View>
@@ -183,17 +215,27 @@ export default function AuthScreen() {
                 }}
               >
                 <View
-                  style={{ height: 1, flex: 1, backgroundColor: '#E2E8F0' }}
+                  style={{
+                    height: 1,
+                    flex: 1,
+                    backgroundColor: theme.colors.border,
+                  }}
                 />
                 <Typography
                   variant="micro"
-                  color="#94A3B8"
-                  style={{ textTransform: 'uppercase' }}
+                  style={{
+                    textTransform: 'uppercase',
+                    color: theme.colors.textTertiary,
+                  }}
                 >
                   Or continue with
                 </Typography>
                 <View
-                  style={{ height: 1, flex: 1, backgroundColor: '#E2E8F0' }}
+                  style={{
+                    height: 1,
+                    flex: 1,
+                    backgroundColor: theme.colors.border,
+                  }}
                 />
               </View>
 
@@ -203,18 +245,24 @@ export default function AuthScreen() {
                 label="Connect with WakaTime"
                 onPress={handleWebConnect}
                 leftIcon={
-                  <Ionicons name="globe-outline" size={20} color="#0F172A" />
+                  <Ionicons
+                    name="globe-outline"
+                    size={20}
+                    color={theme.colors.text}
+                  />
                 }
                 fullWidth
+                style={{ borderColor: theme.colors.border }}
+                labelStyle={{ color: theme.colors.text }}
               />
 
               <Typography
                 variant="micro"
-                color="#94A3B8"
                 style={{
                   textAlign: 'center',
                   marginTop: 16,
                   paddingHorizontal: 16,
+                  color: theme.colors.textSecondary,
                 }}
               >
                 Your API key is stored securely on your device using Expo

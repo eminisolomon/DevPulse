@@ -3,15 +3,15 @@ import { palette } from './colors';
 export const lightTheme = {
   colors: {
     background: '#FFFFFF',
-    surface: palette.neutral[50],
+    surface: palette.neutral[50], // Slightly off-white for surface
     surfaceHighlight: palette.neutral[100],
 
     text: palette.neutral[900],
     textSecondary: palette.neutral[600],
-    textTertiary: palette.gray[400],
+    textTertiary: palette.neutral[400],
     textInverse: '#FFFFFF',
 
-    primary: palette.brand[500],
+    primary: palette.brand[600], // Darker blue for better contrast
     primaryForeground: '#FFFFFF',
     primaryContainer: palette.brand[50],
     primaryContainerForeground: palette.brand[700],
@@ -29,13 +29,13 @@ export const lightTheme = {
     border: palette.neutral[200],
     borderFocus: palette.brand[500],
 
-    success: palette.success[500],
+    success: palette.success[600],
     successContainer: palette.success[50],
-    warning: palette.warning[500],
+    warning: palette.warning[600],
     warningContainer: palette.warning[50],
-    error: palette.error[500],
+    error: palette.error[600],
     errorContainer: palette.error[50],
-    info: palette.info[500],
+    info: palette.info[600],
     infoContainer: palette.info[50],
 
     overlay: 'rgba(0, 0, 0, 0.4)',
