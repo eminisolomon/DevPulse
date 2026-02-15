@@ -17,6 +17,8 @@ export const syncService = {
             improvementStatus: goal.improvement_status,
             isEnabled: goal.is_enabled,
             rangeText: goal.range_text,
+            chartData: JSON.stringify(goal.chart_data),
+            languages: JSON.stringify(goal.languages),
             lastSyncedAt: new Date(),
           })
           .onConflictDoUpdate({
@@ -28,6 +30,8 @@ export const syncService = {
               improvementStatus: goal.improvement_status,
               isEnabled: goal.is_enabled,
               rangeText: goal.range_text,
+              chartData: JSON.stringify(goal.chart_data),
+              languages: JSON.stringify(goal.languages),
               lastSyncedAt: new Date(),
             },
           });

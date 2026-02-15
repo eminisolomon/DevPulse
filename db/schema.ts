@@ -8,5 +8,7 @@ export const goals = sqliteTable('goals', {
   improvementStatus: text('improvement_status'),
   isEnabled: integer('is_enabled', { mode: 'boolean' }).default(true),
   rangeText: text('range_text'),
+  chartData: text('chart_data'),
+  languages: text('languages'),
   lastSyncedAt: integer('last_synced_at', { mode: 'timestamp' }),
 });
