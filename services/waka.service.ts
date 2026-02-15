@@ -1,7 +1,7 @@
 import { WakaTimeStats } from '@/interfaces/stats';
 import { WakaTimeSummaries } from '@/interfaces/summary';
 import { User } from '@/interfaces/user';
-import { fetchWithAuth } from '@/utils/api';
+import { fetchWithAuth } from '@/utilities/api';
 
 export const wakaService = {
   getStats: (range: string = 'last_7_days'): Promise<WakaTimeStats> =>

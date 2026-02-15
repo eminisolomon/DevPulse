@@ -1,4 +1,4 @@
-import { secureStorage } from '@/utils/storage';
+import { secureStorage } from '@/utilities/storage';
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 

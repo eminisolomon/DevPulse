@@ -1,6 +1,7 @@
-import { useTheme } from '@/hooks/useTheme';
+import { useTheme } from '@/theme';
+import { Ionicons } from '@expo/vector-icons';
 import { Tabs } from 'expo-router';
-import { Activity, FolderCode, Target } from 'lucide-react-native';
+import React from 'react';
 
 export default function TabLayout() {
   const { theme } = useTheme();
@@ -30,7 +31,7 @@ export default function TabLayout() {
         options={{
           title: 'Pulse',
           tabBarIcon: ({ color, size }) => (
-            <Activity size={size} color={color} />
+            <Ionicons name="pulse" size={size} color={color} />
           ),
         }}
       />
@@ -39,7 +40,7 @@ export default function TabLayout() {
         options={{
           title: 'Projects',
           tabBarIcon: ({ color, size }) => (
-            <FolderCode size={size} color={color} />
+            <Ionicons name="folder-open-outline" size={size} color={color} />
           ),
         }}
       />
@@ -47,7 +48,9 @@ export default function TabLayout() {
         name="goals"
         options={{
           title: 'Goals',
-          tabBarIcon: ({ color, size }) => <Target size={size} color={color} />,
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="disc-outline" size={size} color={color} />
+          ),
         }}
       />
     </Tabs>

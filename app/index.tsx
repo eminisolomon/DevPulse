@@ -1,22 +1,15 @@
-import { useAuthStore } from '@/stores/useAuthStore';
-import { useRouter } from 'expo-router';
-import {
-  ArrowRight,
-  Globe,
-  Key,
-  Server as ServerIcon,
-} from 'lucide-react-native';
-import React, { useEffect, useState } from 'react';
-import { KeyboardAvoidingView, Platform, ScrollView, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-
-// UI Components
 import { Button } from '@/components/Button';
 import { Card } from '@/components/Card';
 import { TextInput } from '@/components/Input';
 import { Switch } from '@/components/Switch';
 import { Typography } from '@/components/Typography';
-import { toast } from '@/utils/toast';
+import { useAuthStore } from '@/stores/useAuthStore';
+import { toastError, toastInfo } from '@/utilities/toast';
+import { Ionicons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
+import React, { useEffect, useState } from 'react';
+import { KeyboardAvoidingView, Platform, ScrollView, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function AuthScreen() {
   const router = useRouter();
@@ -34,12 +27,12 @@ export default function AuthScreen() {
 
   const handleApiKeySubmit = () => {
     if (!keyInput.trim()) {
-      toast.error('Error', 'Please enter your API Key');
+      toastError('Error', 'Please enter your API Key');
       return;
     }
 
     if (isCustomServer && !customUrl.trim()) {
-      toast.error('Error', 'Please enter your Wakapi URL');
+      toastError('Error', 'Please enter your Wakapi URL');
       return;
     }
 
@@ -51,8 +44,7 @@ export default function AuthScreen() {
   };
 
   const handleWebConnect = () => {
-    // Placeholder for OAuth/Web flow
-    toast.info('Coming Soon', 'Web authentication flow is under development.');
+    toastInfo('Coming Soon', 'Web authentication flow is under development.');
   };
 
   return (
@@ -79,7 +71,7 @@ export default function AuthScreen() {
                 backgroundColor: 'rgba(57, 189, 248, 0.1)', // brand-400 with opacity
               }}
             >
-              <Key size={40} color="#38BDF8" />
+              <Ionicons name="key-outline" size={40} color="#38BDF8" />
             </View>
             <Typography
               variant="display"
@@ -114,7 +106,7 @@ export default function AuthScreen() {
                     gap: 12,
                   }}
                 >
-                  <ServerIcon size={24} color="#38BDF8" />
+                  <Ionicons name="server-outline" size={24} color="#38BDF8" />
                   <View>
                     <Typography variant="body" weight="medium">
                       Custom Server
@@ -133,7 +125,13 @@ export default function AuthScreen() {
                     Server URL
                   </Typography>
                   <TextInput
-                    leftIcon={<Globe size={20} color="#94A3B8" />}
+                    leftIcon={
+                      <Ionicons
+                        name="globe-outline"
+                        size={20}
+                        color="#94A3B8"
+                      />
+                    }
                     placeholder="https://wakapi.dev/api/v1"
                     value={customUrl}
                     onChangeText={setCustomUrl}
@@ -148,7 +146,9 @@ export default function AuthScreen() {
                   API Key
                 </Typography>
                 <TextInput
-                  leftIcon={<Key size={20} color="#94A3B8" />}
+                  leftIcon={
+                    <Ionicons name="key-outline" size={20} color="#94A3B8" />
+                  }
                   placeholder="waka_..."
                   value={keyInput}
                   onChangeText={setKeyInput}
@@ -163,7 +163,8 @@ export default function AuthScreen() {
                         borderRadius: 6,
                       }}
                     >
-                      <ArrowRight
+                      <Ionicons
+                        name="arrow-forward"
                         size={20}
                         color="#38BDF8"
                         onPress={handleApiKeySubmit}
@@ -201,7 +202,9 @@ export default function AuthScreen() {
                 size="lg"
                 label="Connect with WakaTime"
                 onPress={handleWebConnect}
-                leftIcon={<Globe size={20} color="#0F172A" />}
+                leftIcon={
+                  <Ionicons name="globe-outline" size={20} color="#0F172A" />
+                }
                 fullWidth
               />
 
