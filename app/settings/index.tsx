@@ -1,10 +1,11 @@
-import { Card } from '@/components/Card';
+import { BottomSheet, Card } from '@/components';
 import { Typography } from '@/components/Typography';
 import { useTheme, useUser } from '@/hooks';
 import { useAuthStore } from '@/stores/useAuthStore';
 import { Feather, MaterialIcons } from '@expo/vector-icons';
+import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import { useRouter } from 'expo-router';
-import React from 'react';
+import React, { useRef } from 'react';
 import {
   Image,
   ScrollView,
@@ -20,8 +21,14 @@ export default function SettingsScreen() {
   const { data: user } = useUser();
   const { logout } = useAuthStore();
   const router = useRouter();
+  const logoutBottomSheetRef = useRef<BottomSheetModal>(null);
 
   const handleLogout = () => {
+    logoutBottomSheetRef.current?.present();
+  };
+
+  const confirmLogout = () => {
+    logoutBottomSheetRef.current?.dismiss();
     logout();
     router.replace('/');
   };
@@ -278,6 +285,57 @@ export default function SettingsScreen() {
             LOGOUT
           </Typography>
         </TouchableOpacity>
+
+        <BottomSheet
+          ref={logoutBottomSheetRef}
+          title="Logout"
+          snapPoints={['35%']}
+        >
+          <View style={styles.logoutContent}>
+            <View style={styles.logoutIconContainer}>
+              <MaterialIcons
+                name="logout"
+                size={40}
+                color={theme.colors.error}
+              />
+            </View>
+            <Typography
+              variant="title"
+              weight="bold"
+              style={styles.logoutTitle}
+            >
+              Are you sure?
+            </Typography>
+            <Typography
+              color={theme.colors.textSecondary}
+              style={styles.logoutDescription}
+            >
+              You will need to enter your API key again to access your stats.
+            </Typography>
+            <View style={styles.logoutActions}>
+              <TouchableOpacity
+                style={[
+                  styles.cancelButton,
+                  { borderColor: theme.colors.border },
+                ]}
+                onPress={() => logoutBottomSheetRef.current?.dismiss()}
+              >
+                <Typography weight="bold">CANCEL</Typography>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[
+                  styles.confirmLogoutButton,
+                  { backgroundColor: theme.colors.error },
+                ]}
+                onPress={confirmLogout}
+              >
+                <Typography weight="bold" style={{ color: '#fff' }}>
+                  LOGOUT
+                </Typography>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </BottomSheet>
       </ScrollView>
     </SafeAreaView>
   );
@@ -396,5 +454,43 @@ const styles = StyleSheet.create({
     paddingVertical: 16,
     borderRadius: 16,
     marginTop: 24,
+  },
+  logoutContent: {
+    padding: 24,
+    alignItems: 'center',
+  },
+  logoutIconContainer: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    backgroundColor: 'rgba(239, 68, 68, 0.1)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 20,
+  },
+  logoutTitle: {
+    marginBottom: 8,
+  },
+  logoutDescription: {
+    textAlign: 'center',
+    marginBottom: 32,
+  },
+  logoutActions: {
+    flexDirection: 'row',
+    gap: 12,
+    width: '100%',
+  },
+  cancelButton: {
+    flex: 1,
+    paddingVertical: 14,
+    borderRadius: 12,
+    alignItems: 'center',
+    borderWidth: 1,
+  },
+  confirmLogoutButton: {
+    flex: 2,
+    paddingVertical: 14,
+    borderRadius: 12,
+    alignItems: 'center',
   },
 });
