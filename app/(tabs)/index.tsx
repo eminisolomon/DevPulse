@@ -1,98 +1,142 @@
-import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
+import ActivityChart from '@/components/ActivityChart';
+import LanguageChart from '@/components/LanguageChart';
+import { useAuthStore } from '@/stores/useAuthStore';
+import { api } from '@/utils/api';
+import { useQuery } from '@tanstack/react-query';
+import { subDays } from 'date-fns';
+import { Redirect } from 'expo-router';
+import React from 'react';
+import {
+  ActivityIndicator,
+  RefreshControl,
+  ScrollView,
+  Text,
+  View,
+} from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { HelloWave } from '@/components/hello-wave';
-import ParallaxScrollView from '@/components/parallax-scroll-view';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { Link } from 'expo-router';
+export default function Dashboard() {
+  const { apiKey } = useAuthStore();
 
-export default function HomeScreen() {
+  if (!apiKey) {
+    return <Redirect href="/" />;
+  }
+
+  const { data: user, isLoading: userLoading } = useQuery({
+    queryKey: ['user'],
+    queryFn: api.getUser,
+  });
+
+  const {
+    data: stats,
+    isLoading: statsLoading,
+    refetch: refetchStats,
+    isRefetching,
+  } = useQuery({
+    queryKey: ['stats', 'last_7_days'],
+    queryFn: () => api.getStats('last_7_days'),
+  });
+
+  const today = new Date();
+  const start = subDays(today, 6); // Last 7 days including today
+
+  const {
+    data: summaries,
+    isLoading: summariesLoading,
+    refetch: refetchSummaries,
+  } = useQuery({
+    queryKey: ['summaries', start, today],
+    queryFn: () => api.getSummaries(start, today),
+  });
+
+  const isLoading = userLoading || statsLoading || summariesLoading;
+
+  const handleRefresh = () => {
+    refetchStats();
+    refetchSummaries();
+  };
+
+  if (isLoading && !stats && !summaries) {
+    return (
+      <View className="flex-1 bg-neutral-900 justify-center items-center">
+        <ActivityIndicator size="large" color="#10b981" />
+      </View>
+    );
+  }
+
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12',
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <Link href="/modal">
-          <Link.Trigger>
-            <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-          </Link.Trigger>
-          <Link.Preview />
-          <Link.Menu>
-            <Link.MenuAction title="Action" icon="cube" onPress={() => alert('Action pressed')} />
-            <Link.MenuAction
-              title="Share"
-              icon="square.and.arrow.up"
-              onPress={() => alert('Share pressed')}
-            />
-            <Link.Menu title="More" icon="ellipsis">
-              <Link.MenuAction
-                title="Delete"
-                icon="trash"
-                destructive
-                onPress={() => alert('Delete pressed')}
-              />
-            </Link.Menu>
-          </Link.Menu>
-        </Link>
+    <SafeAreaView className="flex-1 bg-neutral-900" edges={['top']}>
+      <ScrollView
+        contentContainerStyle={{ padding: 16, paddingBottom: 100 }}
+        refreshControl={
+          <RefreshControl
+            refreshing={isRefetching}
+            onRefresh={handleRefresh}
+            tintColor="#10b981"
+          />
+        }
+      >
+        <View className="mb-6">
+          <Text className="text-neutral-400 text-sm uppercase font-semibold tracking-wider mb-1">
+            Welcome back
+          </Text>
+          <Text className="text-white text-3xl font-bold">
+            {user?.data?.display_name || user?.data?.username || 'Developer'}
+          </Text>
+        </View>
 
-        <ThemedText>
-          {`Tap the Explore tab to learn more about what's included in this starter app.`}
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          {`When you're ready, run `}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+        {/* Quick Stats Grid */}
+        <View className="flex-row justify-between mb-6">
+          <View className="bg-neutral-800 p-4 rounded-2xl flex-1 mr-2 border border-neutral-700 shadow-sm">
+            <Text className="text-neutral-400 text-xs font-medium mb-1 uppercase tracking-wide">
+              7 Day Total
+            </Text>
+            <Text className="text-emerald-400 text-2xl font-bold tracking-tight">
+              {stats?.data?.human_readable_total || '0h 0m'}
+            </Text>
+          </View>
+          <View className="bg-neutral-800 p-4 rounded-2xl flex-1 ml-2 border border-neutral-700 shadow-sm">
+            <Text className="text-neutral-400 text-xs font-medium mb-1 uppercase tracking-wide">
+              Daily Average
+            </Text>
+            <Text className="text-white text-2xl font-bold tracking-tight">
+              {stats?.data?.human_readable_daily_average || '0h 0m'}
+            </Text>
+          </View>
+        </View>
+
+        {/* Languages Chart */}
+        <View className="mb-8">
+          <Text className="text-white text-lg font-bold mb-4">
+            Top Languages
+          </Text>
+          <View className="bg-neutral-800 rounded-3xl p-6 border border-neutral-700 shadow-sm">
+            {stats?.data?.languages ? (
+              <LanguageChart data={stats.data.languages} />
+            ) : (
+              <Text className="text-neutral-500 text-center py-10">
+                No language data available
+              </Text>
+            )}
+          </View>
+        </View>
+
+        {/* Activity Chart */}
+        <View className="mb-8">
+          <Text className="text-white text-lg font-bold mb-4">
+            Daily Activity
+          </Text>
+          <View className="bg-neutral-800 rounded-3xl p-4 border border-neutral-700 shadow-sm overflow-hidden">
+            {summaries?.data ? (
+              <ActivityChart data={summaries.data} />
+            ) : (
+              <Text className="text-neutral-500 text-center py-10">
+                Loading activity data...
+              </Text>
+            )}
+          </View>
+        </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
-  },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
-  },
-});
