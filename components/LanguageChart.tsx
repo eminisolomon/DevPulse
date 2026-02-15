@@ -1,7 +1,9 @@
+import { useTheme } from '@/hooks/useTheme';
 import { WakaTimeLanguage } from '@/interfaces/stats';
 import React from 'react';
-import { Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { Pie, PolarChart } from 'victory-native';
+import { Typography } from './Typography';
 
 interface LanguageChartProps {
   data: WakaTimeLanguage[];
@@ -17,6 +19,8 @@ const COLORS = [
 ];
 
 export default function LanguageChart({ data }: LanguageChartProps) {
+  const { theme } = useTheme();
+
   // prepare data for Victory
   const chartData = data.slice(0, 5).map((lang, index) => ({
     languageName: lang.name,
@@ -28,14 +32,16 @@ export default function LanguageChart({ data }: LanguageChartProps) {
 
   if (totalSeconds === 0) {
     return (
-      <View className="h-64 items-center justify-center">
-        <Text className="text-neutral-500">No data available</Text>
+      <View style={[styles.container, styles.center]}>
+        <Typography color={theme.colors.textSecondary}>
+          No data available
+        </Typography>
       </View>
     );
   }
 
   return (
-    <View className="h-64 justify-center items-center">
+    <View style={[styles.container, styles.center]}>
       <PolarChart
         data={chartData}
         colorKey="color"
@@ -44,37 +50,59 @@ export default function LanguageChart({ data }: LanguageChartProps) {
       >
         <Pie.Chart>
           {({ slice }) => {
-            // Remove 'label' from slice props to avoid type mismatch with Pie.Slice label prop
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars
             const { label, ...restSlice } = slice;
             return (
               // @ts-ignore
-              <Pie.Slice
-                {...restSlice}
-                // color is included in restSlice
-              />
+              <Pie.Slice {...restSlice} />
             );
           }}
         </Pie.Chart>
       </PolarChart>
 
       {/* Legend */}
-      <View className="flex-row flex-wrap justify-center mt-4 gap-2">
+      <View style={styles.legendContainer}>
         {chartData.map((d) => (
-          <View
-            key={d.languageName}
-            className="flex-row items-center mr-2 mb-1"
-          >
-            <View
-              style={{ backgroundColor: d.color }}
-              className="w-3 h-3 rounded-full mr-2"
-            />
-            <Text className="text-neutral-300 text-xs font-medium">
+          <View key={d.languageName} style={styles.legendItem}>
+            <View style={[styles.dot, { backgroundColor: d.color }]} />
+            <Typography
+              variant="micro"
+              color={theme.colors.textSecondary}
+              weight="medium"
+            >
               {d.languageName}
-            </Text>
+            </Typography>
           </View>
         ))}
       </View>
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    height: 256,
+  },
+  center: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  legendContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'center',
+    marginTop: 16,
+    gap: 8,
+  },
+  legendItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginRight: 8,
+    marginBottom: 4,
+  },
+  dot: {
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+    marginRight: 8,
+  },
+});

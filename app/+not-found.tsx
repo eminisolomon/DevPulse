@@ -1,21 +1,41 @@
+import { Button } from '@/components/Button';
+import { Typography } from '@/components/Typography';
+import { useTheme } from '@/hooks/useTheme';
 import { Link, Stack } from 'expo-router';
-import { Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 
 export default function NotFoundScreen() {
+  const { theme } = useTheme();
+
   return (
     <>
       <Stack.Screen options={{ title: 'Oops!', headerShown: false }} />
-      <View className="flex-1 items-center justify-center bg-neutral-900 p-5">
-        <Text className="text-white text-4xl font-bold mb-4 font-sans">
+      <View
+        style={[styles.container, { backgroundColor: theme.colors.background }]}
+      >
+        <Typography variant="display" style={{ marginBottom: 16 }}>
           404
-        </Text>
-        <Text className="text-neutral-400 text-lg mb-8 text-center font-sans">
+        </Typography>
+        <Typography
+          variant="body"
+          style={{ marginBottom: 32, textAlign: 'center' }}
+          color={theme.colors.textSecondary}
+        >
           This screen doesn't exist.
-        </Text>
-        <Link href="/" className="bg-emerald-500 px-6 py-3 rounded-xl">
-          <Text className="text-black font-bold font-sans">Go to Home</Text>
+        </Typography>
+        <Link href="/" asChild>
+          <Button label="Go to Home" />
         </Link>
       </View>
     </>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 20,
+  },
+});

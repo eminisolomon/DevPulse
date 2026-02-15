@@ -1,7 +1,8 @@
+import { useTheme } from '@/hooks/useTheme';
 import { WakaTimeSummary } from '@/interfaces/summary';
 import { format, parseISO } from 'date-fns';
 import React from 'react';
-import { View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { Bar, CartesianChart } from 'victory-native';
 
 interface ActivityChartProps {
@@ -9,6 +10,7 @@ interface ActivityChartProps {
 }
 
 export default function ActivityChart({ data }: ActivityChartProps) {
+  const { theme } = useTheme();
   // Map data for Victory
   // x: day index or timestamp, y: hours
   const chartData = data.map((day) => ({
@@ -33,7 +35,7 @@ export default function ActivityChart({ data }: ActivityChartProps) {
   // I'll skip axis labels for this iteration to avoid font loading complexity unless I add it to hooks.
 
   return (
-    <View className="h-48 w-full bg-neutral-800 rounded-2xl p-4">
+    <View style={[styles.container, { backgroundColor: theme.colors.surface }]}>
       <CartesianChart
         data={chartData}
         xKey="x"
@@ -41,16 +43,15 @@ export default function ActivityChart({ data }: ActivityChartProps) {
         padding={16}
         domainPadding={{ left: 20, right: 20, top: 20 }}
         axisOptions={{
-          // font: font, // skipping font for now to avoid crash if not loaded
-          lineColor: '#404040',
-          labelColor: '#a3a3a3',
+          lineColor: theme.colors.border,
+          labelColor: theme.colors.textSecondary,
         }}
       >
         {({ points, chartBounds }) => (
           <Bar
             points={points.y}
             chartBounds={chartBounds}
-            color="#10b981"
+            color={theme.colors.primary}
             roundedCorners={{ topLeft: 4, topRight: 4 }}
             animate={{ type: 'spring' }}
           />
@@ -59,3 +60,12 @@ export default function ActivityChart({ data }: ActivityChartProps) {
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    height: 192,
+    width: '100%',
+    borderRadius: 16,
+    padding: 16,
+  },
+});

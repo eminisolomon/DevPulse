@@ -6,7 +6,6 @@ export * from './Card';
 export * from './Checkbox';
 export * from './Chip';
 export * from './Divider';
-export * from './Form';
 export * from './Input';
 export * from './ListItem';
 export * from './nav';

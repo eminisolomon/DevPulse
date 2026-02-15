@@ -1,3 +1,5 @@
+import { WakaTimeStats } from '@/interfaces/stats';
+import { WakaTimeSummaries } from '@/interfaces/summary';
 import { useAuthStore } from '@/stores/useAuthStore';
 
 const getAuth = () => {
@@ -41,9 +43,11 @@ export const api = {
   getAuth,
   getHeaders,
   fetchWithAuth,
-  getStats: (range: string = 'last_7_days') =>
-    fetchWithAuth(`/users/current/stats/${range}`),
-  getSummaries: (start: string, end: string) =>
-    fetchWithAuth(`/users/current/summaries?start=${start}&end=${end}`),
+  getStats: (range: string = 'last_7_days'): Promise<WakaTimeStats> =>
+    fetchWithAuth<WakaTimeStats>(`/users/current/stats/${range}`),
+  getSummaries: (start: string, end: string): Promise<WakaTimeSummaries> =>
+    fetchWithAuth<WakaTimeSummaries>(
+      `/users/current/summaries?start=${start}&end=${end}`,
+    ),
   getUser: () => fetchWithAuth('/users/current'),
 };

@@ -1,3 +1,5 @@
+import { Typography } from '@/components/Typography';
+import { useTheme } from '@/hooks/useTheme';
 import { subDays } from 'date-fns';
 import { Redirect } from 'expo-router';
 import React from 'react';
@@ -5,7 +7,7 @@ import {
   ActivityIndicator,
   RefreshControl,
   ScrollView,
-  Text,
+  StyleSheet,
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -18,6 +20,7 @@ import { useUser } from '@/hooks/useUser';
 import { useAuthStore } from '@/stores/useAuthStore';
 
 export default function Dashboard() {
+  const { theme } = useTheme();
   const { apiKey } = useAuthStore();
 
   if (!apiKey) {
@@ -53,81 +56,147 @@ export default function Dashboard() {
 
   if (isLoading && !stats && !summaries) {
     return (
-      <View className="flex-1 bg-neutral-900 justify-center items-center">
-        <ActivityIndicator size="large" color="#10b981" />
+      <View
+        style={[
+          styles.loadingContainer,
+          { backgroundColor: theme.colors.background },
+        ]}
+      >
+        <ActivityIndicator size="large" color={theme.colors.primary} />
       </View>
     );
   }
 
   return (
-    <SafeAreaView className="flex-1 bg-neutral-900" edges={['top']}>
+    <SafeAreaView
+      style={[styles.container, { backgroundColor: theme.colors.background }]}
+      edges={['top']}
+    >
       <ScrollView
         contentContainerStyle={{ padding: 16, paddingBottom: 100 }}
         refreshControl={
           <RefreshControl
             refreshing={isRefetching}
             onRefresh={handleRefresh}
-            tintColor="#10b981"
+            tintColor={theme.colors.primary}
           />
         }
       >
-        <View className="mb-6">
-          <Text className="text-neutral-400 text-sm uppercase font-semibold tracking-wider mb-1 font-sans">
+        <View style={styles.header}>
+          <Typography
+            variant="caption"
+            weight="semibold"
+            color={theme.colors.textSecondary}
+            style={styles.greeting}
+          >
             Welcome back
-          </Text>
-          <Text className="text-white text-3xl font-bold font-sans">
+          </Typography>
+          <Typography variant="headline" weight="bold">
             {user?.data?.display_name || user?.data?.username || 'Developer'}
-          </Text>
+          </Typography>
         </View>
 
         {/* Quick Stats Grid */}
-        <View className="flex-row justify-between mb-6">
-          <View className="bg-neutral-800 p-4 rounded-2xl flex-1 mr-2 border border-neutral-700 shadow-sm">
-            <Text className="text-neutral-400 text-xs font-medium mb-1 uppercase tracking-wide font-sans">
+        <View style={styles.statsGrid}>
+          <View
+            style={[
+              styles.statCard,
+              {
+                backgroundColor: theme.colors.surface,
+                borderColor: theme.colors.border,
+                marginRight: 8,
+              },
+            ]}
+          >
+            <Typography
+              variant="micro"
+              weight="medium"
+              color={theme.colors.textSecondary}
+              style={styles.statLabel}
+            >
               7 Day Total
-            </Text>
-            <Text className="text-emerald-400 text-2xl font-bold tracking-tight font-sans">
+            </Typography>
+            <Typography
+              variant="title"
+              color={theme.colors.primary}
+              weight="bold"
+            >
               {stats?.data?.human_readable_total || '0h 0m'}
-            </Text>
+            </Typography>
           </View>
-          <View className="bg-neutral-800 p-4 rounded-2xl flex-1 ml-2 border border-neutral-700 shadow-sm">
-            <Text className="text-neutral-400 text-xs font-medium mb-1 uppercase tracking-wide font-sans">
+          <View
+            style={[
+              styles.statCard,
+              {
+                backgroundColor: theme.colors.surface,
+                borderColor: theme.colors.border,
+                marginLeft: 8,
+              },
+            ]}
+          >
+            <Typography
+              variant="micro"
+              weight="medium"
+              color={theme.colors.textSecondary}
+              style={styles.statLabel}
+            >
               Daily Average
-            </Text>
-            <Text className="text-white text-2xl font-bold tracking-tight font-sans">
+            </Typography>
+            <Typography variant="title" weight="bold">
               {stats?.data?.human_readable_daily_average || '0h 0m'}
-            </Text>
+            </Typography>
           </View>
         </View>
 
-        {/* Languages Chart */}
-        <View className="mb-8">
-          <Text className="text-white text-lg font-bold mb-4 font-sans">
+        <View style={styles.chartSection}>
+          <Typography variant="title" weight="bold" style={styles.chartTitle}>
             Top Languages
-          </Text>
-          <View className="bg-neutral-800 rounded-3xl p-6 border border-neutral-700 shadow-sm">
+          </Typography>
+          <View
+            style={[
+              styles.chartCard,
+              {
+                backgroundColor: theme.colors.surface,
+                borderColor: theme.colors.border,
+              },
+            ]}
+          >
             {stats?.data?.languages ? (
               <LanguageChart data={stats.data.languages} />
             ) : (
-              <Text className="text-neutral-500 text-center py-10 font-sans">
+              <Typography
+                color={theme.colors.textSecondary}
+                style={styles.noDataText}
+              >
                 No language data available
-              </Text>
+              </Typography>
             )}
           </View>
         </View>
 
-        {/* Activity Chart */}
-        <View className="mb-8">
-          <Text className="text-white text-lg font-bold mb-4 font-sans">
+        <View style={styles.chartSection}>
+          <Typography variant="title" weight="bold" style={styles.chartTitle}>
             Daily Activity
-          </Text>
-          <View className="bg-neutral-800 rounded-3xl p-4 border border-neutral-700 shadow-sm overflow-hidden">
+          </Typography>
+          <View
+            style={[
+              styles.chartCard,
+              {
+                backgroundColor: theme.colors.surface,
+                borderColor: theme.colors.border,
+                padding: 16,
+              },
+            ]}
+          >
             {summaries?.data ? (
               <ActivityChart data={summaries.data} />
             ) : (
-              <Text className="text-neutral-500 text-center py-10 font-sans">
+              <Typography
+                color={theme.colors.textSecondary}
+                style={styles.noDataText}
+              >
                 Loading activity data...
-              </Text>
+              </Typography>
             )}
           </View>
         </View>
@@ -135,3 +204,64 @@ export default function Dashboard() {
     </SafeAreaView>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  header: {
+    marginBottom: 24,
+  },
+  greeting: {
+    textTransform: 'uppercase',
+    letterSpacing: 1,
+    marginBottom: 4,
+  },
+  statsGrid: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 24,
+  },
+  statCard: {
+    flex: 1,
+    padding: 16,
+    borderRadius: 16,
+    borderWidth: 1,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 2,
+    elevation: 2,
+  },
+  statLabel: {
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+    marginBottom: 4,
+  },
+  chartSection: {
+    marginBottom: 32,
+  },
+  chartTitle: {
+    marginBottom: 16,
+  },
+  chartCard: {
+    borderRadius: 24,
+    padding: 24,
+    borderWidth: 1,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 2,
+    elevation: 2,
+    overflow: 'hidden',
+  },
+  noDataText: {
+    textAlign: 'center',
+    paddingVertical: 40,
+  },
+});

@@ -1,4 +1,3 @@
-import { getThemePreference, setThemePreference } from '../utilities/storage';
 import React, { createContext, ReactNode, useEffect, useState } from 'react';
 import { useColorScheme } from 'react-native';
 import { darkTheme } from './dark';
