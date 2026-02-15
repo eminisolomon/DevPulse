@@ -1,3 +1,4 @@
+import { ThemeProvider } from '@/theme';
 import {
   Outfit_400Regular,
   Outfit_600SemiBold,
@@ -8,7 +9,6 @@ import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
-import '../global.css';
 
 const queryClient = new QueryClient();
 
@@ -32,8 +32,10 @@ export default function RootLayout() {
   }
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <Stack screenOptions={{ headerShown: false }} />
-    </QueryClientProvider>
+    <ThemeProvider>
+      <QueryClientProvider client={queryClient}>
+        <Stack screenOptions={{ headerShown: false }} />
+      </QueryClientProvider>
+    </ThemeProvider>
   );
 }

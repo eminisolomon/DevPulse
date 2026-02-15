@@ -3,7 +3,6 @@ import { createAvatar } from '@dicebear/core';
 import * as personas from '@dicebear/personas';
 import React, { useMemo } from 'react';
 import { Image, ImageSourcePropType, View } from 'react-native';
-import { SvgXml } from 'react-native-svg';
 
 interface AvatarProps {
   source?: ImageSourcePropType;
@@ -52,9 +51,7 @@ export const Avatar = ({
           style={{ width: '100%', height: '100%' }}
           resizeMode="cover"
         />
-      ) : (
-        avatarSvg && <SvgXml xml={avatarSvg} width={size} height={size} />
-      )}
+      ) : null}
     </View>
   );
 };

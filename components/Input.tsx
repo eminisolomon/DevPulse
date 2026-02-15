@@ -5,15 +5,12 @@ import {
   TextInput as NativeTextInput,
   Pressable,
   StyleSheet,
+  TextInputProps,
   View,
 } from 'react-native';
-import MaskedTextInput, {
-  createNumberMask,
-  MaskInputProps,
-} from 'react-native-mask-input';
 import { Typography } from './Typography';
 
-interface InputProps extends MaskInputProps {
+interface InputProps extends TextInputProps {
   label?: string;
   error?: string;
   helperText?: string;
@@ -139,7 +136,7 @@ export const TextInput = ({
       >
         {leftIcon && <View>{leftIcon}</View>}
 
-        <MaskedTextInput
+        <NativeTextInput
           style={[
             styles.input,
             {
@@ -154,15 +151,6 @@ export const TextInput = ({
           onFocus={handleFocus}
           onBlur={handleBlur}
           editable={editable}
-          onChangeText={(masked, unmasked, obfuscated) => {
-            if (noSpaces && masked.includes(' ')) {
-              const cleaned = masked.replace(/\s/g, '');
-              inputRef.current?.setNativeProps({ text: cleaned });
-              props.onChangeText?.(cleaned, cleaned, cleaned);
-            } else {
-              props.onChangeText?.(masked, unmasked, obfuscated);
-            }
-          }}
           {...props}
         />
 
@@ -214,17 +202,19 @@ export const PasswordInput = (props: InputProps) => {
 
 export const MoneyInput = ({
   currencySymbol = '₦',
-  precision = 2,
   ...props
-}: InputProps & { currencySymbol?: string; precision?: number }) => {
-  const currencyMask = createNumberMask({
-    prefix: [currencySymbol, ' '],
-    delimiter: ',',
-    separator: '.',
-    precision,
-  });
-
-  return <TextInput keyboardType="numeric" mask={currencyMask} {...props} />;
+}: InputProps & { currencySymbol?: string }) => {
+  return (
+    <TextInput
+      keyboardType="numeric"
+      leftIcon={
+        <Typography variant="body" style={{ marginRight: 4 }}>
+          {currencySymbol}
+        </Typography>
+      }
+      {...props}
+    />
+  );
 };
 
 const styles = StyleSheet.create({
