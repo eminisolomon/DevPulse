@@ -11,8 +11,8 @@ import { useStats } from '@/hooks/useStats';
 import { useTheme } from '@/hooks/useTheme';
 import { Ionicons } from '@expo/vector-icons';
 import { subDays } from 'date-fns';
-import { useRouter } from 'expo-router';
-import React, { useMemo, useState } from 'react';
+import { useLocalSearchParams } from 'expo-router';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
   ActivityIndicator,
   RefreshControl,
@@ -47,9 +47,18 @@ const getDates = (r: TimeRange) => {
 
 export default function NumbersScreen() {
   const { theme } = useTheme();
-  const router = useRouter();
+  const params = useLocalSearchParams<{ range?: TimeRange }>();
   const [range, setRange] = useState<TimeRange>('7_days');
   const { start, end } = useMemo(() => getDates(range), [range]);
+
+  useEffect(() => {
+    if (
+      params.range &&
+      ['7_days', '30_days', 'year', 'all_time'].includes(params.range)
+    ) {
+      setRange(params.range);
+    }
+  }, [params.range]);
 
   const {
     data: stats,

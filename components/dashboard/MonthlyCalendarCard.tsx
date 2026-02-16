@@ -16,12 +16,12 @@ interface DailySummary {
   date: string;
   totalTime: string;
   hasActivity: boolean;
-  activityLevel: number; // 0-4
+  activityLevel: number;
 }
 
 interface MonthlyCalendarCardProps {
-  currentMonth: string; // e.g., "February"
-  totalTime: string; // e.g., "89 HRS 34 MINS"
+  currentMonth: string;
+  totalTime: string;
   days: DailySummary[];
 }
 
@@ -38,7 +38,7 @@ export const MonthlyCalendarCard = ({
   const start = startOfMonth(today);
   const end = endOfMonth(today);
   const calendarDays = eachDayOfInterval({ start, end });
-  const startDay = getDay(start); // 0 (Sunday) to 6 (Saturday)
+  const startDay = getDay(start);
 
   // Determine weeks
   const weeks = [];
@@ -72,20 +72,17 @@ export const MonthlyCalendarCard = ({
 
     const { summary, day } = dayData;
     const hasActivity = summary?.hasActivity;
-    // Simple activity level coloring for now
     const activityColor = hasActivity ? theme.colors.primary : 'transparent';
-    const textColor = hasActivity ? '#000' : theme.colors.text; // Better contrast against primary
+    const textColor = hasActivity ? '#000' : theme.colors.text;
 
     return (
       <View key={index} style={styles.dayCell}>
         <View
           style={[
             styles.dayCircle,
-            hasActivity && { backgroundColor: theme.colors.surfaceHighlight }, // Just highlight for now, or use heat map colors
-            // For now let's just use a simple indicator
+            hasActivity && { backgroundColor: theme.colors.surfaceHighlight },
           ]}
         >
-          {/* If activity, show a background or dot */}
           {hasActivity && (
             <View
               style={[
@@ -156,7 +153,7 @@ export const MonthlyCalendarCard = ({
             styles.button,
             { backgroundColor: theme.colors.surfaceHighlight },
           ]}
-          onPress={() => router.push('/stats/numbers' as any)}
+          onPress={() => router.push('/stats/numbers?range=30_days' as any)}
         >
           <Typography
             variant="caption"
