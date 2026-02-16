@@ -1,81 +1,17 @@
 import { Typography } from '@/components';
 import { UserProfileSkeleton } from '@/components/skeletons';
 import { ProfileHeader, ProfileStats, UserLanguages } from '@/features';
-import { useLeaderboard, useStats, useTheme, useUser } from '@/hooks';
-import { useLeaderboardStore } from '@/stores';
+import { useTheme, useUserProfile } from '@/hooks';
 import { useLocalSearchParams } from 'expo-router';
-import React, { useCallback, useMemo, useState } from 'react';
+import React from 'react';
 import { RefreshControl, ScrollView, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function UserProfileScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const { theme } = useTheme();
-  const {
-    data: leaderboardData,
-    isLoading: isLeaderboardLoading,
-    refetch: refetchLeaderboard,
-  } = useLeaderboard();
-  const {
-    data: currentUser,
-    isLoading: isUserLoading,
-    refetch: refetchUser,
-  } = useUser();
-  const {
-    data: statsData,
-    isLoading: isStatsLoading,
-    refetch: refetchStats,
-  } = useStats('last_7_days');
-  const { userRanks } = useLeaderboardStore();
-
-  const [refreshing, setRefreshing] = useState(false);
-
-  const onRefresh = useCallback(async () => {
-    setRefreshing(true);
-    await Promise.all([refetchLeaderboard(), refetchUser(), refetchStats()]);
-    setRefreshing(false);
-  }, [refetchLeaderboard, refetchUser, refetchStats]);
-
-  const isSelf = currentUser?.data?.id === id;
-
-  const userRank = useMemo(() => {
-    if (leaderboardData?.pages) {
-      const found = leaderboardData.pages
-        .flatMap((page: any) => page.data)
-        .find((item: any) => item.user.id === id);
-      if (found) return found;
-    }
-
-    if (isSelf && currentUser?.data && statsData?.data) {
-      return {
-        rank: userRanks.global || '?',
-        user: currentUser.data,
-        running_total: {
-          total_seconds: statsData.data.total_seconds,
-          human_readable_total: statsData.data.human_readable_total,
-          daily_average: statsData.data.daily_average,
-          human_readable_daily_average:
-            statsData.data.human_readable_daily_average,
-          languages: statsData.data.languages.map((l: any) => ({
-            name: l.name,
-            total_seconds: l.total_seconds,
-          })),
-        },
-      };
-    }
-
-    return null;
-  }, [
-    leaderboardData,
-    id,
-    isSelf,
-    currentUser,
-    statsData,
-    userRanks.global,
-  ]) as any;
-
-  const isLoading =
-    isLeaderboardLoading || (isSelf && (isUserLoading || isStatsLoading));
+  const { profile, isLoading, refreshing, onRefresh, isSelf } =
+    useUserProfile(id);
 
   if (isLoading) {
     return (
@@ -88,7 +24,7 @@ export default function UserProfileScreen() {
     );
   }
 
-  if (!userRank) {
+  if (!profile) {
     return (
       <SafeAreaView
         style={[styles.container, { backgroundColor: theme.colors.background }]}
@@ -99,20 +35,20 @@ export default function UserProfileScreen() {
           weight="bold"
           style={{ margin: 16, textAlign: 'center', marginTop: 100 }}
         >
-          User Not Found
+          Developer Not Found
         </Typography>
         <Typography
           color={theme.colors.textSecondary}
           style={{ textAlign: 'center', marginHorizontal: 32 }}
         >
-          We couldn't find this user in the current leaderboard. They might not
-          have any activity for this period.
+          We couldn't find this developer in the current leaderboard. They might
+          not have any activity for this period.
         </Typography>
       </SafeAreaView>
     );
   }
 
-  const { user, running_total, rank } = userRank;
+  const { user, running_total, rank } = profile;
 
   return (
     <SafeAreaView

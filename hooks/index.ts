@@ -11,3 +11,4 @@ export * from './useStats';
 export * from './useSummaries';
 export * from './useTheme';
 export * from './useUser';
+export * from './useUserProfile';
