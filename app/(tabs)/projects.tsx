@@ -14,7 +14,6 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function ProjectsScreen() {
   const { theme } = useTheme();
@@ -117,9 +116,8 @@ export default function ProjectsScreen() {
   }
 
   return (
-    <SafeAreaView
+    <View
       style={[styles.container, { backgroundColor: theme.colors.background }]}
-      edges={['top']}
     >
       <ScreenHeader
         title="Projects"
@@ -194,7 +192,7 @@ export default function ProjectsScreen() {
         }
         showsVerticalScrollIndicator={false}
       />
-    </SafeAreaView>
+    </View>
   );
 }
 
@@ -209,7 +207,7 @@ const styles = StyleSheet.create({
   },
   listContent: {
     padding: 16,
-    paddingTop: 0,
+    paddingTop: 16,
     paddingBottom: 40,
   },
   projectCard: {

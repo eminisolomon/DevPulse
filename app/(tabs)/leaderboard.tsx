@@ -15,7 +15,6 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function LeaderboardScreen() {
   const { theme, isDark } = useTheme();
@@ -204,9 +203,8 @@ export default function LeaderboardScreen() {
   }
 
   return (
-    <SafeAreaView
+    <View
       style={[styles.container, { backgroundColor: theme.colors.background }]}
-      edges={['top']}
     >
       <ScreenHeader
         title="Leaderboard"
@@ -267,7 +265,7 @@ export default function LeaderboardScreen() {
           ) : null
         }
       />
-    </SafeAreaView>
+    </View>
   );
 }
 
@@ -286,6 +284,7 @@ const styles = StyleSheet.create({
   },
   listContent: {
     padding: 16,
+    paddingTop: 16,
     paddingBottom: 100,
   },
   podiumContainer: {
@@ -303,7 +302,6 @@ const styles = StyleSheet.create({
   },
   podiumItemFirst: {
     zIndex: 2,
-    marginHorizontal: -10,
   },
   podiumItemSecond: {
     zIndex: 1,

@@ -3,6 +3,7 @@ import { useTheme } from '@/hooks/useTheme';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import React from 'react';
 import { StyleSheet, TouchableOpacity, View, ViewStyle } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 interface ScreenHeaderAction {
   icon: keyof typeof MaterialCommunityIcons.glyphMap;
@@ -28,56 +29,54 @@ export const ScreenHeader = ({
   const { theme } = useTheme();
 
   return (
-    <View
-      style={[
-        styles.header,
-        { backgroundColor: theme.colors.primary },
-        styles.shadow,
-        style,
-      ]}
+    <SafeAreaView
+      edges={['top']}
+      style={[{ backgroundColor: theme.colors.primary }, styles.shadow, style]}
     >
-      <View style={styles.contentRow}>
-        <View style={styles.leftSection}>
-          <Typography
-            variant="title"
-            weight="bold"
-            color={theme.colors.primaryForeground}
-          >
-            {title}
-          </Typography>
-          {subtitle && (
+      <View style={styles.header}>
+        <View style={styles.contentRow}>
+          <View style={styles.leftSection}>
             <Typography
-              variant="micro"
+              variant="title"
+              weight="bold"
               color={theme.colors.primaryForeground}
-              style={styles.subtitle}
             >
-              {subtitle}
+              {title}
             </Typography>
-          )}
-        </View>
-
-        <View style={styles.rightSection}>
-          {rightElement}
-          {actions?.map((action, index) => (
-            <TouchableOpacity
-              key={index}
-              activeOpacity={0.7}
-              style={[
-                styles.iconButton,
-                { backgroundColor: 'rgba(255, 255, 255, 0.2)' },
-              ]}
-              onPress={action.onPress}
-            >
-              <MaterialCommunityIcons
-                name={action.icon}
-                size={20}
+            {subtitle && (
+              <Typography
+                variant="micro"
                 color={theme.colors.primaryForeground}
-              />
-            </TouchableOpacity>
-          ))}
+                style={styles.subtitle}
+              >
+                {subtitle}
+              </Typography>
+            )}
+          </View>
+
+          <View style={styles.rightSection}>
+            {rightElement}
+            {actions?.map((action, index) => (
+              <TouchableOpacity
+                key={index}
+                activeOpacity={0.7}
+                style={[
+                  styles.iconButton,
+                  { backgroundColor: 'rgba(255, 255, 255, 0.2)' },
+                ]}
+                onPress={action.onPress}
+              >
+                <MaterialCommunityIcons
+                  name={action.icon}
+                  size={20}
+                  color={theme.colors.primaryForeground}
+                />
+              </TouchableOpacity>
+            ))}
+          </View>
         </View>
       </View>
-    </View>
+    </SafeAreaView>
   );
 };
 

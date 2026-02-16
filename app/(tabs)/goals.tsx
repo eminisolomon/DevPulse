@@ -12,7 +12,6 @@ import {
   StyleSheet,
   View,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function GoalsScreen() {
   const { theme } = useTheme();
@@ -114,9 +113,8 @@ export default function GoalsScreen() {
   }
 
   return (
-    <SafeAreaView
+    <View
       style={[styles.container, { backgroundColor: theme.colors.background }]}
-      edges={['top']}
     >
       <ScreenHeader
         title="Goals"
@@ -162,7 +160,7 @@ export default function GoalsScreen() {
           </View>
         }
       />
-    </SafeAreaView>
+    </View>
   );
 }
 
@@ -177,7 +175,7 @@ const styles = StyleSheet.create({
   },
   listContent: {
     padding: 16,
-    paddingTop: 0,
+    paddingTop: 16,
     paddingBottom: 100,
   },
   goalCard: {
