@@ -1,10 +1,14 @@
-import { BottomSheet, Card } from '@/components';
 import { Avatar } from '@/components/Avatar';
+import { Card } from '@/components/Card';
+import { LogoutBottomSheet } from '@/components/settings/LogoutBottomSheet';
+import { SectionHeader } from '@/components/settings/SectionHeader';
+import { SettingItem } from '@/components/settings/SettingItem';
 import { Typography } from '@/components/Typography';
+import { ACCENT_COLORS } from '@/constants/colors';
 import { useTheme, useUser } from '@/hooks';
 import { settingsService } from '@/services/settings.service';
 import { useAuthStore } from '@/stores/useAuthStore';
-import { Feather, MaterialIcons } from '@expo/vector-icons';
+import { Feather, MaterialIcons } from '@expo/vector-icons'; // Added Feather import here
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import { useRouter } from 'expo-router';
 import React, { useRef } from 'react';
@@ -12,7 +16,6 @@ import {
   Linking,
   ScrollView,
   StyleSheet,
-  Switch,
   TouchableOpacity,
   View,
 } from 'react-native';
@@ -49,17 +52,6 @@ export default function SettingsScreen() {
     await settingsService.updateSettings({ [key]: newValue });
   };
 
-  const ACCENT_COLORS = [
-    { name: 'Deep Blue', color: '#3B82F6' },
-    { name: 'Royal Purple', color: '#8B5CF6' },
-    { name: 'Emerald', color: '#10B981' },
-    { name: 'Crimson', color: '#EF4444' },
-    { name: 'Amber', color: '#F59E0B' },
-    { name: 'Rose', color: '#F43F5E' },
-    { name: 'Indigo', color: '#6366F1' },
-    { name: 'Slate', color: '#475569' },
-  ];
-
   const currentAccentName =
     ACCENT_COLORS.find((c) => c.color === accentColor)?.name || 'Custom';
   const currentModeLabel =
@@ -74,80 +66,6 @@ export default function SettingsScreen() {
     logout();
     router.replace('/');
   };
-
-  const SettingItem = ({
-    icon,
-    label,
-    value,
-    onPress,
-    isSwitch,
-    switchValue,
-    onSwitchChange,
-    color,
-    description,
-  }: any) => (
-    <TouchableOpacity
-      style={styles.settingItem}
-      onPress={onPress}
-      disabled={isSwitch}
-    >
-      <View
-        style={[
-          styles.settingIcon,
-          { backgroundColor: (color || theme.colors.primary) + '15' },
-        ]}
-      >
-        <Feather name={icon} size={20} color={color || theme.colors.primary} />
-      </View>
-      <View style={styles.settingText}>
-        <Typography weight="medium">{label}</Typography>
-        {description && (
-          <Typography variant="micro" color={theme.colors.textSecondary}>
-            {description}
-          </Typography>
-        )}
-      </View>
-      {isSwitch ? (
-        <Switch
-          value={switchValue}
-          onValueChange={onSwitchChange}
-          trackColor={{
-            false: theme.colors.border,
-            true: theme.colors.primary,
-          }}
-          thumbColor={theme.colors.surface}
-        />
-      ) : (
-        <View style={styles.settingValue}>
-          {value && (
-            <Typography
-              variant="caption"
-              color={theme.colors.textSecondary}
-              style={{ marginRight: 8 }}
-            >
-              {value}
-            </Typography>
-          )}
-          <Feather
-            name="chevron-right"
-            size={18}
-            color={theme.colors.textSecondary}
-          />
-        </View>
-      )}
-    </TouchableOpacity>
-  );
-
-  const SectionHeader = ({ title }: { title: string }) => (
-    <Typography
-      variant="micro"
-      weight="bold"
-      color={theme.colors.textSecondary}
-      style={styles.sectionHeader}
-    >
-      {title.toUpperCase()}
-    </Typography>
-  );
 
   const userData = user?.data;
 
@@ -282,56 +200,11 @@ export default function SettingsScreen() {
           </Typography>
         </TouchableOpacity>
 
-        <BottomSheet
+        <LogoutBottomSheet
           ref={logoutBottomSheetRef}
-          title="Logout"
-          snapPoints={['50%']}
-        >
-          <View style={styles.logoutContent}>
-            <View style={styles.logoutIconContainer}>
-              <MaterialIcons
-                name="logout"
-                size={40}
-                color={theme.colors.error}
-              />
-            </View>
-            <Typography
-              variant="title"
-              weight="bold"
-              style={styles.logoutTitle}
-            >
-              Are you sure?
-            </Typography>
-            <Typography
-              color={theme.colors.textSecondary}
-              style={styles.logoutDescription}
-            >
-              You will need to enter your API key again to access your stats.
-            </Typography>
-            <View style={styles.logoutActions}>
-              <TouchableOpacity
-                style={[
-                  styles.cancelButton,
-                  { borderColor: theme.colors.border },
-                ]}
-                onPress={() => logoutBottomSheetRef.current?.dismiss()}
-              >
-                <Typography weight="bold">CANCEL</Typography>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[
-                  styles.confirmLogoutButton,
-                  { backgroundColor: theme.colors.error },
-                ]}
-                onPress={confirmLogout}
-              >
-                <Typography weight="bold" style={{ color: '#fff' }}>
-                  LOGOUT
-                </Typography>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </BottomSheet>
+          onConfirm={confirmLogout}
+          onCancel={() => logoutBottomSheetRef.current?.dismiss()}
+        />
       </ScrollView>
     </SafeAreaView>
   );
@@ -354,12 +227,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 20,
   },
-  largeAvatar: {
-    width: 120,
-    height: 120,
-    borderRadius: 60,
-    marginBottom: 16,
-  },
   userName: {
     marginBottom: 4,
   },
@@ -368,34 +235,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: 4,
   },
-  sectionHeader: {
-    marginLeft: 4,
-    marginBottom: 8,
-    marginTop: 16,
-  },
   sectionCard: {
     padding: 4,
     marginBottom: 12,
-  },
-  settingItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 12,
-  },
-  settingIcon: {
-    width: 40,
-    height: 40,
-    borderRadius: 10,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 12,
-  },
-  settingText: {
-    flex: 1,
-  },
-  settingValue: {
-    flexDirection: 'row',
-    alignItems: 'center',
   },
   logoutButton: {
     flexDirection: 'row',
@@ -404,43 +246,5 @@ const styles = StyleSheet.create({
     paddingVertical: 16,
     borderRadius: 16,
     marginTop: 24,
-  },
-  logoutContent: {
-    padding: 24,
-    alignItems: 'center',
-  },
-  logoutIconContainer: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    backgroundColor: 'rgba(239, 68, 68, 0.1)',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 20,
-  },
-  logoutTitle: {
-    marginBottom: 8,
-  },
-  logoutDescription: {
-    textAlign: 'center',
-    marginBottom: 32,
-  },
-  logoutActions: {
-    flexDirection: 'row',
-    gap: 12,
-    width: '100%',
-  },
-  cancelButton: {
-    flex: 1,
-    paddingVertical: 14,
-    borderRadius: 12,
-    alignItems: 'center',
-    borderWidth: 1,
-  },
-  confirmLogoutButton: {
-    flex: 2,
-    paddingVertical: 14,
-    borderRadius: 12,
-    alignItems: 'center',
   },
 });
