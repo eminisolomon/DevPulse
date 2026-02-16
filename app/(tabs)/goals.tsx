@@ -121,7 +121,14 @@ export default function GoalsScreen() {
       <ScreenHeader
         title="Goals"
         subtitle="Track your coding milestones"
-        style={{ paddingBottom: 16 }}
+        actions={[
+          {
+            icon: 'plus',
+            onPress: () => {
+              /* TODO: Open goal creation */
+            },
+          },
+        ]}
       />
 
       <FlatList

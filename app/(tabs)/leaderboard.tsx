@@ -211,7 +211,12 @@ export default function LeaderboardScreen() {
       <ScreenHeader
         title="Leaderboard"
         subtitle="Top developers this week"
-        style={{ paddingBottom: 0 }}
+        actions={[
+          {
+            icon: 'refresh',
+            onPress: () => refetch(),
+          },
+        ]}
       />
 
       <FlatList

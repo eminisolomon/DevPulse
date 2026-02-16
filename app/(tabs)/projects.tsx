@@ -66,6 +66,14 @@ export default function ProjectsScreen() {
                 />
               </View>
 
+              <Typography
+                variant="micro"
+                color={theme.colors.textSecondary}
+                style={styles.lastActiveText}
+              >
+                Last active: {item.human_readable_last_heartbeat_at || 'Never'}
+              </Typography>
+
               {item.repository && (
                 <View style={styles.repoInfo}>
                   <Feather
@@ -93,12 +101,6 @@ export default function ProjectsScreen() {
               />
             </View>
           </View>
-
-          <View style={styles.cardFooter}>
-            <Typography variant="micro" color={theme.colors.textSecondary}>
-              Last active: {item.human_readable_last_heartbeat_at || 'Never'}
-            </Typography>
-          </View>
         </Card>
       </TouchableOpacity>
     );
@@ -122,7 +124,20 @@ export default function ProjectsScreen() {
       <ScreenHeader
         title="Projects"
         subtitle={`${projectsData.length} projects tracked`}
-        style={{ paddingBottom: 16 }}
+        actions={[
+          {
+            icon: 'filter-variant',
+            onPress: () => {
+              /* TODO: Implement filtering */
+            },
+          },
+          {
+            icon: 'magnify',
+            onPress: () => {
+              /* TODO: Implement search */
+            },
+          },
+        ]}
       />
 
       <FlatList
@@ -198,8 +213,8 @@ const styles = StyleSheet.create({
     paddingBottom: 40,
   },
   projectCard: {
-    marginBottom: 12,
-    padding: 12,
+    marginBottom: 10,
+    padding: 10,
     borderWidth: 1,
     borderColor: 'rgba(0,0,0,0.03)',
   },
@@ -242,13 +257,10 @@ const styles = StyleSheet.create({
     alignItems: 'flex-end',
     paddingLeft: 8,
   },
-  cardFooter: {
-    marginTop: 6,
-    paddingTop: 6,
-    borderTopWidth: 1,
-    borderTopColor: 'rgba(0,0,0,0.03)',
-    flexDirection: 'row',
-    justifyContent: 'flex-start',
+  lastActiveText: {
+    marginTop: -2,
+    marginBottom: 6,
+    opacity: 0.8,
   },
   footerLoader: {
     paddingVertical: 20,
