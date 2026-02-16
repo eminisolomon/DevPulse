@@ -142,6 +142,24 @@ export default function UserProfileScreen() {
             @{user.username || 'anonymous'}
           </Typography>
 
+          {user.city?.title && (
+            <View style={styles.locationContainer}>
+              <Feather
+                name="map-pin"
+                size={12}
+                color={theme.colors.textSecondary}
+              />
+              <Typography
+                variant="caption"
+                color={theme.colors.textSecondary}
+                weight="bold"
+                style={styles.locationText}
+              >
+                {user.city.title.toUpperCase()}
+              </Typography>
+            </View>
+          )}
+
           <View style={styles.badgesContainer}>
             {user.is_hireable && (
               <View
@@ -187,7 +205,7 @@ export default function UserProfileScreen() {
               </TouchableOpacity>
             )}
 
-            {user.email && user.is_email_public && (
+            {(isSelf ? user.email && user.is_email_public : user.email) && (
               <TouchableOpacity
                 activeOpacity={0.7}
                 style={[
@@ -318,7 +336,7 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   username: {
-    marginBottom: 12,
+    marginBottom: 4,
   },
   badgesContainer: {
     flexDirection: 'row',
@@ -375,5 +393,16 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingVertical: 16,
     borderRadius: 16,
+  },
+  locationContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    marginTop: 2,
+    marginBottom: 12,
+  },
+  locationText: {
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
   },
 });

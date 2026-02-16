@@ -156,7 +156,6 @@ export async function scheduleGoalReminders(
 export async function cancelAllScheduledNotifications(): Promise<void> {
   try {
     await Notifications.cancelAllScheduledNotificationsAsync();
-    console.log('[Notifications] All scheduled notifications cancelled');
   } catch (error) {
     console.error(
       '[Notifications] Failed to cancel scheduled notifications:',
