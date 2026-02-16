@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "DevPulse",
-    "slug": "DevPulse",
+    "slug": "devpulse",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -59,10 +59,16 @@
       "reactCompiler": true
     },
     "updates": {
-      "url": "https://u.expo.dev/YOUR-PROJECT-ID"
+      "url": "https://u.expo.dev/a19f3c33-5abe-4092-aa16-585e085c0a92"
     },
     "runtimeVersion": {
       "policy": "appVersion"
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "a19f3c33-5abe-4092-aa16-585e085c0a92"
+      }
     }
   }
 }
