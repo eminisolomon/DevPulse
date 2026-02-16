@@ -1,3 +1,4 @@
+import { Button } from '@/components/Button';
 import { Card } from '@/components/Card';
 import { Typography } from '@/components/Typography';
 import { useTheme } from '@/hooks/useTheme';
@@ -194,19 +195,18 @@ export const MonthlyCalendarCard = ({
           </View>
         ))}
 
-        <TouchableOpacity
-          style={[styles.button, { backgroundColor: theme.colors.background }]}
+        <Button
+          label="VIEW DETAILS OF THIS MONTH"
           onPress={() => router.push('/stats/numbers?range=last_30_days')}
-        >
-          <Typography
-            variant="caption"
-            weight="bold"
-            color={theme.colors.textSecondary}
-            style={{ textTransform: 'uppercase' }}
-          >
-            VIEW DETAILS OF THIS MONTH
-          </Typography>
-        </TouchableOpacity>
+          variant="soft"
+          fullWidth
+          style={{ marginTop: 16 }}
+          labelStyle={{
+            fontSize: 10,
+            letterSpacing: 0.5,
+          }}
+          size="sm"
+        />
       </View>
     </Card>
   );
@@ -264,12 +264,5 @@ const styles = StyleSheet.create({
     ...StyleSheet.absoluteFillObject,
     borderRadius: 16,
     opacity: 0.5,
-  },
-  button: {
-    marginTop: 16,
-    paddingVertical: 12,
-    borderRadius: 12,
-    alignItems: 'center',
-    justifyContent: 'center',
   },
 });

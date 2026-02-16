@@ -1,9 +1,10 @@
+import { Button } from '@/components/Button';
 import { Card } from '@/components/Card';
 import { Typography } from '@/components/Typography';
 import { useTheme } from '@/hooks/useTheme';
 import { useRouter } from 'expo-router';
 import React from 'react';
-import { StyleSheet, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 
 interface ProjectTime {
   name: string;
@@ -11,7 +12,7 @@ interface ProjectTime {
 }
 
 interface TotalTimeCardProps {
-  totalTime: string; // e.g., "4,846 HRS 10 MINS"
+  totalTime: string;
   totalProjectsCount: number;
   recentProjects: ProjectTime[];
 }
@@ -84,19 +85,18 @@ export const TotalTimeCard = ({
           </View>
         ))}
 
-        <TouchableOpacity
-          style={[styles.button, { backgroundColor: theme.colors.background }]}
+        <Button
+          label="VIEW ALL PROJECTS"
           onPress={() => router.push('/projects' as any)}
-        >
-          <Typography
-            variant="caption"
-            weight="bold"
-            color={theme.colors.textSecondary}
-            style={{ textTransform: 'uppercase' }}
-          >
-            VIEW ALL PROJECTS
-          </Typography>
-        </TouchableOpacity>
+          variant="soft"
+          fullWidth
+          style={{ marginTop: 8 }}
+          labelStyle={{
+            fontSize: 10,
+            letterSpacing: 0.5,
+          }}
+          size="sm"
+        />
       </View>
     </Card>
   );
@@ -135,12 +135,5 @@ const styles = StyleSheet.create({
     width: 8,
     height: 8,
     borderRadius: 4,
-  },
-  button: {
-    marginTop: 8,
-    paddingVertical: 12,
-    borderRadius: 12,
-    alignItems: 'center',
-    justifyContent: 'center',
   },
 });

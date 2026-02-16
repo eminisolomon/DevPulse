@@ -14,7 +14,8 @@ type ButtonVariant =
   | 'secondary'
   | 'ghost'
   | 'destructive'
-  | 'outline';
+  | 'outline'
+  | 'soft';
 type ButtonSize = 'sm' | 'md' | 'lg';
 
 interface ButtonProps extends Omit<PressableProps, 'style'> {
@@ -88,6 +89,13 @@ export const Button = ({
             : theme.colors.primary,
           opacity: baseDisabled ? 0.5 : opacity,
         };
+      case 'soft':
+        return {
+          backgroundColor: baseDisabled
+            ? theme.colors.surfaceHighlight
+            : theme.colors.primary + '15',
+          opacity: baseDisabled ? 0.5 : opacity,
+        };
     }
   };
 
@@ -104,6 +112,8 @@ export const Button = ({
       case 'destructive':
         return theme.colors.textInverse;
       case 'outline':
+        return theme.colors.primary;
+      case 'soft':
         return theme.colors.primary;
     }
   };
