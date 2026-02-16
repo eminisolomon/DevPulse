@@ -139,7 +139,7 @@ export const DailyProgressCard = ({
             styles.button,
             { backgroundColor: theme.colors.surfaceHighlight },
           ]}
-          onPress={() => router.push('/stats/numbers' as any)}
+          onPress={() => router.push('/stats/today')}
         >
           <Typography
             variant="caption"
