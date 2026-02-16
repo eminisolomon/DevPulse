@@ -17,29 +17,32 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function LeaderboardScreen() {
-  const { theme } = useTheme();
+  const { theme, isDark } = useTheme();
   const router = useRouter();
   const { data, isLoading, refetch, isRefetching } = useLeaderboard();
+
+  const leaderboardData = data?.data || [];
+  const topThree = leaderboardData.slice(0, 3);
+  // Reorder for display: [2nd, 1st, 3rd]
+  const displayTopThree = [
+    topThree[1], // 2nd
+    topThree[0], // 1st
+    topThree[2], // 3rd
+  ].filter(Boolean);
+
+  const remainingUsers = leaderboardData.slice(3);
 
   const renderLeaderboardItem = ({ item }: { item: LeaderboardUser }) => (
     <TouchableOpacity
       activeOpacity={0.7}
       onPress={() => router.push(`/user/${item.user.id}`)}
     >
-      <Card
-        style={[
-          styles.userCard,
-          item.rank === 1 && { borderColor: '#FFD700', borderWidth: 2 },
-        ]}
-      >
-        {' '}
+      <Card style={styles.userCard}>
         <View style={styles.rankContainer}>
           <Typography
-            variant="title"
+            variant="body"
             weight="bold"
-            color={
-              item.rank <= 3 ? theme.colors.primary : theme.colors.textSecondary
-            }
+            color={theme.colors.textSecondary}
           >
             #{item.rank}
           </Typography>
@@ -56,22 +59,117 @@ export default function LeaderboardScreen() {
             {item.running_total.human_readable_total}
           </Typography>
         </View>
-        {item.rank <= 3 && (
-          <Feather
-            name="award"
-            size={20}
-            color={
-              item.rank === 1
-                ? '#FFD700'
-                : item.rank === 2
-                  ? '#C0C0C0'
-                  : '#CD7F32'
-            }
-          />
-        )}
       </Card>
     </TouchableOpacity>
   );
+
+  const renderTopThree = () => {
+    if (displayTopThree.length === 0) return null;
+
+    return (
+      <View style={styles.podiumContainer}>
+        {displayTopThree.map((user, index) => {
+          const podiumRank =
+            user.rank === topThree[0]?.rank
+              ? 1
+              : user.rank === topThree[1]?.rank
+                ? 2
+                : 3;
+          const isFirst = podiumRank === 1;
+          const isSecond = podiumRank === 2;
+          const colors = {
+            1: '#FFD700', // Gold
+            2: '#C0C0C0', // Silver
+            3: '#CD7F32', // Bronze
+          };
+          const color = colors[podiumRank as 1 | 2 | 3];
+
+          return (
+            <TouchableOpacity
+              key={user.user.id}
+              activeOpacity={0.8}
+              style={[
+                styles.podiumItem,
+                isFirst && styles.podiumItemFirst,
+                isSecond && styles.podiumItemSecond,
+              ]}
+              onPress={() => router.push(`/user/${user.user.id}`)}
+            >
+              <View style={styles.avatarWrapper}>
+                <Image
+                  source={{
+                    uri: user.user.photo || 'https://via.placeholder.com/150',
+                  }}
+                  style={[
+                    styles.podiumAvatar,
+                    isFirst
+                      ? styles.avatarFirst
+                      : isSecond
+                        ? styles.avatarSecond
+                        : styles.avatarThird,
+                    { borderColor: color },
+                  ]}
+                />
+                <View style={[styles.podiumBadge, { backgroundColor: color }]}>
+                  <Typography
+                    variant="micro"
+                    weight="bold"
+                    color="#FFFFFF"
+                    style={user.rank > 999 ? { fontSize: 8 } : undefined}
+                  >
+                    {user.rank}
+                  </Typography>
+                </View>
+                {isFirst && (
+                  <View style={styles.crownContainer}>
+                    <Feather name="award" size={24} color="#FFD700" />
+                  </View>
+                )}
+              </View>
+
+              <View style={styles.podiumInfo}>
+                <Typography
+                  variant="caption"
+                  weight="bold"
+                  align="center"
+                  numberOfLines={1}
+                >
+                  {user.user.display_name || user.user.username || 'Anon'}
+                </Typography>
+                <Typography
+                  variant="micro"
+                  color={theme.colors.textSecondary}
+                  align="center"
+                  weight="medium"
+                >
+                  {user.running_total.human_readable_total
+                    .replace('hrs', 'h')
+                    .replace('mins', 'm')}
+                </Typography>
+              </View>
+
+              {/* Pedestal effect */}
+              <View
+                style={[
+                  styles.pedestal,
+                  {
+                    backgroundColor: isDark
+                      ? 'rgba(255,255,255,0.05)'
+                      : 'rgba(0,0,0,0.03)',
+                  },
+                  isFirst
+                    ? styles.pedestalFirst
+                    : isSecond
+                      ? styles.pedestalSecond
+                      : styles.pedestalThird,
+                ]}
+              />
+            </TouchableOpacity>
+          );
+        })}
+      </View>
+    );
+  };
 
   if (isLoading && !data) {
     return (
@@ -92,16 +190,18 @@ export default function LeaderboardScreen() {
         <Typography variant="headline" weight="bold">
           Leaderboard
         </Typography>
-        <Typography color={theme.colors.textSecondary}>
+        <Typography color={theme.colors.textSecondary} style={{ marginTop: 4 }}>
           Top developers this week
         </Typography>
       </View>
 
       <FlatList
-        data={data?.data}
+        data={remainingUsers}
         renderItem={renderLeaderboardItem}
         keyExtractor={(item) => item.user.id}
         contentContainerStyle={styles.listContent}
+        ListHeaderComponent={renderTopThree}
+        showsVerticalScrollIndicator={false}
         refreshControl={
           <RefreshControl
             refreshing={isRefetching}
@@ -110,22 +210,24 @@ export default function LeaderboardScreen() {
           />
         }
         ListEmptyComponent={
-          <View style={styles.emptyState}>
-            <Feather name="users" size={48} color={theme.colors.border} />
-            <Typography
-              variant="title"
-              weight="semibold"
-              style={styles.emptyTitle}
-            >
-              Leaderboard Unavailable
-            </Typography>
-            <Typography
-              color={theme.colors.textSecondary}
-              style={styles.emptySubtitle}
-            >
-              Unable to fetch leaderboard data at this time.
-            </Typography>
-          </View>
+          remainingUsers.length === 0 && leaderboardData.length === 0 ? (
+            <View style={styles.emptyState}>
+              <Feather name="users" size={48} color={theme.colors.border} />
+              <Typography
+                variant="title"
+                weight="semibold"
+                style={styles.emptyTitle}
+              >
+                Leaderboard Unavailable
+              </Typography>
+              <Typography
+                color={theme.colors.textSecondary}
+                style={styles.emptySubtitle}
+              >
+                Unable to fetch leaderboard data at this time.
+              </Typography>
+            </View>
+          ) : null
         }
       />
     </SafeAreaView>
@@ -143,12 +245,95 @@ const styles = StyleSheet.create({
   },
   header: {
     padding: 24,
-    paddingBottom: 16,
+    paddingBottom: 0,
   },
   listContent: {
     padding: 16,
-    paddingTop: 0,
     paddingBottom: 100,
+  },
+  podiumContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'flex-end',
+    marginTop: 24,
+    marginBottom: 32,
+    paddingHorizontal: 8,
+  },
+  podiumItem: {
+    flex: 1,
+    alignItems: 'center',
+    position: 'relative',
+  },
+  podiumItemFirst: {
+    zIndex: 2,
+    marginHorizontal: -10,
+  },
+  podiumItemSecond: {
+    zIndex: 1,
+  },
+  avatarWrapper: {
+    position: 'relative',
+    marginBottom: 12,
+    alignItems: 'center',
+  },
+  podiumAvatar: {
+    backgroundColor: 'rgba(0,0,0,0.05)',
+    borderWidth: 3,
+  },
+  avatarFirst: {
+    width: 86,
+    height: 86,
+    borderRadius: 43,
+  },
+  avatarSecond: {
+    width: 72,
+    height: 72,
+    borderRadius: 36,
+  },
+  avatarThird: {
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+  },
+  podiumBadge: {
+    position: 'absolute',
+    bottom: -2,
+    right: 0,
+    minWidth: 22,
+    height: 22,
+    borderRadius: 11,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 2,
+    borderColor: '#FFFFFF',
+    paddingHorizontal: 4,
+  },
+  crownContainer: {
+    position: 'absolute',
+    top: -20,
+    zIndex: 3,
+  },
+  podiumInfo: {
+    paddingHorizontal: 4,
+    marginBottom: 8,
+    width: '100%',
+  },
+  pedestal: {
+    width: '90%',
+    borderRadius: 12,
+    position: 'absolute',
+    bottom: -16,
+    zIndex: -1,
+  },
+  pedestalFirst: {
+    height: 90,
+    width: '100%',
+  },
+  pedestalSecond: {
+    height: 70,
+  },
+  pedestalThird: {
+    height: 50,
   },
   userCard: {
     flexDirection: 'row',

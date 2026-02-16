@@ -19,7 +19,6 @@ import {
   StyleSheet,
   View,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function DailyScreen() {
   const { theme } = useTheme();
@@ -110,9 +109,8 @@ export default function DailyScreen() {
   }
 
   return (
-    <SafeAreaView
+    <View
       style={[styles.container, { backgroundColor: theme.colors.background }]}
-      edges={['top']}
     >
       <Stack.Screen options={{ title }} />
       <ScrollView
@@ -236,7 +234,7 @@ export default function DailyScreen() {
           />
         )}
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 }
 
