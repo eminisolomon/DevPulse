@@ -2,6 +2,7 @@ import {
   DailyProgressCard,
   DashboardHeader,
   MonthlyCalendarCard,
+  RankPulseCard,
   TotalTimeCard,
 } from '@/features/dashboard';
 import { useAllTime, useStats, useSummaries, useTheme, useUser } from '@/hooks';
@@ -187,6 +188,8 @@ export default function Dashboard() {
         }
       >
         <DashboardHeader />
+
+        <RankPulseCard />
 
         <TotalTimeCard
           totalTime={totalTimeDisplay}

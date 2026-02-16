@@ -28,17 +28,21 @@ export function LeaderboardProvider({
   children: React.ReactNode;
 }) {
   const { data: userData } = useUser();
-  const { selectedCountry, setSelectedCountry } = useLeaderboardStore();
+  const { selectedCountry, setSelectedCountry, fetchUserRanks } =
+    useLeaderboardStore();
 
   const userCountry = useMemo(() => {
     return userData?.data.city?.country_code;
   }, [userData]);
 
   useEffect(() => {
-    if (userCountry && selectedCountry === undefined) {
-      setSelectedCountry(userCountry);
+    if (userCountry) {
+      fetchUserRanks(userCountry);
+      if (selectedCountry === undefined) {
+        setSelectedCountry(userCountry);
+      }
     }
-  }, [userCountry, selectedCountry, setSelectedCountry]);
+  }, [userCountry, selectedCountry, setSelectedCountry, fetchUserRanks]);
 
   const {
     data: leaderboardDataObj,
