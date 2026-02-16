@@ -2,7 +2,7 @@ import { Avatar, Card, Typography } from '@/components';
 import { UserProfileSkeleton } from '@/components/skeletons';
 import { useLeaderboard, useStats, useTheme, useUser } from '@/hooks';
 import { useLeaderboardStore } from '@/stores';
-import { formatDuration } from '@/utilities';
+import { formatDuration, getLanguageColor } from '@/utilities';
 import { Feather } from '@expo/vector-icons';
 import { useLocalSearchParams } from 'expo-router';
 import React, { useMemo } from 'react';
@@ -268,23 +268,36 @@ export default function UserProfileScreen() {
           TOP LANGUAGES
         </Typography>
         <Card style={styles.languagesCard}>
-          {running_total.languages.map((lang: any, index: number) => (
-            <View
-              key={lang.name}
-              style={[
-                styles.langItem,
-                index !== running_total.languages.length - 1 && {
-                  borderBottomWidth: 1,
-                  borderBottomColor: theme.colors.border + '50',
-                },
-              ]}
-            >
-              <Typography weight="medium">{lang.name}</Typography>
-              <Typography color={theme.colors.textSecondary}>
-                {formatDuration(lang.total_seconds)}
-              </Typography>
-            </View>
-          ))}
+          {(userRank.running_total.languages || []).map(
+            (lang: { name: string; total_seconds: number }, index: number) => (
+              <View
+                key={lang.name}
+                style={[
+                  styles.langItem,
+                  {
+                    borderBottomWidth:
+                      index === userRank.running_total.languages.length - 1
+                        ? 0
+                        : 1,
+                    borderBottomColor: theme.colors.border,
+                  },
+                ]}
+              >
+                <View style={styles.langLeft}>
+                  <View
+                    style={[
+                      styles.langDot,
+                      { backgroundColor: getLanguageColor(lang.name) },
+                    ]}
+                  />
+                  <Typography weight="medium">{lang.name}</Typography>
+                </View>
+                <Typography color={theme.colors.textSecondary}>
+                  {formatDuration(lang.total_seconds)}
+                </Typography>
+              </View>
+            ),
+          )}
           {running_total.languages.length === 0 && (
             <Typography
               color={theme.colors.textSecondary}
@@ -404,5 +417,15 @@ const styles = StyleSheet.create({
   locationText: {
     textTransform: 'uppercase',
     letterSpacing: 0.5,
+  },
+  langLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  langDot: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    marginRight: 10,
   },
 });
