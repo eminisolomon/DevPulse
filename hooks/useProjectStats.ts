@@ -10,5 +10,7 @@ export function useProjectStats(
     queryKey: ['project-stats', projectName, range],
     queryFn: () => wakaService.getProjectStats(projectName, range),
     enabled: !!projectName,
+    staleTime: 0,
+    gcTime: 0,
   });
 }

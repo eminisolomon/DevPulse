@@ -43,16 +43,23 @@ export default function DailyScreen() {
     isRefetching,
   } = useSummaries(start, end);
 
-  const { data: durationSessions, isLoading: durationsLoading } =
-    useDurations(selectedDate);
+  const {
+    data: durationSessions,
+    isLoading: durationsLoading,
+    refetch: refetchDurations,
+  } = useDurations(selectedDate);
 
   const dayData = useMemo(() => {
     if (!summaries?.data?.[0]) return null;
     return summaries.data[0];
   }, [summaries]);
 
-  const { data: stats } = useStats('last_7_days');
+  const { data: stats, refetch: refetchStats } = useStats('last_7_days');
   const dailyAverage = stats?.data?.daily_average || 0;
+
+  const onRefresh = async () => {
+    await Promise.all([refetch(), refetchDurations(), refetchStats()]);
+  };
 
   const { goalDiffText, totalTimeLabel } = useMemo(() => {
     const seconds = dayData?.grand_total?.total_seconds || 0;
@@ -114,7 +121,7 @@ export default function DailyScreen() {
         refreshControl={
           <RefreshControl
             refreshing={isRefetching}
-            onRefresh={refetch}
+            onRefresh={onRefresh}
             tintColor={theme.colors.primary}
             colors={[theme.colors.primary]} // For Android
             progressBackgroundColor={theme.colors.surface} // For Android

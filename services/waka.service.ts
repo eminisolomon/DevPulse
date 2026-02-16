@@ -10,10 +10,15 @@ export const wakaService = {
   getStats: (range: string = 'last_7_days'): Promise<WakaTimeStats> =>
     fetchWithAuth<WakaTimeStats>(`/users/current/stats/${range}`),
 
-  getSummaries: (start: string, end: string): Promise<WakaTimeSummaries> =>
-    fetchWithAuth<WakaTimeSummaries>(
-      `/users/current/summaries?start=${start}&end=${end}`,
-    ),
+  getSummaries: (
+    start: string,
+    end: string,
+    project?: string,
+  ): Promise<WakaTimeSummaries> => {
+    let url = `/users/current/summaries?start=${start}&end=${end}`;
+    if (project) url += `&project=${encodeURIComponent(project)}`;
+    return fetchWithAuth<WakaTimeSummaries>(url);
+  },
 
   getUser: (): Promise<User> => fetchWithAuth<User>('/users/current'),
 

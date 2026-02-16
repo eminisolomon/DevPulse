@@ -1,36 +1,58 @@
 import { Card } from '@/components/Card';
 import LanguageChart from '@/components/LanguageChart';
 import { Typography } from '@/components/Typography';
-import { useProjectStats, useTheme } from '@/hooks';
+import { useProjectStats, useProjectSummaries, useTheme } from '@/hooks';
+import { formatDisplayDuration } from '@/utilities/formatters';
+import { subDays } from 'date-fns';
 import { Stack, useLocalSearchParams } from 'expo-router';
-import React from 'react';
-import { ActivityIndicator, ScrollView, StyleSheet, View } from 'react-native';
+import React, { useMemo } from 'react';
+import { RefreshControl, ScrollView, StyleSheet, View } from 'react-native';
 
 export default function ProjectDetailScreen() {
   const { id } = useLocalSearchParams();
   const { theme } = useTheme();
 
-  const { data: stats7d, isLoading: loading7d } = useProjectStats(
-    id as string,
-    'last_7_days',
-  );
+  const projectId = id as string;
+  const today = new Date();
+  const sevenDaysAgo = subDays(today, 6);
 
-  const { data: statsAllTime, isLoading: loadingAllTime } = useProjectStats(
-    id as string,
-    'all_time',
-  );
+  const {
+    data: summariesData,
+    isLoading: loadingSummaries,
+    refetch: refetchSummaries,
+  } = useProjectSummaries(projectId, sevenDaysAgo, today);
 
-  const isLoading = loading7d || loadingAllTime;
+  const {
+    data: stats7d,
+    isLoading: loading7d,
+    refetch: refetch7d,
+  } = useProjectStats(projectId, 'last_7_days');
 
-  if (isLoading) {
-    return (
-      <View
-        style={[styles.center, { backgroundColor: theme.colors.background }]}
-      >
-        <ActivityIndicator size="large" color={theme.colors.primary} />
-      </View>
+  const {
+    data: statsAllTime,
+    isLoading: loadingAllTime,
+    refetch: refetchAllTime,
+  } = useProjectStats(projectId, 'all_time');
+
+  const isLoading = loadingSummaries || loading7d || loadingAllTime;
+
+  // Calculate total duration from summaries
+  const totalSeconds7d = useMemo(() => {
+    if (!summariesData?.data) return 0;
+    return summariesData.data.reduce(
+      (acc, day) => acc + day.grand_total.total_seconds,
+      0,
     );
-  }
+  }, [summariesData]);
+
+  // Calculate daily average from summaries
+  const dailyAverage7d = useMemo(() => {
+    if (!summariesData?.data || summariesData.data.length === 0) return 0;
+    return totalSeconds7d / summariesData.data.length;
+  }, [totalSeconds7d, summariesData]);
+
+  const formattedTotal7d = formatDisplayDuration(totalSeconds7d);
+  const formattedAverage7d = formatDisplayDuration(dailyAverage7d);
 
   const getProjectSpecificData = (statsData: any, projectName: string) => {
     if (!statsData) return null;
@@ -41,6 +63,7 @@ export default function ProjectDetailScreen() {
 
     return {
       total: projectEntry?.text || statsData.human_readable_total || '0h 0m',
+      totalSeconds: projectEntry?.total_seconds || statsData.total_seconds || 0,
       dailyAvg:
         projectEntry?.daily_average_text ||
         statsData.human_readable_daily_average ||
@@ -50,18 +73,37 @@ export default function ProjectDetailScreen() {
     };
   };
 
-  const project7d = getProjectSpecificData(stats7d?.data, id as string);
-  const projectAllTime = getProjectSpecificData(
-    statsAllTime?.data,
-    id as string,
+  const project7d = getProjectSpecificData(stats7d?.data, projectId);
+  const projectAllTime = getProjectSpecificData(statsAllTime?.data, projectId);
+
+  // Ensure All Time is never less than 7 Days (client-side fix for stale API data)
+  const displayedAllTimeSeconds = Math.max(
+    projectAllTime?.totalSeconds || 0,
+    totalSeconds7d,
   );
+  const formattedAllTime = formatDisplayDuration(displayedAllTimeSeconds);
 
   return (
     <View
       style={[styles.container, { backgroundColor: theme.colors.background }]}
     >
-      <Stack.Screen options={{ title: id as string }} />
-      <ScrollView contentContainerStyle={styles.scrollContent}>
+      <Stack.Screen options={{ title: projectId }} />
+      <ScrollView
+        contentContainerStyle={styles.scrollContent}
+        refreshControl={
+          <RefreshControl
+            refreshing={isLoading}
+            onRefresh={() => {
+              refetchSummaries();
+              refetch7d();
+              refetchAllTime();
+            }}
+            tintColor={theme.colors.primary}
+            colors={[theme.colors.primary]}
+            progressBackgroundColor={theme.colors.surface}
+          />
+        }
+      >
         <Card style={styles.allTimeCard}>
           <Typography variant="micro" color={theme.colors.textSecondary}>
             ALL TIME TOTAL
@@ -71,7 +113,7 @@ export default function ProjectDetailScreen() {
             weight="bold"
             color={theme.colors.primary}
           >
-            {projectAllTime?.total || '0 hrs 0 mins'}
+            {formattedAllTime}
           </Typography>
         </Card>
 
@@ -85,7 +127,7 @@ export default function ProjectDetailScreen() {
               weight="bold"
               color={theme.colors.primary}
             >
-              {project7d?.total || '0h 0m'}
+              {formattedTotal7d}
             </Typography>
           </Card>
           <Card style={styles.statCard}>
@@ -93,7 +135,7 @@ export default function ProjectDetailScreen() {
               DAILY AVG
             </Typography>
             <Typography variant="title" weight="bold">
-              {project7d?.dailyAvg || '0h 0m'}
+              {formattedAverage7d}
             </Typography>
           </Card>
         </View>

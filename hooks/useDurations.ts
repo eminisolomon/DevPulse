@@ -26,5 +26,7 @@ export function useDurations(date: Date = new Date()) {
         };
       });
     },
+    staleTime: 0,
+    gcTime: 0,
   });
 }

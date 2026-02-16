@@ -1,6 +1,7 @@
 import { WakaTimeSummaries } from '@/interfaces/summary';
 import { wakaService } from '@/services/waka.service';
 import { asyncStorage } from '@/utilities/storage';
+import { format } from 'date-fns';
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 
@@ -22,13 +23,12 @@ export const useSummariesStore = create<SummariesState>()(
       isLoading: false,
       error: null,
       fetchSummaries: async (start, end) => {
-        const key = `${start.toISOString().split('T')[0]}_${end.toISOString().split('T')[0]}`;
+        const startStr = format(start, 'yyyy-MM-dd');
+        const endStr = format(end, 'yyyy-MM-dd');
+        const key = `${startStr}_${endStr}`;
         set({ isLoading: true, error: null });
         try {
-          const summaries = await wakaService.getSummaries(
-            start.toISOString().split('T')[0],
-            end.toISOString().split('T')[0],
-          );
+          const summaries = await wakaService.getSummaries(startStr, endStr);
           set((state) => ({
             data: { ...state.data, [key]: summaries },
             isLoading: false,

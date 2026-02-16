@@ -28,6 +28,9 @@ export async function fetchWithAuth<T>(
     ...getHeaders(token),
     ...(options.headers || {}),
     'Content-Type': 'application/json',
+    'Cache-Control': 'no-cache',
+    Pragma: 'no-cache',
+    Expires: '0',
   };
 
   let response = await fetch(url, {
