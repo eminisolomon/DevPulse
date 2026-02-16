@@ -1,13 +1,8 @@
 import { COUNTRIES } from '@/constants/countries';
 import { useLeaderboard, useUser } from '@/hooks';
 import { LeaderboardUser } from '@/interfaces/leaderboard';
-import React, {
-  createContext,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react';
+import { useLeaderboardStore } from '@/stores/useLeaderboardStore';
+import React, { createContext, useContext, useEffect, useMemo } from 'react';
 
 interface LeaderboardContextType {
   selectedCountry: string | undefined;
@@ -16,7 +11,6 @@ interface LeaderboardContextType {
   isRefetching: boolean;
   leaderboardData: LeaderboardUser[];
   currentUserRank: LeaderboardUser | undefined;
-  refetch: () => void;
   fetchNextPage: () => void;
   hasNextPage: boolean;
   isFetchingNextPage: boolean;
@@ -34,9 +28,7 @@ export function LeaderboardProvider({
   children: React.ReactNode;
 }) {
   const { data: userData } = useUser();
-  const [selectedCountry, setSelectedCountry] = useState<string | undefined>(
-    undefined,
-  );
+  const { selectedCountry, setSelectedCountry } = useLeaderboardStore();
 
   const userCountry = useMemo(() => {
     return userData?.data.city?.country_code;
@@ -46,26 +38,26 @@ export function LeaderboardProvider({
     if (userCountry && selectedCountry === undefined) {
       setSelectedCountry(userCountry);
     }
-  }, [userCountry]);
+  }, [userCountry, selectedCountry, setSelectedCountry]);
 
   const {
-    data,
+    data: leaderboardDataObj,
     isLoading,
     isRefetching,
     refetch,
     hasNextPage,
     fetchNextPage,
     isFetchingNextPage,
-  } = useLeaderboard(selectedCountry);
+  } = useLeaderboard();
 
   const leaderboardData = useMemo(
-    () => data?.pages.flatMap((page) => page.data) || [],
-    [data],
+    () => leaderboardDataObj.pages.flatMap((page) => page.data) || [],
+    [leaderboardDataObj.pages],
   );
 
   const currentUserRank = useMemo(() => {
-    return data?.pages[0]?.current_user;
-  }, [data]);
+    return leaderboardDataObj.pages[0]?.current_user;
+  }, [leaderboardDataObj.pages]);
 
   const value = {
     selectedCountry,

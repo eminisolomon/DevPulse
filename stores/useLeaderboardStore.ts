@@ -49,7 +49,7 @@ export const useLeaderboardStore = create<LeaderboardState>()(
             data: [response],
             isLoading: false,
             page: 1,
-            hasMore: response.page < response.total_pages,
+            hasMore: response.total_pages > 1,
           });
         } catch (error: any) {
           set({ error: error.message, isLoading: false });

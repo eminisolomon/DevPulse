@@ -1,24 +1,17 @@
 import { useLeaderboardStore } from '@/stores/useLeaderboardStore';
 import { useEffect } from 'react';
 
-export function useLeaderboard(countryCode?: string, language?: string) {
+export function useLeaderboard() {
   const {
     data,
     isLoading,
     isFetchingNextPage,
     error,
     selectedCountry,
-    setSelectedCountry,
     fetchLeaderboard,
     fetchNextPage,
     hasMore,
   } = useLeaderboardStore();
-
-  useEffect(() => {
-    if (countryCode !== selectedCountry) {
-      setSelectedCountry(countryCode);
-    }
-  }, [countryCode, selectedCountry, setSelectedCountry]);
 
   useEffect(() => {
     if (data.length === 0 && !isLoading && !error) {
