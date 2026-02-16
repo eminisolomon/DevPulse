@@ -9,6 +9,7 @@ import {
   format,
   getDay,
   isSameDay,
+  isSameMonth,
   startOfMonth,
 } from 'date-fns';
 import { useRouter } from 'expo-router';
@@ -39,6 +40,8 @@ export const MonthlyCalendarCard = ({
 }: MonthlyCalendarCardProps) => {
   const { theme, isDark } = useTheme();
   const router = useRouter();
+
+  const isCurrentMonth = isSameMonth(monthDate, new Date());
 
   // Generate calendar days for the specific monthDate
   const start = startOfMonth(monthDate);
@@ -155,11 +158,16 @@ export const MonthlyCalendarCard = ({
               worked in {currentMonthName}
             </Typography>
           </View>
-          <TouchableOpacity onPress={onNextMonth} style={styles.navButton}>
+          <TouchableOpacity
+            onPress={onNextMonth}
+            style={styles.navButton}
+            disabled={isCurrentMonth}
+          >
             <Ionicons
               name="chevron-forward"
               size={24}
               color={theme.colors.text}
+              style={{ opacity: isCurrentMonth ? 0.3 : 1 }}
             />
           </TouchableOpacity>
         </View>
