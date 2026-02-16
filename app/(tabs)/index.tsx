@@ -1,8 +1,9 @@
-import { Card } from '@/components/Card';
-import { Typography } from '@/components/Typography';
-import { DailyProgressCard } from '@/components/dashboard/DailyProgressCard';
-import { MonthlyCalendarCard } from '@/components/dashboard/MonthlyCalendarCard';
-import { TotalTimeCard } from '@/components/dashboard/TotalTimeCard';
+import { Card, Typography } from '@/components';
+import {
+  DailyProgressCard,
+  MonthlyCalendarCard,
+  TotalTimeCard,
+} from '@/features/dashboard';
 import { useStats } from '@/hooks/useStats';
 import { useSummaries } from '@/hooks/useSummaries';
 import { useTheme } from '@/hooks/useTheme';
