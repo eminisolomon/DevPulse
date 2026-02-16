@@ -24,7 +24,6 @@ export const Card = ({
           shadowOffset: { width: 0, height: 2 },
           shadowOpacity: isDark ? 0.3 : 0.1,
           shadowRadius: 8,
-          elevation: 3,
         };
       case 'outlined':
         return {

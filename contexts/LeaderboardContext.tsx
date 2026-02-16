@@ -21,6 +21,7 @@ interface LeaderboardContextType {
   hasNextPage: boolean;
   isFetchingNextPage: boolean;
   countries: typeof COUNTRIES;
+  userCountry: string | undefined;
 }
 
 const LeaderboardContext = createContext<LeaderboardContextType | undefined>(
@@ -37,14 +38,18 @@ export function LeaderboardProvider({
     undefined,
   );
 
-  useEffect(() => {
-    if (
-      userData?.data.timezone?.includes('Lagos') &&
-      selectedCountry === undefined
-    ) {
-      setSelectedCountry('NG');
+  const userCountry = useMemo(() => {
+    if (userData?.data.timezone?.includes('Lagos')) {
+      return 'NG';
     }
+    return undefined;
   }, [userData]);
+
+  useEffect(() => {
+    if (userCountry && selectedCountry === undefined) {
+      setSelectedCountry(userCountry);
+    }
+  }, [userCountry]);
 
   const {
     data,
@@ -77,6 +82,7 @@ export function LeaderboardProvider({
     hasNextPage,
     isFetchingNextPage,
     countries: COUNTRIES,
+    userCountry,
   };
 
   return (

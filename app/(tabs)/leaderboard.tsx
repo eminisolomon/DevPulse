@@ -37,6 +37,7 @@ export default function LeaderboardScreen() {
     hasNextPage,
     isFetchingNextPage,
     countries,
+    userCountry,
   } = useLeaderboardContext();
 
   const { data: weeklyStats } = useStats('last_7_days');
@@ -220,6 +221,9 @@ export default function LeaderboardScreen() {
 
   const renderCurrentUserRank = () => {
     if (!currentUserRank) return null;
+
+    // Hide rank if viewing a specific country that is not the user's home country
+    if (selectedCountry && selectedCountry !== userCountry) return null;
 
     return (
       <View
@@ -590,7 +594,6 @@ const styles = StyleSheet.create({
     padding: 12,
     paddingBottom: 16,
     borderTopWidth: 1,
-    elevation: 20,
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
