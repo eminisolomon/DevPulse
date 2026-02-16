@@ -33,3 +33,12 @@ export interface WakaTimeStats {
     timezone: string;
   };
 }
+export interface WakaTimeAllTime {
+  data: {
+    total_seconds: number;
+    text: string;
+    digital: string;
+    is_up_to_date: boolean;
+    percent_calculated: number;
+  };
+}

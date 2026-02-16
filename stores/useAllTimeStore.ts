@@ -1,42 +1,36 @@
-import { StatsRange } from '@/constants/wakatime';
-import { WakaTimeStats } from '@/interfaces/stats';
+import { WakaTimeAllTime } from '@/interfaces/stats';
 import { wakaService } from '@/services/waka.service';
 import { asyncStorage } from '@/utilities/storage';
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 
-interface StatsCache {
-  [key: string]: WakaTimeStats;
-}
-
-interface StatsState {
-  data: StatsCache;
+interface AllTimeState {
+  data: WakaTimeAllTime | null;
   isLoading: boolean;
   error: string | null;
-  fetchStats: (range: StatsRange) => Promise<void>;
+  fetchAllTime: (force?: boolean) => Promise<void>;
 }
 
-export const useStatsStore = create<StatsState>()(
+export const useAllTimeStore = create<AllTimeState>()(
   persist(
     (set, get) => ({
-      data: {},
+      data: null,
       isLoading: false,
       error: null,
-      fetchStats: async (range) => {
+      fetchAllTime: async (force = false) => {
+        if (!force && get().data) return;
+
         set({ isLoading: true, error: null });
         try {
-          const stats = await wakaService.getStats(range);
-          set((state) => ({
-            data: { ...state.data, [range]: stats },
-            isLoading: false,
-          }));
+          const allTime = await wakaService.getAllTimeSinceToday();
+          set({ data: allTime, isLoading: false });
         } catch (error: any) {
           set({ error: error.message, isLoading: false });
         }
       },
     }),
     {
-      name: 'stats-storage',
+      name: 'all-time-storage',
       storage: createJSONStorage(() => asyncStorage),
     },
   ),

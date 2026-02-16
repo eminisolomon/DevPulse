@@ -7,11 +7,13 @@ import { StyleSheet, View } from 'react-native';
 interface QuickStatsProps {
   totalDuration: string;
   dailyAverage: string;
+  label?: string;
 }
 
 export const QuickStats = ({
   totalDuration,
   dailyAverage,
+  label = '7 Day Total',
 }: QuickStatsProps) => {
   const { theme } = useTheme();
 
@@ -33,7 +35,7 @@ export const QuickStats = ({
           color={theme.colors.textSecondary}
           style={styles.statLabel}
         >
-          7 Day Total
+          {label}
         </Typography>
         <Typography variant="title" color={theme.colors.primary} weight="bold">
           {totalDuration}

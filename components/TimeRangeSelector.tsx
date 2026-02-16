@@ -1,4 +1,5 @@
 import { Typography } from '@/components/Typography';
+import { STATS_RANGES, StatsRange } from '@/constants/wakatime';
 import { useTheme } from '@/hooks/useTheme';
 import React, { useEffect, useRef } from 'react';
 import {
@@ -9,40 +10,40 @@ import {
   useWindowDimensions,
 } from 'react-native';
 
-export type TimeRange = '7_days' | '30_days' | 'year' | 'all_time';
+export type TimeRange = StatsRange;
 
 interface TimeRangeSelectorProps {
   value: TimeRange;
   onChange: (range: TimeRange) => void;
+  availableRanges?: readonly { label: string; value: string }[];
 }
 
-const RANGES: { label: string; value: TimeRange }[] = [
-  { label: 'Week', value: '7_days' },
-  { label: 'Month', value: '30_days' },
-  { label: 'Year', value: 'year' },
-  { label: 'All', value: 'all_time' },
-];
+const DEFAULT_RANGES = STATS_RANGES;
 
 export const TimeRangeSelector = ({
   value,
   onChange,
+  availableRanges = DEFAULT_RANGES,
 }: TimeRangeSelectorProps) => {
   const { theme } = useTheme();
   const { width } = useWindowDimensions();
   const containerPadding = 4;
-  const segmentWidth = (width - 32 - containerPadding * 2) / 4; // 32 is screen padding
+  const segmentWidth =
+    (width - 32 - containerPadding * 2) / availableRanges.length;
 
   const animatedValue = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
-    const index = RANGES.findIndex((r) => r.value === value);
-    Animated.spring(animatedValue, {
-      toValue: index * segmentWidth,
-      useNativeDriver: true,
-      friction: 12,
-      tension: 50,
-    }).start();
-  }, [value, segmentWidth]);
+    const index = availableRanges.findIndex((r) => r.value === value);
+    if (index !== -1) {
+      Animated.spring(animatedValue, {
+        toValue: index * segmentWidth,
+        useNativeDriver: true,
+        friction: 12,
+        tension: 50,
+      }).start();
+    }
+  }, [value, segmentWidth, availableRanges]);
 
   return (
     <View
@@ -62,13 +63,13 @@ export const TimeRangeSelector = ({
         ]}
       />
       <View style={styles.segmentsContainer}>
-        {RANGES.map((range) => {
+        {availableRanges.map((range) => {
           const isSelected = value === range.value;
           return (
             <TouchableOpacity
               key={range.value}
               style={[styles.segment, { width: segmentWidth }]}
-              onPress={() => onChange(range.value)}
+              onPress={() => onChange(range.value as TimeRange)}
               activeOpacity={0.7}
             >
               <Typography

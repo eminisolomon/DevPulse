@@ -1,7 +1,7 @@
 import { WakaTimeGoalsResponse } from '@/interfaces/goal';
 import { WakaTimeLeaderboard } from '@/interfaces/leaderboard';
 import { WakaTimeProjectsResponse } from '@/interfaces/project';
-import { WakaTimeStats } from '@/interfaces/stats';
+import { WakaTimeAllTime, WakaTimeStats } from '@/interfaces/stats';
 import { WakaTimeSummaries } from '@/interfaces/summary';
 import { User } from '@/interfaces/user';
 import { fetchWithAuth } from '@/utilities/api';
@@ -53,4 +53,7 @@ export const wakaService = {
 
   getProgramLanguages: (): Promise<any> =>
     fetchWithAuth<any>('/program_languages'),
+
+  getAllTimeSinceToday: (): Promise<WakaTimeAllTime> =>
+    fetchWithAuth<WakaTimeAllTime>('/users/current/all_time_since_today'),
 };

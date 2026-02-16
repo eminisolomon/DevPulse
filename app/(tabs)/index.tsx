@@ -6,10 +6,7 @@ import {
   QuickStats,
   TotalTimeCard,
 } from '@/features/dashboard';
-import { useStats } from '@/hooks/useStats';
-import { useSummaries } from '@/hooks/useSummaries';
-import { useTheme } from '@/hooks/useTheme';
-import { useUser } from '@/hooks/useUser';
+import { useAllTime, useStats, useSummaries, useTheme, useUser } from '@/hooks';
 import { useAuthStore } from '@/stores/useAuthStore';
 import { formatDuration } from '@/utilities/formatters';
 import { endOfMonth, startOfMonth } from 'date-fns';
@@ -26,9 +23,14 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function Dashboard() {
   const { theme } = useTheme();
-  const { apiKey } = useAuthStore();
+  const { isAuthenticated } = useAuthStore();
 
   const { isLoading: userLoading } = useUser();
+  const {
+    data: allTimeData,
+    isLoading: allTimeLoading,
+    refetch: refetchAllTime,
+  } = useAllTime();
 
   const today = useMemo(() => new Date(), []);
   const [viewingMonth, setViewingMonth] = useState(today);
@@ -43,8 +45,6 @@ export default function Dashboard() {
     isRefetching: isStatsRefetching,
   } = useStats('last_7_days');
 
-  const { data: allTimeStats, refetch: refetchAllTime } = useStats('all_time');
-
   const { data: recentStats, refetch: refetchRecent } = useStats('last_7_days');
 
   const { data: todaySummaries, refetch: refetchToday } = useSummaries(
@@ -57,7 +57,7 @@ export default function Dashboard() {
     endMonth,
   );
 
-  const isLoading = userLoading || statsLoading;
+  const isLoading = userLoading || statsLoading || allTimeLoading;
 
   const handleRefresh = () => {
     refetchStats();
@@ -70,9 +70,8 @@ export default function Dashboard() {
   const dailyAverage = stats?.data?.daily_average || 0;
 
   // Derived Data
-  const totalTimeDisplay =
-    allTimeStats?.data.human_readable_total || '0 HRS 0 MINS';
-  const totalProjects = allTimeStats?.data.projects?.length || 0;
+  const totalTimeDisplay = allTimeData?.data.text || '0 HRS 0 MINS';
+  const totalProjects = stats?.data.projects?.length || 0;
 
   const recentProjects = (recentStats?.data.projects || [])
     .slice(0, 3)
@@ -157,7 +156,7 @@ export default function Dashboard() {
     };
   });
 
-  if (!apiKey) {
+  if (!isAuthenticated) {
     return <Redirect href="/" />;
   }
 

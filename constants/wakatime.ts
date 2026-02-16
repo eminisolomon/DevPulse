@@ -7,3 +7,7 @@ export const STATS_RANGES = [
 ] as const;
 
 export type StatsRange = (typeof STATS_RANGES)[number]['value'];
+
+export const getRangeLabel = (value: string): string => {
+  return STATS_RANGES.find((r) => r.value === value)?.label || value;
+};
