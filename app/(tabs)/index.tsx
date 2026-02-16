@@ -1,12 +1,10 @@
 import { Card } from '@/components/Card';
-import { OrgSelector } from '@/components/OrgSelector';
 import { Typography } from '@/components/Typography';
 import {
   DailyProgressCard,
   DashboardBanner,
   DashboardHeader,
   MonthlyCalendarCard,
-  QuickStats,
   TotalTimeCard,
 } from '@/features/dashboard';
 import { useAllTime, useStats, useSummaries, useTheme, useUser } from '@/hooks';
@@ -30,7 +28,6 @@ export default function Dashboard() {
   const { theme } = useTheme();
   const { isAuthenticated } = useAuthStore();
   const router = useRouter();
-  const [selectedOrg, setSelectedOrg] = React.useState<string | null>(null);
 
   const { isLoading: userLoading } = useUser();
   const {
@@ -140,7 +137,6 @@ export default function Dashboard() {
     );
   };
 
-  // Transform Month Summary Data for Calendar with Heatmap
   const calendarDays = (monthSummaries?.data || []).map((dayData) => {
     const totalSeconds = dayData.grand_total.total_seconds;
     let activityLevel = 0;
@@ -197,14 +193,7 @@ export default function Dashboard() {
       >
         <DashboardHeader />
 
-        <OrgSelector selectedOrgId={selectedOrg} onSelect={setSelectedOrg} />
-
         <DashboardBanner />
-
-        <QuickStats
-          totalDuration={stats?.data?.human_readable_total || '0h 0m'}
-          dailyAverage={stats?.data?.human_readable_daily_average || '0h 0m'}
-        />
 
         <TouchableOpacity
           onPress={() => router.push('/stats/sessions')}

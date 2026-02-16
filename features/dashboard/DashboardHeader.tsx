@@ -14,7 +14,7 @@ export const DashboardHeader = () => {
   return (
     <View style={styles.header}>
       <View style={styles.headerTop}>
-        <View>
+        <View style={styles.greetingContainer}>
           <Typography
             variant="caption"
             weight="semibold"
@@ -27,13 +27,16 @@ export const DashboardHeader = () => {
             {user?.data?.display_name || user?.data?.username || 'Developer'}
           </Typography>
         </View>
-        <TouchableOpacity onPress={() => router.push('/settings')}>
-          <Avatar
-            source={user?.data?.photo ? { uri: user.data.photo } : undefined}
-            initials={user?.data?.display_name || user?.data?.username}
-            size={44}
-          />
-        </TouchableOpacity>
+
+        <View style={styles.rightContainer}>
+          <TouchableOpacity onPress={() => router.push('/settings')}>
+            <Avatar
+              source={user?.data?.photo ? { uri: user.data.photo } : undefined}
+              initials={user?.data?.display_name || user?.data?.username}
+              size={44}
+            />
+          </TouchableOpacity>
+        </View>
       </View>
     </View>
   );
@@ -47,6 +50,15 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+  },
+  greetingContainer: {
+    flex: 1,
+    marginRight: 12,
+  },
+  rightContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
   },
   greeting: {
     textTransform: 'uppercase',

@@ -1,5 +1,5 @@
 import {
-  RadialClockChart,
+  ActivityRhythm,
   SegmentedStatsCard,
   TimeRange,
   TimeRangeSelector,
@@ -240,34 +240,10 @@ export default function NumbersScreen() {
           />
         )}
 
-        {durationSessions && <RadialClockChart sessions={durationSessions} />}
-
-        {stats?.data?.best_day && (
-          <Card style={styles.bestDayCard}>
-            <View style={styles.bestDayHeader}>
-              <Ionicons name="trophy-outline" size={24} color="#FFD700" />
-              <Typography
-                variant="title"
-                weight="bold"
-                style={styles.bestDayTitle}
-              >
-                Best Day
-              </Typography>
-            </View>
-            <View style={styles.bestDayInfo}>
-              <Typography
-                variant="headline"
-                color={theme.colors.primary}
-                weight="bold"
-              >
-                {stats.data.best_day.text}
-              </Typography>
-              <Typography variant="body" color={theme.colors.textSecondary}>
-                on {stats.data.best_day.date}
-              </Typography>
-            </View>
-          </Card>
-        )}
+        <ActivityRhythm
+          sessions={durationSessions}
+          isLoading={durationsLoading}
+        />
       </ScrollView>
     </SafeAreaView>
   );

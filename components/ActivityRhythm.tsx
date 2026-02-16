@@ -8,7 +8,7 @@ import {
   matchFont,
 } from '@shopify/react-native-skia';
 import React, { useMemo } from 'react';
-import { Platform, StyleSheet, View } from 'react-native';
+import { ActivityIndicator, Platform, StyleSheet, View } from 'react-native';
 import { Card } from './Card';
 import { Typography } from './Typography';
 
@@ -18,22 +18,25 @@ export interface ClockSession {
   color?: string;
 }
 
-interface RadialClockChartProps {
-  sessions: ClockSession[];
+interface ActivityRhythmProps {
+  sessions?: ClockSession[];
+  isLoading?: boolean;
   size?: number;
+  title?: string;
+  subtitle?: string;
 }
 
 const HOURS = [0, 6, 12, 18];
 const MARGIN = 40;
 
-export const RadialClockChart = ({
+export const ActivityRhythm = ({
   sessions = [],
+  isLoading = false,
   size = 280,
-}: RadialClockChartProps) => {
-  if (!sessions || !Array.isArray(sessions)) {
-    return null;
-  }
-  const { theme, isDark } = useTheme();
+  title = 'Activity Rhythm',
+  subtitle = 'Showing 24-hour coding density',
+}: ActivityRhythmProps) => {
+  const { theme } = useTheme();
 
   const center = size / 2;
   const outerRadius = size / 2 - MARGIN;
@@ -50,11 +53,12 @@ export const RadialClockChart = ({
   );
 
   const arcs = useMemo(() => {
+    if (isLoading || !sessions.length) return [];
     return sessions.map((session) => {
+      // Normalize start and duration to 24-hour circle
       const startAngle =
         (session.start / (24 * 3600)) * 2 * Math.PI - Math.PI / 2;
-      const endAngle =
-        startAngle + (session.duration / (24 * 3600)) * 2 * Math.PI;
+      const sweepAngle = (session.duration / (24 * 3600)) * 2 * Math.PI;
 
       const path = Skia.Path.Make();
       path.addArc(
@@ -65,7 +69,7 @@ export const RadialClockChart = ({
           height: midRadius * 2,
         },
         (startAngle * 180) / Math.PI,
-        ((endAngle - startAngle) * 180) / Math.PI,
+        (sweepAngle * 180) / Math.PI,
       );
 
       return {
@@ -73,16 +77,22 @@ export const RadialClockChart = ({
         color: session.color || theme.colors.primary,
       };
     });
-  }, [sessions, center, midRadius, theme.colors.primary]);
+  }, [sessions, center, midRadius, theme.colors.primary, isLoading]);
 
   return (
     <Card style={styles.card}>
-      <Typography variant="title" style={styles.title}>
-        Activity Rhythm
-      </Typography>
+      <View style={styles.header}>
+        <Typography variant="title" weight="bold">
+          {title}
+        </Typography>
+        {isLoading && (
+          <ActivityIndicator size="small" color={theme.colors.primary} />
+        )}
+      </View>
+
       <View style={[styles.canvasContainer, { height: size }]}>
-        <Canvas style={{ flex: 1 }}>
-          {/* Background Circle */}
+        <Canvas style={{ width: size, height: size }}>
+          {/* Background Track */}
           <Circle
             cx={center}
             cy={center}
@@ -118,16 +128,29 @@ export const RadialClockChart = ({
           })}
 
           {/* Activity Arcs */}
-          {arcs.map((arc, index) => (
-            <Path
-              key={index}
-              path={arc.path}
-              color={arc.color}
-              style="stroke"
-              strokeWidth={strokeWidth}
-              strokeCap="round"
+          {!isLoading &&
+            arcs.map((arc, index) => (
+              <Path
+                key={index}
+                path={arc.path}
+                color={arc.color}
+                style="stroke"
+                strokeWidth={strokeWidth}
+                strokeCap="round"
+              />
+            ))}
+
+          {/* Empty State Indicator */}
+          {!isLoading && sessions.length === 0 && (
+            <SkiaText
+              x={center - 35}
+              y={center + 5}
+              text="No Activity"
+              font={font}
+              color={theme.colors.textSecondary}
+              opacity={0.5}
             />
-          ))}
+          )}
 
           {/* Center Indicator */}
           <Circle
@@ -136,16 +159,18 @@ export const RadialClockChart = ({
             r={innerRadius - 20}
             color={theme.colors.surfaceHighlight}
             style="fill"
+            opacity={0.3}
           />
         </Canvas>
       </View>
+
       <View style={styles.legend}>
         <Typography
           variant="caption"
           align="center"
           color={theme.colors.textSecondary}
         >
-          Showing 24-hour coding density
+          {subtitle}
         </Typography>
       </View>
     </Card>
@@ -154,16 +179,19 @@ export const RadialClockChart = ({
 
 const styles = StyleSheet.create({
   card: {
-    marginVertical: 8,
-    alignItems: 'center',
+    marginVertical: 12,
+    padding: 16,
   },
-  title: {
-    alignSelf: 'flex-start',
-    marginBottom: 20,
-    fontWeight: '700',
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 10,
   },
   canvasContainer: {
     width: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   legend: {
     marginTop: 10,

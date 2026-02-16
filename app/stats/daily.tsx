@@ -1,4 +1,4 @@
-import { RadialClockChart, SegmentedStatsCard } from '@/components';
+import { ActivityRhythm, SegmentedStatsCard } from '@/components';
 import { Card } from '@/components/Card';
 import { Typography } from '@/components/Typography';
 import { useDurations } from '@/hooks/useDurations';
@@ -142,12 +142,8 @@ export default function DailyScreen() {
           </Typography>
         </Card>
 
-        {/* Radial Clock Chart */}
-        {clockSessions.length > 0 && (
-          <Card style={styles.chartCard}>
-            <RadialClockChart sessions={clockSessions} size={280} />
-          </Card>
-        )}
+        {/* Activity Rhythm */}
+        <ActivityRhythm sessions={clockSessions} isLoading={durationsLoading} />
 
         {/* Projects List */}
         {projects.length > 0 && (

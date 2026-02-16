@@ -1,3 +1,4 @@
+export * from './ActivityRhythm';
 export * from './Avatar';
 export * from './Badge';
 export * from './BottomSheet';
@@ -11,7 +12,6 @@ export * from './ListItem';
 export * from './nav';
 export * from './Progress';
 export * from './Providers';
-export * from './RadialClockChart';
 export * from './Radio';
 export * from './SegmentedStatsCard';
 export * from './Select';

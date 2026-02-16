@@ -26,6 +26,8 @@ interface SelectProps {
   categories?: string[];
   hideSearch?: boolean;
   snapPoints?: string[];
+  triggerStyle?: any;
+  compact?: boolean;
 }
 
 export function Select({
@@ -41,6 +43,8 @@ export function Select({
   categories,
   hideSearch = false,
   snapPoints,
+  triggerStyle,
+  compact = false,
 }: SelectProps) {
   const { theme } = useTheme();
   const bottomSheetRef = useRef<BottomSheetModal>(null);
@@ -82,7 +86,7 @@ export function Select({
   return (
     <>
       <View style={styles.container}>
-        {label && (
+        {label && !compact && (
           <Typography
             variant="caption"
             weight="medium"
@@ -100,6 +104,7 @@ export function Select({
               borderColor: error ? theme.colors.error : theme.colors.border,
               opacity: disabled ? 0.6 : 1,
             },
+            triggerStyle,
           ]}
         >
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
@@ -115,7 +120,7 @@ export function Select({
           </View>
           <Ionicons
             name="chevron-down"
-            size={20}
+            size={compact ? 16 : 20}
             color={theme.colors.textTertiary}
           />
         </Pressable>
