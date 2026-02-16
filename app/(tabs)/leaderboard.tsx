@@ -32,6 +32,7 @@ export default function LeaderboardScreen() {
           item.rank === 1 && { borderColor: '#FFD700', borderWidth: 2 },
         ]}
       >
+        {' '}
         <View style={styles.rankContainer}>
           <Typography
             variant="title"
@@ -43,12 +44,10 @@ export default function LeaderboardScreen() {
             #{item.rank}
           </Typography>
         </View>
-
         <Image
           source={{ uri: item.user.photo || 'https://via.placeholder.com/150' }}
           style={styles.avatar}
         />
-
         <View style={styles.userInfo}>
           <Typography variant="caption" weight="bold">
             {item.user.display_name || item.user.username || 'Anonymous'}
@@ -57,7 +56,6 @@ export default function LeaderboardScreen() {
             {item.running_total.human_readable_total}
           </Typography>
         </View>
-
         {item.rank <= 3 && (
           <Feather
             name="award"

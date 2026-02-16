@@ -5,13 +5,7 @@ import { useTheme } from '@/hooks/useTheme';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import React from 'react';
-import {
-  ActivityIndicator,
-  ScrollView,
-  StyleSheet,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import { ActivityIndicator, ScrollView, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function NumbersScreen() {
@@ -35,55 +29,50 @@ export default function NumbersScreen() {
       value: stats?.data?.human_readable_total || '0h 0m',
       icon: 'time-outline',
       color: theme.colors.primary,
+      fullWidth: true,
     },
     {
       label: 'Daily Average',
       value: stats?.data?.human_readable_daily_average || '0h 0m',
       icon: 'stats-chart-outline',
       color: theme.colors.secondary,
+      fullWidth: true,
     },
     {
-      label: 'Languages Used',
+      label: 'Languages',
       value: stats?.data?.languages?.length?.toString() || '0',
       icon: 'code-slash-outline',
       color: theme.colors.accent,
+      fullWidth: false,
     },
     {
-      label: 'Projects Tracked',
+      label: 'Projects',
       value: stats?.data?.projects?.length?.toString() || '0',
       icon: 'folder-outline',
       color: '#4CAF50',
+      fullWidth: false,
     },
     {
-      label: 'Editors Used',
+      label: 'Editors',
       value: stats?.data?.editors?.length?.toString() || '0',
       icon: 'create-outline',
       color: '#FF9800',
+      fullWidth: false,
     },
     {
-      label: 'Operating Systems',
+      label: 'OS',
       value: stats?.data?.operating_systems?.length?.toString() || '0',
       icon: 'desktop-outline',
       color: '#9C27B0',
+      fullWidth: false,
     },
   ];
 
   return (
     <SafeAreaView
       style={[styles.container, { backgroundColor: theme.colors.background }]}
+      edges={['bottom', 'left', 'right']}
     >
-      <View style={styles.header}>
-        <TouchableOpacity
-          onPress={() => router.back()}
-          style={styles.backButton}
-        >
-          <Ionicons name="arrow-back" size={24} color={theme.colors.text} />
-        </TouchableOpacity>
-        <Typography variant="headline" weight="bold">
-          The Numbers
-        </Typography>
-      </View>
-
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <Typography
           variant="caption"
@@ -95,7 +84,13 @@ export default function NumbersScreen() {
 
         <View style={styles.grid}>
           {statItems.map((item, index) => (
-            <Card key={index} style={styles.statCard}>
+            <Card
+              key={index}
+              style={[
+                styles.statCard,
+                item.fullWidth ? { width: '100%' } : { width: '48%' },
+              ]}
+            >
               <View
                 style={[
                   styles.iconContainer,
@@ -163,14 +158,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 16,
-  },
-  backButton: {
-    marginRight: 16,
-  },
   scrollContent: {
     padding: 16,
   },
@@ -179,6 +166,8 @@ const styles = StyleSheet.create({
   },
   grid: {
     gap: 12,
+    flexDirection: 'row',
+    flexWrap: 'wrap',
   },
   statCard: {
     flexDirection: 'row',

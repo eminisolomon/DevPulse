@@ -74,7 +74,7 @@ export default function ThemeSelectionScreen() {
           variant="micro"
           weight="bold"
           color={theme.colors.textSecondary}
-          style={styles.sectionHeader}
+          style={[styles.sectionHeader, { marginTop: 0 }]}
         >
           APPEARANCE
         </Typography>

@@ -2,22 +2,14 @@ import { Card } from '@/components/Card';
 import LanguageChart from '@/components/LanguageChart';
 import { Typography } from '@/components/Typography';
 import { useProjectStats, useTheme } from '@/hooks';
-import { Feather } from '@expo/vector-icons';
-import { useLocalSearchParams, useRouter } from 'expo-router';
+import { useLocalSearchParams } from 'expo-router';
 import React from 'react';
-import {
-  ActivityIndicator,
-  ScrollView,
-  StyleSheet,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import { ActivityIndicator, ScrollView, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function ProjectDetailScreen() {
   const { id } = useLocalSearchParams();
   const { theme } = useTheme();
-  const router = useRouter();
   const { data, isLoading } = useProjectStats(id as string);
 
   if (isLoading) {
@@ -35,20 +27,8 @@ export default function ProjectDetailScreen() {
   return (
     <SafeAreaView
       style={[styles.container, { backgroundColor: theme.colors.background }]}
-      edges={['top']}
+      edges={['bottom', 'left', 'right']}
     >
-      <View style={styles.header}>
-        <TouchableOpacity
-          onPress={() => router.back()}
-          style={styles.backButton}
-        >
-          <Feather name="arrow-left" size={24} color={theme.colors.text} />
-        </TouchableOpacity>
-        <Typography variant="headline" weight="bold">
-          {id}
-        </Typography>
-      </View>
-
       <ScrollView contentContainerStyle={styles.scrollContent}>
         {/* Quick Stats */}
         <View style={styles.statsGrid}>
