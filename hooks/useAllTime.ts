@@ -1,4 +1,4 @@
-import { useAllTimeStore } from '@/stores/useAllTimeStore';
+import { useAllTimeStore } from '@/stores';
 import { useEffect } from 'react';
 
 export function useAllTime() {

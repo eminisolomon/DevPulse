@@ -1,4 +1,4 @@
-import { wakaService } from '@/services/waka.service';
+import { wakaService } from '@/services';
 import { useQuery } from '@tanstack/react-query';
 import { format, startOfDay } from 'date-fns';
 

@@ -1,14 +1,14 @@
-import { Avatar } from '@/components/Avatar';
-import { Card } from '@/components/Card';
-import { LogoutBottomSheet } from '@/components/settings/LogoutBottomSheet';
-import { SectionHeader } from '@/components/settings/SectionHeader';
-import { SettingItem } from '@/components/settings/SettingItem';
-import { Typography } from '@/components/Typography';
-import { ACCENT_COLORS } from '@/constants/colors';
+import { Avatar, Card, Typography } from '@/components';
+import { ACCENT_COLORS } from '@/constants';
+import {
+  LogoutBottomSheet,
+  SectionHeader,
+  SettingItem,
+} from '@/features/settings';
 import { useTheme, useUser } from '@/hooks';
-import { settingsService } from '@/services/settings.service';
-import { useAuthStore } from '@/stores/useAuthStore';
-import { Feather, MaterialIcons } from '@expo/vector-icons'; // Added Feather import here
+import { settingsService } from '@/services';
+import { useAuthStore } from '@/stores';
+import { Feather, MaterialIcons } from '@expo/vector-icons';
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import { useRouter } from 'expo-router';
 import React, { useRef } from 'react';

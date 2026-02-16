@@ -1,5 +1,5 @@
-import { WakaTimeGoal } from '@/interfaces/goal';
-import { wakaService } from '@/services/waka.service';
+import { WakaTimeGoal } from '@/interfaces';
+import { wakaService } from '@/services';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 export function useGoalMutation() {

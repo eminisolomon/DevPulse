@@ -1,5 +1,5 @@
-import { useOrganizationStore } from '@/stores/useOrganizationStore';
-import { useSummariesStore } from '@/stores/useSummariesStore';
+import { useOrganizationStore } from '@/stores';
+import { useSummariesStore } from '@/stores';
 import { format } from 'date-fns';
 import { useEffect } from 'react';
 

@@ -1,4 +1,4 @@
-import { useUserStore } from '@/stores/useUserStore';
+import { useUserStore } from '@/stores';
 import { useEffect } from 'react';
 
 export function useUser() {

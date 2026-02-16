@@ -1,4 +1,4 @@
-import { wakaService } from '@/services/waka.service';
+import { wakaService } from '@/services';
 import { useQueries } from '@tanstack/react-query';
 import { format, subDays } from 'date-fns';
 
@@ -11,16 +11,14 @@ export function usePunchCardData(days: number = 7) {
     queries: dates.map((date) => ({
       queryKey: ['durations', format(date, 'yyyy-MM-dd')],
       queryFn: () => wakaService.getDurations(format(date, 'yyyy-MM-dd')),
-      staleTime: 1000 * 60 * 5, // 5 minutes
+      staleTime: 1000 * 60 * 5,
     })),
   });
 
   const isLoading = queries.some((q) => q.isLoading);
 
-  // Aggregate data into [{ day: 0-6, hour: 0-23, seconds: number }]
   const aggregatedData: { day: number; hour: number; seconds: number }[] = [];
 
-  // Initialize with zeros
   for (let d = 0; d < 7; d++) {
     for (let h = 0; h < 24; h++) {
       aggregatedData.push({ day: d, hour: h, seconds: 0 });

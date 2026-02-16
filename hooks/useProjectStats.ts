@@ -1,5 +1,5 @@
-import { WakaTimeStats } from '@/interfaces/stats';
-import { wakaService } from '@/services/waka.service';
+import { WakaTimeStats } from '@/interfaces';
+import { wakaService } from '@/services';
 import { useQuery } from '@tanstack/react-query';
 
 export function useProjectStats(

@@ -1,6 +1,6 @@
 import { StatsRange } from '@/constants/wakatime';
-import { useOrganizationStore } from '@/stores/useOrganizationStore';
-import { useStatsStore } from '@/stores/useStatsStore';
+import { useOrganizationStore } from '@/stores';
+import { useStatsStore } from '@/stores';
 import { useEffect } from 'react';
 
 export function useStats(range: StatsRange = 'last_7_days') {

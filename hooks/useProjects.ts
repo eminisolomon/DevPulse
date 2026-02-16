@@ -1,4 +1,4 @@
-import { useProjectsStore } from '@/stores/useProjectsStore';
+import { useProjectsStore } from '@/stores';
 import { useEffect } from 'react';
 
 export function useProjects() {
