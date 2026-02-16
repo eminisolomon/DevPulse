@@ -196,7 +196,7 @@ export const MonthlyCalendarCard = ({
 
         <TouchableOpacity
           style={[styles.button, { backgroundColor: theme.colors.background }]}
-          onPress={() => router.push('/stats/numbers?range=30_days' as any)}
+          onPress={() => router.push('/stats/numbers?range=last_30_days')}
         >
           <Typography
             variant="caption"

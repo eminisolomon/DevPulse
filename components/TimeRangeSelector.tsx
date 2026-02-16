@@ -71,7 +71,6 @@ export const TimeRangeSelector = ({
       <View style={styles.segmentsContainer}>
         {availableRanges.map((range) => {
           const isSelected = value === range.value;
-          // Use non-breaking space to prevent wrapping that causes truncation to "1"
           const displayLabel = range.label.replace(' ', '\u00A0');
 
           return (
