@@ -1,10 +1,11 @@
+import { Avatar } from '@/components';
 import { BottomSheet } from '@/components/BottomSheet';
 import { Card } from '@/components/Card';
 import { ListItem } from '@/components/ListItem';
 import { ScreenHeader } from '@/components/ScreenHeader';
 import { Typography } from '@/components/Typography';
 import { useLeaderboardContext } from '@/contexts/LeaderboardContext';
-import { useTheme } from '@/hooks';
+import { useStats, useTheme } from '@/hooks';
 import { LeaderboardUser } from '@/interfaces/leaderboard';
 import { Feather } from '@expo/vector-icons';
 import { BottomSheetFlatList, BottomSheetModal } from '@gorhom/bottom-sheet';
@@ -13,7 +14,6 @@ import React from 'react';
 import {
   ActivityIndicator,
   FlatList,
-  Image,
   RefreshControl,
   StyleSheet,
   TouchableOpacity,
@@ -38,6 +38,8 @@ export default function LeaderboardScreen() {
     isFetchingNextPage,
     countries,
   } = useLeaderboardContext();
+
+  const { data: weeklyStats } = useStats('last_7_days');
 
   const topThree = React.useMemo(
     () => leaderboardData.slice(0, 3),
@@ -77,10 +79,13 @@ export default function LeaderboardScreen() {
             #{item.rank}
           </Typography>
         </View>
-        <Image
-          source={{ uri: item.user.photo || 'https://via.placeholder.com/150' }}
-          style={styles.avatar}
-        />
+        <View style={{ marginHorizontal: 12 }}>
+          <Avatar
+            source={item.user.photo ? { uri: item.user.photo } : undefined}
+            initials={item.user.display_name || item.user.username}
+            size={40}
+          />
+        </View>
         <View style={styles.userInfo}>
           <Typography variant="caption" weight="bold">
             {item.user.display_name || item.user.username || 'Anonymous'}
@@ -126,10 +131,7 @@ export default function LeaderboardScreen() {
               onPress={() => router.push(`/user/${user.user.id}`)}
             >
               <View style={styles.avatarWrapper}>
-                <Image
-                  source={{
-                    uri: user.user.photo || 'https://via.placeholder.com/150',
-                  }}
+                <View
                   style={[
                     styles.podiumAvatar,
                     isFirst
@@ -137,9 +139,24 @@ export default function LeaderboardScreen() {
                       : isSecond
                         ? styles.avatarSecond
                         : styles.avatarThird,
-                    { borderColor: color },
+                    {
+                      borderColor: color,
+                      width: isFirst ? 86 : isSecond ? 72 : 64,
+                      height: isFirst ? 86 : isSecond ? 72 : 64,
+                      borderRadius: isFirst ? 43 : isSecond ? 36 : 32,
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                    },
                   ]}
-                />
+                >
+                  <Avatar
+                    source={
+                      user.user.photo ? { uri: user.user.photo } : undefined
+                    }
+                    initials={user.user.display_name || user.user.username}
+                    size={isFirst ? 80 : isSecond ? 66 : 58}
+                  />
+                </View>
                 <View style={[styles.podiumBadge, { backgroundColor: color }]}>
                   <Typography
                     variant="micro"
@@ -214,14 +231,6 @@ export default function LeaderboardScreen() {
           },
         ]}
       >
-        <Typography
-          variant="caption"
-          weight="bold"
-          color={theme.colors.textSecondary}
-          style={styles.currentUserTitle}
-        >
-          Your Rank
-        </Typography>
         <TouchableOpacity
           activeOpacity={0.7}
           onPress={() => router.push(`/user/${currentUserRank.user.id}`)}
@@ -231,11 +240,9 @@ export default function LeaderboardScreen() {
               styles.userCard,
               {
                 marginBottom: 0,
-                backgroundColor: isDark
-                  ? 'rgba(255,255,255,0.05)'
-                  : 'rgba(0,0,0,0.02)',
                 borderWidth: 1,
                 borderColor: theme.colors.primary,
+                paddingVertical: 8, // Reduced padding
               },
             ]}
           >
@@ -248,23 +255,47 @@ export default function LeaderboardScreen() {
                 #{currentUserRank.rank}
               </Typography>
             </View>
-            <Image
-              source={{
-                uri:
-                  currentUserRank.user.photo ||
-                  'https://via.placeholder.com/150',
-              }}
-              style={styles.avatar}
-            />
+            <View style={{ marginHorizontal: 12 }}>
+              <Avatar
+                source={
+                  currentUserRank.user.photo
+                    ? { uri: currentUserRank.user.photo }
+                    : undefined
+                }
+                initials={
+                  currentUserRank.user.display_name ||
+                  currentUserRank.user.username
+                }
+                size={40}
+              />
+            </View>
             <View style={styles.userInfo}>
-              <Typography variant="caption" weight="bold">
-                {currentUserRank.user.display_name ||
-                  currentUserRank.user.username ||
-                  'You'}
-              </Typography>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                }}
+              >
+                <Typography variant="caption" weight="bold">
+                  {currentUserRank.user.display_name ||
+                    currentUserRank.user.username ||
+                    'You'}
+                </Typography>
+                <Typography
+                  variant="micro"
+                  weight="bold"
+                  color={theme.colors.primary}
+                  style={{ marginRight: 8 }}
+                >
+                  YOU
+                </Typography>
+              </View>
+
               <Typography variant="micro" color={theme.colors.textSecondary}>
-                {currentUserRank.running_total?.human_readable_total ||
-                  '0 secs'}
+                {currentUserRank.running_total?.total_seconds > 0
+                  ? currentUserRank.running_total.human_readable_total
+                  : weeklyStats?.data.human_readable_total || 'No time logged'}
               </Typography>
             </View>
           </Card>
@@ -556,8 +587,8 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-    padding: 16,
-    paddingBottom: 24,
+    padding: 12,
+    paddingBottom: 16,
     borderTopWidth: 1,
     elevation: 20,
     shadowColor: '#000',
@@ -567,9 +598,5 @@ const styles = StyleSheet.create({
     },
     shadowOpacity: 0.1,
     shadowRadius: 12,
-  },
-  currentUserTitle: {
-    marginBottom: 8,
-    paddingHorizontal: 4,
   },
 });
