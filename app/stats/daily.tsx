@@ -1,5 +1,6 @@
 import { ActivityRhythm, SegmentedStatsCard } from '@/components';
 import { Card } from '@/components/Card';
+import { DailyStatsSkeleton } from '@/components/skeletons/DailyStatsSkeleton';
 import { Typography } from '@/components/Typography';
 import { useDurations } from '@/hooks/useDurations';
 import { useStats } from '@/hooks/useStats';
@@ -12,13 +13,7 @@ import {
 import { endOfDay, parseISO, startOfDay } from 'date-fns';
 import { Stack, useLocalSearchParams } from 'expo-router';
 import React, { useMemo } from 'react';
-import {
-  ActivityIndicator,
-  RefreshControl,
-  ScrollView,
-  StyleSheet,
-  View,
-} from 'react-native';
+import { RefreshControl, ScrollView, StyleSheet, View } from 'react-native';
 
 export default function DailyScreen() {
   const { theme } = useTheme();
@@ -101,9 +96,10 @@ export default function DailyScreen() {
   if ((isLoading || durationsLoading) && !dayData) {
     return (
       <View
-        style={[styles.loading, { backgroundColor: theme.colors.background }]}
+        style={[styles.container, { backgroundColor: theme.colors.background }]}
       >
-        <ActivityIndicator size="large" color={theme.colors.primary} />
+        <Stack.Screen options={{ title }} />
+        <DailyStatsSkeleton />
       </View>
     );
   }
@@ -120,6 +116,8 @@ export default function DailyScreen() {
             refreshing={isRefetching}
             onRefresh={refetch}
             tintColor={theme.colors.primary}
+            colors={[theme.colors.primary]} // For Android
+            progressBackgroundColor={theme.colors.surface} // For Android
           />
         }
       >

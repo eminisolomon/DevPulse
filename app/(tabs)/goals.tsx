@@ -1,5 +1,6 @@
 import { Card } from '@/components/Card';
 import { ScreenHeader } from '@/components/ScreenHeader';
+import { GoalsSkeleton } from '@/components/skeletons/GoalsSkeleton';
 import { Typography } from '@/components/Typography';
 import { useGoals, useTheme } from '@/hooks';
 import { WakaTimeGoal } from '@/interfaces/goal';
@@ -7,7 +8,6 @@ import { Feather } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import React from 'react';
 import {
-  ActivityIndicator,
   FlatList,
   RefreshControl,
   StyleSheet,
@@ -113,9 +113,19 @@ export default function GoalsScreen() {
   if (isLoading && !data) {
     return (
       <View
-        style={[styles.center, { backgroundColor: theme.colors.background }]}
+        style={[styles.container, { backgroundColor: theme.colors.background }]}
       >
-        <ActivityIndicator size="large" color={theme.colors.primary} />
+        <ScreenHeader
+          title="Goals"
+          subtitle="Track your coding milestones"
+          actions={[
+            {
+              icon: 'plus',
+              onPress: () => router.push('/goals/create'),
+            },
+          ]}
+        />
+        <GoalsSkeleton />
       </View>
     );
   }
@@ -145,6 +155,8 @@ export default function GoalsScreen() {
             refreshing={isRefetching}
             onRefresh={refetch}
             tintColor={theme.colors.primary}
+            colors={[theme.colors.primary]} // For Android
+            progressBackgroundColor={theme.colors.surface} // For Android
           />
         }
         ListEmptyComponent={

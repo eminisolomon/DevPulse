@@ -1,5 +1,6 @@
 import { Card } from '@/components/Card';
 import { ScreenHeader } from '@/components/ScreenHeader';
+import { ProjectListSkeleton } from '@/components/skeletons/ProjectListSkeleton';
 import { Typography } from '@/components/Typography';
 import { useProjects, useTheme } from '@/hooks';
 import { WakaTimeProject } from '@/interfaces/project';
@@ -108,9 +109,27 @@ export default function ProjectsScreen() {
   if (isLoading && !data) {
     return (
       <View
-        style={[styles.center, { backgroundColor: theme.colors.background }]}
+        style={[styles.container, { backgroundColor: theme.colors.background }]}
       >
-        <ActivityIndicator size="large" color={theme.colors.primary} />
+        <ScreenHeader
+          title="Projects"
+          subtitle={`${projectsData.length} projects tracked`}
+          actions={[
+            {
+              icon: 'filter-variant',
+              onPress: () => {
+                /* TODO: Implement filtering */
+              },
+            },
+            {
+              icon: 'magnify',
+              onPress: () => {
+                /* TODO: Implement search */
+              },
+            },
+          ]}
+        />
+        <ProjectListSkeleton />
       </View>
     );
   }
@@ -163,6 +182,8 @@ export default function ProjectsScreen() {
             refreshing={isRefetching}
             onRefresh={refetch}
             tintColor={theme.colors.primary}
+            colors={[theme.colors.primary]} // For Android
+            progressBackgroundColor={theme.colors.surface} // For Android
           />
         }
         ListEmptyComponent={

@@ -13,6 +13,7 @@ interface SkeletonProps {
   width?: DimensionValue;
   height?: DimensionValue;
   variant?: 'rect' | 'circle';
+  borderRadius?: number;
   style?: ViewStyle;
 }
 
@@ -20,6 +21,7 @@ export const Skeleton = ({
   width = '100%',
   height = 20,
   variant = 'rect',
+  borderRadius,
   style,
 }: SkeletonProps) => {
   const { theme } = useTheme();
@@ -48,11 +50,12 @@ export const Skeleton = ({
           height,
           backgroundColor: theme.colors.surfaceHighlight,
           borderRadius:
-            variant === 'circle'
+            borderRadius ??
+            (variant === 'circle'
               ? typeof height === 'number'
                 ? height / 2
                 : 999
-              : theme.spacing[1],
+              : theme.spacing[1]),
         },
         animatedStyle,
         style,

@@ -1,3 +1,4 @@
+import { DashboardSkeleton } from '@/components/skeletons/DashboardSkeleton';
 import {
   DailyProgressCard,
   DashboardHeader,
@@ -11,13 +12,7 @@ import { formatDuration } from '@/utilities/formatters';
 import { endOfMonth, startOfMonth } from 'date-fns';
 import { Redirect, useRouter } from 'expo-router';
 import React, { useMemo, useState } from 'react';
-import {
-  ActivityIndicator,
-  RefreshControl,
-  ScrollView,
-  StyleSheet,
-  View,
-} from 'react-native';
+import { RefreshControl, ScrollView, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function Dashboard() {
@@ -161,14 +156,12 @@ export default function Dashboard() {
 
   if (isLoading && !stats) {
     return (
-      <View
-        style={[
-          styles.loadingContainer,
-          { backgroundColor: theme.colors.background },
-        ]}
+      <SafeAreaView
+        style={[styles.container, { backgroundColor: theme.colors.background }]}
+        edges={['top']}
       >
-        <ActivityIndicator size="large" color={theme.colors.primary} />
-      </View>
+        <DashboardSkeleton />
+      </SafeAreaView>
     );
   }
 
@@ -184,6 +177,8 @@ export default function Dashboard() {
             refreshing={isStatsRefetching}
             onRefresh={handleRefresh}
             tintColor={theme.colors.primary}
+            colors={[theme.colors.primary]} // For Android
+            progressBackgroundColor={theme.colors.surface} // For Android
           />
         }
       >

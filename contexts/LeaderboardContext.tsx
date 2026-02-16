@@ -11,6 +11,7 @@ interface LeaderboardContextType {
   isRefetching: boolean;
   leaderboardData: LeaderboardUser[];
   currentUserRank: LeaderboardUser | undefined;
+  refetch: () => void;
   fetchNextPage: () => void;
   hasNextPage: boolean;
   isFetchingNextPage: boolean;

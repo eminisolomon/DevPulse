@@ -1,5 +1,6 @@
 import { BottomSheet, ListItem, Typography } from '@/components';
 import { ScreenHeader } from '@/components/ScreenHeader';
+import { LeaderboardSkeleton } from '@/components/skeletons/LeaderboardSkeleton';
 import { useLeaderboardContext } from '@/contexts/LeaderboardContext';
 import {
   CurrentUserRank,
@@ -59,9 +60,33 @@ export default function LeaderboardScreen() {
   if (isLoading && !leaderboardData.length) {
     return (
       <View
-        style={[styles.center, { backgroundColor: theme.colors.background }]}
+        style={[styles.container, { backgroundColor: theme.colors.background }]}
       >
-        <ActivityIndicator size="large" color={theme.colors.primary} />
+        <ScreenHeader
+          title="Leaderboard"
+          subtitle={
+            selectedCountry
+              ? `${selectedCountry} Top Developers`
+              : 'Global Top Developers'
+          }
+          rightElement={
+            <TouchableOpacity
+              activeOpacity={0.7}
+              style={{
+                padding: 8,
+                backgroundColor: theme.colors.surfaceHighlight,
+                borderRadius: 8,
+              }}
+              onPress={handlePresentModalPress}
+            >
+              <Typography variant="title">
+                {countries.find((c) => c.value === selectedCountry)?.icon ||
+                  '🌍'}
+              </Typography>
+            </TouchableOpacity>
+          }
+        />
+        <LeaderboardSkeleton />
       </View>
     );
   }
@@ -122,6 +147,8 @@ export default function LeaderboardScreen() {
             refreshing={isRefetching}
             onRefresh={refetch}
             tintColor={theme.colors.primary}
+            colors={[theme.colors.primary]} // For Android
+            progressBackgroundColor={theme.colors.surface} // For Android
           />
         }
         ListEmptyComponent={
