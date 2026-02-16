@@ -4,14 +4,10 @@ import {
   TimeRange,
   TimeRangeSelector,
 } from '@/components';
-import ActivityChart from '@/components/ActivityChart';
 import { Card } from '@/components/Card';
-import { PunchCard } from '@/components/PunchCard';
 import { Typography } from '@/components/Typography';
 import { useDurations } from '@/hooks/useDurations';
-import { usePunchCardData } from '@/hooks/usePunchCardData';
 import { useStats } from '@/hooks/useStats';
-import { useSummaries } from '@/hooks/useSummaries';
 import { useTheme } from '@/hooks/useTheme';
 import { Ionicons } from '@expo/vector-icons';
 import { subDays } from 'date-fns';
@@ -62,30 +58,17 @@ export default function NumbersScreen() {
     isRefetching: isStatsRefetching,
   } = useStats(rangeApiMap[range]);
 
-  const {
-    data: summaries,
-    isLoading: summariesLoading,
-    refetch: refetchSummaries,
-    isRefetching: isSummariesRefetching,
-  } = useSummaries(start, end);
-
-  const { data: punchData, isLoading: punchLoading } = usePunchCardData(
-    range === '7_days' ? 7 : range === '30_days' ? 30 : 90,
-  );
-
   const { data: durationSessions, isLoading: durationsLoading } =
     useDurations();
 
-  const isLoading =
-    statsLoading || summariesLoading || punchLoading || durationsLoading;
-  const isRefetching = isStatsRefetching || isSummariesRefetching;
+  const isLoading = statsLoading || durationsLoading;
+  const isRefetching = isStatsRefetching;
 
   const handleRefresh = () => {
     refetchStats();
-    refetchSummaries();
   };
 
-  if (isLoading && !stats && !summaries) {
+  if (isLoading && !stats) {
     return (
       <View
         style={[styles.loading, { backgroundColor: theme.colors.background }]}
@@ -155,43 +138,7 @@ export default function NumbersScreen() {
           />
         }
       >
-        <Typography
-          variant="caption"
-          color={theme.colors.textSecondary}
-          style={styles.subtitle}
-        >
-          Detailed analytics
-        </Typography>
-
         <TimeRangeSelector value={range} onChange={setRange} />
-        <View style={{ height: 16 }} />
-
-        <View style={styles.chartSection}>
-          <Typography variant="title" weight="bold" style={styles.chartTitle}>
-            Daily Activity
-          </Typography>
-          <View
-            style={[
-              styles.chartCard,
-              {
-                backgroundColor: theme.colors.surface,
-                borderColor: theme.colors.border,
-                padding: 16,
-              },
-            ]}
-          >
-            {summaries?.data ? (
-              <ActivityChart data={summaries.data} />
-            ) : (
-              <Typography
-                color={theme.colors.textSecondary}
-                style={styles.noDataText}
-              >
-                Loading activity data...
-              </Typography>
-            )}
-          </View>
-        </View>
 
         <View style={styles.grid}>
           {statItems.map((item, index) => (
@@ -279,8 +226,6 @@ export default function NumbersScreen() {
 
         {durationSessions && <RadialClockChart sessions={durationSessions} />}
 
-        {!punchLoading && punchData && <PunchCard data={punchData} />}
-
         {stats?.data?.best_day && (
           <Card style={styles.bestDayCard}>
             <View style={styles.bestDayHeader}>
@@ -322,11 +267,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   scrollContent: {
-    padding: 16,
+    paddingHorizontal: 16,
+    paddingTop: 0,
     paddingBottom: 40,
-  },
-  subtitle: {
-    marginBottom: 24,
   },
   grid: {
     gap: 12,
@@ -368,26 +311,5 @@ const styles = StyleSheet.create({
   bestDayInfo: {
     alignItems: 'center',
     paddingVertical: 10,
-  },
-  chartSection: {
-    marginBottom: 32,
-  },
-  chartTitle: {
-    marginBottom: 16,
-  },
-  chartCard: {
-    borderRadius: 24,
-    padding: 24,
-    borderWidth: 1,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 2,
-    elevation: 2,
-    overflow: 'hidden',
-  },
-  noDataText: {
-    textAlign: 'center',
-    paddingVertical: 40,
   },
 });
