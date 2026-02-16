@@ -31,27 +31,28 @@ export const ScreenHeader = ({
   return (
     <SafeAreaView
       edges={['top']}
-      style={[{ backgroundColor: theme.colors.primary }, styles.shadow, style]}
+      style={[{ backgroundColor: theme.colors.background }, style]}
     >
       <View style={styles.header}>
         <View style={styles.contentRow}>
           <View style={styles.leftSection}>
-            <Typography
-              variant="title"
-              weight="bold"
-              color={theme.colors.primaryForeground}
-            >
-              {title}
-            </Typography>
             {subtitle && (
               <Typography
-                variant="micro"
-                color={theme.colors.primaryForeground}
-                style={styles.subtitle}
+                variant="caption"
+                weight="semibold"
+                color={theme.colors.textSecondary}
+                style={styles.greeting}
               >
                 {subtitle}
               </Typography>
             )}
+            <Typography
+              variant="headline"
+              weight="bold"
+              color={theme.colors.text}
+            >
+              {title}
+            </Typography>
           </View>
 
           <View style={styles.rightSection}>
@@ -62,14 +63,14 @@ export const ScreenHeader = ({
                 activeOpacity={0.7}
                 style={[
                   styles.iconButton,
-                  { backgroundColor: 'rgba(255, 255, 255, 0.2)' },
+                  { backgroundColor: theme.colors.surfaceHighlight },
                 ]}
                 onPress={action.onPress}
               >
                 <MaterialCommunityIcons
                   name={action.icon}
                   size={20}
-                  color={theme.colors.primaryForeground}
+                  color={theme.colors.text}
                 />
               </TouchableOpacity>
             ))}
@@ -98,9 +99,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
   },
-  subtitle: {
-    marginTop: 2,
-    opacity: 0.9,
+  greeting: {
+    marginBottom: 2,
   },
   iconButton: {
     width: 36,
@@ -109,12 +109,5 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginLeft: 10,
-  },
-  shadow: {
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 4,
   },
 });
