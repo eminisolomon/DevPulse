@@ -1,50 +1,36 @@
+import { BottomSheet, ListItem, Typography } from '@/components';
 import { useTheme } from '@/hooks';
 import { WakaTimeOrganization } from '@/interfaces/organization';
 import { useOrganizationStore } from '@/stores/useOrganizationStore';
-import { Ionicons } from '@expo/vector-icons';
-import React, { useRef, useState } from 'react';
-import {
-  Modal,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  TouchableWithoutFeedback,
-  View,
-} from 'react-native';
-import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
+import { Feather, Ionicons } from '@expo/vector-icons';
+import { BottomSheetModal } from '@gorhom/bottom-sheet';
+import React, { useCallback, useRef } from 'react';
+import { StyleSheet, TouchableOpacity, View } from 'react-native';
 
 export function OrganizationSwitcher() {
   const { theme } = useTheme();
   const { organizations, selectedOrganization, selectOrganization } =
     useOrganizationStore();
-  const [visible, setVisible] = useState(false);
-  const buttonRef = useRef<React.ComponentRef<typeof TouchableOpacity>>(null);
-  const [position, setPosition] = useState({ top: 0, right: 0, width: 0 });
+  const bottomSheetRef = useRef<BottomSheetModal>(null);
 
-  const handleOpen = () => {
-    buttonRef.current?.measure((x, y, width, height, pageX, pageY) => {
-      setPosition({
-        top: pageY + height + 8,
-        right: 16,
-        width: 200,
-      });
-      setVisible(true);
-    });
-  };
+  const handleOpen = useCallback(() => {
+    bottomSheetRef.current?.present();
+  }, []);
 
   const handleSelect = (org: WakaTimeOrganization | null) => {
     selectOrganization(org);
-    setVisible(false);
+    bottomSheetRef.current?.dismiss();
   };
 
   const currentName = selectedOrganization
     ? selectedOrganization.name
     : 'Personal';
 
+  const isPersonal = !selectedOrganization;
+
   return (
     <>
       <TouchableOpacity
-        ref={buttonRef}
         onPress={handleOpen}
         activeOpacity={0.7}
         style={[
@@ -55,111 +41,103 @@ export function OrganizationSwitcher() {
           },
         ]}
       >
-        <Text
-          style={[styles.triggerText, { color: theme.colors.text }]}
+        <Typography
+          variant="caption"
+          weight="semibold"
+          style={{ color: theme.colors.text }}
           numberOfLines={1}
         >
           {currentName}
-        </Text>
+        </Typography>
         <Ionicons
           name="chevron-down"
-          size={16}
+          size={14}
           color={theme.colors.textSecondary}
-          style={{ marginLeft: 4 }}
+          style={{ marginLeft: 6 }}
         />
       </TouchableOpacity>
 
-      <Modal
-        visible={visible}
-        transparent
-        animationType="none"
-        onRequestClose={() => setVisible(false)}
+      <BottomSheet
+        ref={bottomSheetRef}
+        title="Switch Context"
+        snapPoints={['40%']}
       >
-        <TouchableWithoutFeedback onPress={() => setVisible(false)}>
-          <View style={styles.overlay}>
-            <TouchableWithoutFeedback>
-              <Animated.View
-                entering={FadeIn.duration(200)}
-                exiting={FadeOut.duration(200)}
+        <View style={styles.menuContent}>
+          <ListItem
+            title="Personal Account"
+            subtitle="Your individual coding stats"
+            onPress={() => handleSelect(null)}
+            leftIcon={
+              <View
                 style={[
-                  styles.menu,
-                  {
-                    top: position.top,
-                    right: 16,
-                    width: position.width,
-                    backgroundColor: theme.colors.surface,
-                    borderColor: theme.colors.border,
-                    shadowColor: '#000',
-                  },
+                  styles.iconContainer,
+                  { backgroundColor: theme.colors.primary + '15' },
                 ]}
               >
-                <TouchableOpacity
-                  style={[
-                    styles.menuItem,
-                    !selectedOrganization && {
-                      backgroundColor: theme.colors.background,
-                    },
-                  ]}
-                  onPress={() => handleSelect(null)}
-                >
-                  <Text
+                <Feather name="user" size={18} color={theme.colors.primary} />
+              </View>
+            }
+            rightIcon={
+              isPersonal ? (
+                <Feather name="check" size={20} color={theme.colors.primary} />
+              ) : undefined
+            }
+            showChevron={false}
+          />
+
+          <View style={styles.divider} />
+
+          <Typography
+            variant="micro"
+            weight="bold"
+            color={theme.colors.textTertiary}
+            style={styles.sectionTitle}
+          >
+            ORGANIZATIONS
+          </Typography>
+
+          {organizations.length === 0 ? (
+            <View style={styles.emptyContainer}>
+              <Typography color={theme.colors.textSecondary} variant="caption">
+                No organizations found
+              </Typography>
+            </View>
+          ) : (
+            organizations.map((org) => (
+              <ListItem
+                key={org.id}
+                title={org.name}
+                subtitle="Organization stats"
+                onPress={() => handleSelect(org)}
+                leftIcon={
+                  <View
                     style={[
-                      styles.menuText,
-                      {
-                        color: theme.colors.text,
-                        fontWeight: !selectedOrganization ? '600' : '400',
-                      },
+                      styles.iconContainer,
+                      { backgroundColor: theme.colors.textSecondary + '15' },
                     ]}
                   >
-                    Personal
-                  </Text>
-                  {!selectedOrganization && (
-                    <Ionicons
-                      name="checkmark"
-                      size={16}
+                    <Feather
+                      name="briefcase"
+                      size={18}
+                      color={theme.colors.textSecondary}
+                    />
+                  </View>
+                }
+                rightIcon={
+                  selectedOrganization?.id === org.id ? (
+                    <Feather
+                      name="check"
+                      size={20}
                       color={theme.colors.primary}
                     />
-                  )}
-                </TouchableOpacity>
-
-                {organizations.map((org) => (
-                  <TouchableOpacity
-                    key={org.id}
-                    style={[
-                      styles.menuItem,
-                      selectedOrganization?.id === org.id && {
-                        backgroundColor: theme.colors.background,
-                      },
-                    ]}
-                    onPress={() => handleSelect(org)}
-                  >
-                    <Text
-                      style={[
-                        styles.menuText,
-                        {
-                          color: theme.colors.text,
-                          fontWeight:
-                            selectedOrganization?.id === org.id ? '600' : '400',
-                        },
-                      ]}
-                      numberOfLines={1}
-                    >
-                      {org.name}
-                    </Text>
-                    {selectedOrganization?.id === org.id && (
-                      <Ionicons
-                        name="checkmark"
-                        size={16}
-                        color={theme.colors.primary}
-                      />
-                    )}
-                  </TouchableOpacity>
-                ))}
-              </Animated.View>
-            </TouchableWithoutFeedback>
-          </View>
-        </TouchableWithoutFeedback>
-      </Modal>
+                  ) : undefined
+                }
+                showChevron={false}
+              />
+            ))
+          )}
+        </View>
+      </BottomSheet>
     </>
   );
 }
@@ -169,41 +147,35 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 20,
-    borderWidth: 1,
-    maxWidth: 150,
-  },
-  triggerText: {
-    fontSize: 14,
-    fontWeight: '500',
-    flexShrink: 1,
-  },
-  overlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.2)',
-  },
-  menu: {
-    position: 'absolute',
+    paddingVertical: 8,
     borderRadius: 12,
     borderWidth: 1,
-    paddingVertical: 4,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.1,
-    shadowRadius: 12,
-    elevation: 4,
-    maxHeight: 300,
+    minWidth: 100,
   },
-  menuItem: {
-    flexDirection: 'row',
+  menuContent: {
+    paddingBottom: 24,
+  },
+  iconContainer: {
+    width: 36,
+    height: 36,
+    borderRadius: 10,
     alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 12,
-    paddingVertical: 10,
+    justifyContent: 'center',
   },
-  menuText: {
-    fontSize: 14,
-    flex: 1,
-    marginRight: 8,
+  divider: {
+    height: 1,
+    marginVertical: 12,
+    marginHorizontal: 16,
+    opacity: 0.1,
+    backgroundColor: '#888',
+  },
+  sectionTitle: {
+    marginHorizontal: 16,
+    marginBottom: 8,
+    letterSpacing: 0.5,
+  },
+  emptyContainer: {
+    padding: 24,
+    alignItems: 'center',
   },
 });

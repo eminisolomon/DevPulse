@@ -14,16 +14,8 @@ export const DashboardHeader = () => {
     <View style={styles.header}>
       <View style={styles.headerTop}>
         <View style={styles.greetingContainer}>
-          <Typography
-            variant="caption"
-            weight="semibold"
-            color={theme.colors.textSecondary}
-            style={styles.greeting}
-          >
-            Welcome back
-          </Typography>
-          <Typography variant="headline" weight="bold">
-            {user?.data?.display_name || user?.data?.username || 'Developer'}
+          <Typography variant="headline" weight="bold" style={styles.greeting}>
+            Dashboard
           </Typography>
         </View>
 
@@ -44,7 +36,9 @@ export const DashboardHeader = () => {
 
 const styles = StyleSheet.create({
   header: {
-    marginBottom: 24,
+    paddingHorizontal: 20,
+    paddingTop: 12,
+    paddingBottom: 8,
   },
   headerTop: {
     flexDirection: 'row',
@@ -61,8 +55,6 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   greeting: {
-    textTransform: 'uppercase',
-    letterSpacing: 1,
-    marginBottom: 4,
+    marginBottom: 0,
   },
 });

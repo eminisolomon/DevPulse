@@ -170,20 +170,24 @@ export default function Dashboard() {
       style={[styles.container, { backgroundColor: theme.colors.background }]}
       edges={['top']}
     >
+      <DashboardHeader />
+
       <ScrollView
-        contentContainerStyle={{ padding: 16, paddingBottom: 100 }}
+        contentContainerStyle={{
+          padding: 16,
+          paddingTop: 12,
+          paddingBottom: 100,
+        }}
         refreshControl={
           <RefreshControl
             refreshing={isStatsRefetching}
             onRefresh={handleRefresh}
             tintColor={theme.colors.primary}
-            colors={[theme.colors.primary]} // For Android
-            progressBackgroundColor={theme.colors.surface} // For Android
+            colors={[theme.colors.primary]}
+            progressBackgroundColor={theme.colors.surface}
           />
         }
       >
-        <DashboardHeader />
-
         <RankPulseCard />
 
         <TotalTimeCard
