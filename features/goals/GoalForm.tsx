@@ -2,12 +2,14 @@ import { Button } from '@/components/Button';
 import { Card } from '@/components/Card';
 import { TextInput } from '@/components/Input';
 import { Select, SelectOption } from '@/components/Select';
-import { Typography } from '@/components/Typography';
 import { useTheme } from '@/hooks/useTheme';
 import { WakaTimeGoal } from '@/interfaces/goal';
-import React, { useState } from 'react';
-import { StyleSheet } from 'react-native';
+import { zodResolver } from '@hookform/resolvers/zod';
+import React from 'react';
+import { Controller, useForm } from 'react-hook-form';
+import { StyleSheet, View } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
+import { GoalFormData, goalSchema } from './schemas';
 
 interface GoalFormProps {
   initialData?: Partial<WakaTimeGoal>;
@@ -29,19 +31,27 @@ export const GoalForm = ({
   isEdit,
 }: GoalFormProps) => {
   const { theme } = useTheme();
-  const [title, setTitle] = useState(initialData?.title || '');
-  const [seconds, setSeconds] = useState(
-    initialData?.seconds ? (initialData.seconds / 3600).toString() : '1',
-  );
-  const [delta, setDelta] = useState(initialData?.delta || 'day');
 
-  const handleSubmit = () => {
-    if (!title || !seconds) return;
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<GoalFormData>({
+    resolver: zodResolver(goalSchema),
+    defaultValues: {
+      title: initialData?.title || '',
+      hours: initialData?.seconds
+        ? (initialData.seconds / 3600).toString()
+        : '1',
+      delta: (initialData?.delta as any) || 'day',
+    },
+  });
 
+  const onFormSubmit = (data: GoalFormData) => {
     onSubmit({
-      title,
-      seconds: parseFloat(seconds) * 3600,
-      delta,
+      title: data.title,
+      seconds: parseFloat(data.hours) * 3600,
+      delta: data.delta,
       is_enabled: true,
     });
   };
@@ -51,43 +61,61 @@ export const GoalForm = ({
       style={styles.container}
       contentContainerStyle={styles.content}
     >
-      <Card style={styles.card}>
-        <Typography variant="title" weight="bold" style={styles.title}>
-          {isEdit ? 'Edit Goal' : 'New Goal'}
-        </Typography>
+      <View style={styles.formContent}>
+        <Card style={styles.card}>
+          <Controller
+            control={control}
+            name="title"
+            render={({ field: { onChange, value } }) => (
+              <TextInput
+                label="Title"
+                placeholder="e.g. My Coding Goal"
+                value={value}
+                onChangeText={onChange}
+                error={errors.title?.message}
+              />
+            )}
+          />
 
-        <TextInput
-          label="Title"
-          placeholder="e.g. My Coding Goal"
-          value={title}
-          onChangeText={setTitle}
-        />
+          <Controller
+            control={control}
+            name="hours"
+            render={({ field: { onChange, value } }) => (
+              <TextInput
+                label="Target Hours"
+                placeholder="e.g. 5"
+                value={value}
+                onChangeText={onChange}
+                keyboardType="numeric"
+                error={errors.hours?.message}
+              />
+            )}
+          />
 
-        <TextInput
-          label="Target Hours"
-          placeholder="e.g. 5"
-          value={seconds}
-          onChangeText={setSeconds}
-          keyboardType="numeric"
-        />
-
-        <Select
-          label="Frequency"
-          value={delta}
-          options={DELTA_OPTIONS}
-          onSelect={setDelta}
-          title="Select Frequency"
-        />
+          <Controller
+            control={control}
+            name="delta"
+            render={({ field: { onChange, value } }) => (
+              <Select
+                label="Frequency"
+                value={value}
+                options={DELTA_OPTIONS}
+                onSelect={onChange}
+                title="Select Frequency"
+              />
+            )}
+          />
+        </Card>
 
         <Button
           label={isEdit ? 'Update Goal' : 'Create Goal'}
-          onPress={handleSubmit}
+          onPress={handleSubmit(onFormSubmit)}
           loading={isLoading}
           style={styles.button}
           size="lg"
           fullWidth
         />
-      </Card>
+      </View>
     </KeyboardAwareScrollView>
   );
 };
@@ -99,13 +127,13 @@ const styles = StyleSheet.create({
   content: {
     padding: 16,
   },
+  formContent: {
+    gap: 16,
+  },
   card: {
     padding: 20,
   },
-  title: {
-    marginBottom: 24,
-  },
   button: {
-    marginTop: 24,
+    marginTop: 8,
   },
 });
