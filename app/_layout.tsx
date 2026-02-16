@@ -1,5 +1,10 @@
 import { AppProviders, ThemedToaster } from '@/components';
 import {
+  requestNotificationPermissions,
+  setupNotificationHandler,
+} from '@/utilities/notifications';
+import { scheduleSmartDailyReminders } from '@/utilities/tasks';
+import {
   Outfit_400Regular,
   Outfit_600SemiBold,
   Outfit_700Bold,
@@ -22,6 +27,14 @@ export default function RootLayout() {
   useEffect(() => {
     if (fontsLoaded) {
       SplashScreen.hideAsync();
+
+      // Initialize Notifications
+      setupNotificationHandler();
+      requestNotificationPermissions().then((granted: boolean) => {
+        if (granted) {
+          scheduleSmartDailyReminders();
+        }
+      });
     }
   }, [fontsLoaded]);
 

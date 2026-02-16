@@ -1,4 +1,3 @@
-import Constants from 'expo-constants';
 import * as Device from 'expo-device';
 import * as Notifications from 'expo-notifications';
 import { Platform } from 'react-native';
@@ -26,21 +25,13 @@ export async function setupAndroidNotificationChannel(): Promise<void> {
   }
 }
 
-function handleRegistrationError(errorMessage: string): void {
-  console.error('[Notifications]', errorMessage);
-  throw new Error(errorMessage);
-}
-
-export async function registerForPushNotificationsAsync(): Promise<
-  string | undefined
-> {
+export async function requestNotificationPermissions(): Promise<boolean> {
   await setupAndroidNotificationChannel();
 
   if (!Device.isDevice) {
     console.warn(
-      '[Notifications] Push notifications require a physical device.',
+      '[Notifications] Notifications are best tested on a physical device.',
     );
-    return undefined;
   }
 
   const { status: existingStatus } = await Notifications.getPermissionsAsync();
@@ -52,43 +43,9 @@ export async function registerForPushNotificationsAsync(): Promise<
   }
 
   if (finalStatus !== 'granted') {
-    console.warn(
-      '[Notifications] Permission not granted for push notifications.',
-    );
-    return undefined;
+    console.warn('[Notifications] Permission not granted for notifications.');
+    return false;
   }
 
-  const projectId =
-    Constants?.expoConfig?.extra?.eas?.projectId ??
-    Constants?.easConfig?.projectId;
-
-  if (!projectId) {
-    handleRegistrationError('Project ID not found in Expo config.');
-    return undefined;
-  }
-
-  try {
-    const pushTokenString = (
-      await Notifications.getExpoPushTokenAsync({ projectId })
-    ).data;
-    return pushTokenString;
-  } catch (error: unknown) {
-    handleRegistrationError(`Failed to get push token: ${error}`);
-    return undefined;
-  }
-}
-
-export function getDeviceInfo(): {
-  deviceId: string;
-  name: string | null;
-  platform: string;
-  osVersion: string | null;
-} {
-  return {
-    deviceId:
-      Device.osBuildId || Device.modelId || `${Platform.OS}-${Date.now()}`,
-    name: Device.deviceName,
-    platform: Platform.OS,
-    osVersion: Device.osVersion,
-  };
+  return true;
 }

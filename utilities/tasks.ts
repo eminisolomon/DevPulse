@@ -1,65 +1,109 @@
 import * as Notifications from 'expo-notifications';
+import { getAllQuotes } from 'success-motivational-quotes';
+import {
+  SATURDAY_MESSAGES,
+  SUNDAY_MESSAGES,
+  WEEKDAY_MESSAGES,
+} from '../constants/messages';
 
-const MORNING_MESSAGES = [
-  {
-    title: '🚗 Good Morning!',
-    body: 'Start your day by checking out the latest car deals on XDrive.',
-  },
-  {
-    title: '🔧 Time for a Check-up?',
-    body: 'Find trusted mechanics near you and keep your car running smoothly.',
-  },
-  {
-    title: '🏎️ Swap Your Ride!',
-    body: 'Explore amazing car swap opportunities on XDrive today.',
-  },
-  {
-    title: '⭐ New Listings Await!',
-    body: 'Check out fresh car listings that just dropped on XDrive.',
-  },
-  {
-    title: '🛠️ Workshop Discovery',
-    body: 'Discover top-rated workshops in your area for all your car needs.',
-  },
-  {
-    title: '💰 Great Deals Today!',
-    body: "Don't miss out on today's best car offers on XDrive.",
-  },
-  {
-    title: '🚘 Your Dream Car Awaits',
-    body: 'Browse through hundreds of cars and find your perfect match.',
-  },
-];
+function getRandomMessage(messages: { title: string; body: string }[]): {
+  title: string;
+  body: string;
+} {
+  if (Math.random() < 0.3) {
+    const externalQuotes = getAllQuotes();
+    if (externalQuotes && externalQuotes.length > 0) {
+      const q =
+        externalQuotes[Math.floor(Math.random() * externalQuotes.length)];
+      return {
+        title: '🌟 Wisdom',
+        body: q.quote || q.text || 'Keep pushing forward!',
+      };
+    }
+  }
 
-function getRandomMorningMessage(): { title: string; body: string } {
-  const randomIndex = Math.floor(Math.random() * MORNING_MESSAGES.length);
-  return MORNING_MESSAGES[randomIndex];
+  const randomIndex = Math.floor(Math.random() * messages.length);
+  return messages[randomIndex];
 }
 
-export async function scheduleDailyMorningNotification(): Promise<void> {
+export async function scheduleSmartDailyReminders(): Promise<void> {
   try {
     await Notifications.cancelAllScheduledNotificationsAsync();
 
-    const message = getRandomMorningMessage();
+    for (let day = 1; day <= 5; day++) {
+      const msg = getRandomMessage(WEEKDAY_MESSAGES);
+      await Notifications.scheduleNotificationAsync({
+        content: {
+          title: msg.title,
+          body: msg.body,
+          sound: 'default',
+          data: { type: 'daily_reminder' },
+        },
+        trigger: {
+          type: Notifications.SchedulableTriggerInputTypes.WEEKLY,
+          weekday: day + 1,
+          hour: 8,
+          minute: 0,
+        },
+      });
+    }
 
+    const satMsg = getRandomMessage(SATURDAY_MESSAGES);
     await Notifications.scheduleNotificationAsync({
       content: {
-        title: message.title,
-        body: message.body,
+        title: satMsg.title,
+        body: satMsg.body,
         sound: 'default',
         data: { type: 'daily_reminder' },
       },
       trigger: {
-        type: Notifications.SchedulableTriggerInputTypes.DAILY,
-        hour: 8,
+        type: Notifications.SchedulableTriggerInputTypes.WEEKLY,
+        weekday: 7,
+        hour: 9,
+        minute: 0,
+      },
+    });
+
+    const sunMsg = getRandomMessage(SUNDAY_MESSAGES);
+    await Notifications.scheduleNotificationAsync({
+      content: {
+        title: sunMsg.title,
+        body: sunMsg.body,
+        sound: 'default',
+        data: { type: 'daily_reminder' },
+      },
+      trigger: {
+        type: Notifications.SchedulableTriggerInputTypes.WEEKLY,
+        weekday: 1,
+        hour: 10,
         minute: 0,
       },
     });
   } catch (error) {
-    console.error(
-      '[Notifications] Failed to schedule daily notification:',
-      error,
-    );
+    console.error('[Notifications] Failed to schedule smart reminders:', error);
+  }
+}
+
+export async function scheduleGoalReminder(
+  goalTitle: string,
+  targetHours: number,
+): Promise<void> {
+  try {
+    await Notifications.scheduleNotificationAsync({
+      content: {
+        title: '🎯 Goal Milestone',
+        body: `You set a goal for ${goalTitle} (${targetHours}h). Let's make it happen!`,
+        sound: 'default',
+        data: { type: 'goal_reminder' },
+      },
+      trigger: {
+        type: Notifications.SchedulableTriggerInputTypes.DAILY,
+        hour: 18,
+        minute: 0,
+      },
+    });
+  } catch (error) {
+    console.error('[Notifications] Failed to schedule goal reminder:', error);
   }
 }
 
