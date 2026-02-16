@@ -20,5 +20,11 @@ export interface User {
     plan: string;
     created_at: string;
     modified_at: string;
+    city?: {
+      country_code: string;
+      name: string;
+      state: string;
+      title: string;
+    };
   };
 }

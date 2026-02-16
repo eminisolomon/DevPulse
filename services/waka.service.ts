@@ -50,4 +50,7 @@ export const wakaService = {
 
   getDurations: (date: string): Promise<any> =>
     fetchWithAuth<any>(`/users/current/durations?date=${date}`),
+
+  getProgramLanguages: (): Promise<any> =>
+    fetchWithAuth<any>('/program_languages'),
 };

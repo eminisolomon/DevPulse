@@ -39,10 +39,7 @@ export function LeaderboardProvider({
   );
 
   const userCountry = useMemo(() => {
-    if (userData?.data.timezone?.includes('Lagos')) {
-      return 'NG';
-    }
-    return undefined;
+    return userData?.data.city?.country_code;
   }, [userData]);
 
   useEffect(() => {

@@ -22,6 +22,12 @@ export interface LeaderboardUser {
     photo: string;
     is_email_public: boolean;
     photo_public: boolean;
+    city?: {
+      country_code: string;
+      name: string;
+      state: string;
+      title: string;
+    };
   };
 }
 
