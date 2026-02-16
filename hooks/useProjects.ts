@@ -1,23 +1,33 @@
-import { WakaTimeProjectsResponse } from '@/interfaces/project';
-import { wakaService } from '@/services/waka.service';
-import { InfiniteData, useInfiniteQuery } from '@tanstack/react-query';
+import { useProjectsStore } from '@/stores/useProjectsStore';
+import { useEffect } from 'react';
 
 export function useProjects() {
-  return useInfiniteQuery<
-    WakaTimeProjectsResponse,
-    Error,
-    InfiniteData<WakaTimeProjectsResponse>,
-    string[],
-    number
-  >({
-    queryKey: ['projects'],
-    queryFn: ({ pageParam }) => wakaService.getProjects(pageParam),
-    initialPageParam: 1,
-    getNextPageParam: (lastPage, allPages) => {
-      if (lastPage.total_pages && allPages.length < lastPage.total_pages) {
-        return allPages.length + 1;
-      }
-      return undefined;
+  const {
+    data,
+    isLoading,
+    isFetchingNextPage,
+    error,
+    fetchProjects,
+    fetchNextPage,
+    hasMore,
+  } = useProjectsStore();
+
+  useEffect(() => {
+    if (data.length === 0) {
+      fetchProjects();
+    }
+  }, [data.length, fetchProjects]);
+
+  return {
+    data: {
+      pages: [{ data }],
     },
-  });
+    isLoading,
+    isRefetching: isLoading,
+    refetch: () => fetchProjects(true),
+    fetchNextPage,
+    hasNextPage: hasMore,
+    isFetchingNextPage,
+    error,
+  };
 }

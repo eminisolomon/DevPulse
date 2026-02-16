@@ -25,4 +25,5 @@ export interface WakaTimeProjectsResponse {
   data: WakaTimeProject[];
   total?: number;
   total_pages?: number;
+  page: number;
 }

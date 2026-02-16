@@ -1,10 +1,19 @@
-import { User } from '@/interfaces/user';
-import { wakaService } from '@/services/waka.service';
-import { useQuery } from '@tanstack/react-query';
+import { useUserStore } from '@/stores/useUserStore';
+import { useEffect } from 'react';
 
 export function useUser() {
-  return useQuery<User>({
-    queryKey: ['user'],
-    queryFn: () => wakaService.getUser(),
-  });
+  const { data, isLoading, error, fetchUser } = useUserStore();
+
+  useEffect(() => {
+    if (!data) {
+      fetchUser();
+    }
+  }, [data, fetchUser]);
+
+  return {
+    data,
+    isLoading,
+    error,
+    refetch: fetchUser,
+  };
 }

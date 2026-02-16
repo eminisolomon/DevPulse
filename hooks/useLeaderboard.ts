@@ -1,25 +1,42 @@
-import { WakaTimeLeaderboard } from '@/interfaces/leaderboard';
-import { wakaService } from '@/services/waka.service';
-import { InfiniteData, useInfiniteQuery } from '@tanstack/react-query';
+import { useLeaderboardStore } from '@/stores/useLeaderboardStore';
+import { useEffect } from 'react';
 
 export function useLeaderboard(countryCode?: string, language?: string) {
-  return useInfiniteQuery<
-    WakaTimeLeaderboard,
-    Error,
-    InfiniteData<WakaTimeLeaderboard>,
-    (string | undefined)[],
-    number
-  >({
-    queryKey: ['leaderboard', countryCode, language],
-    queryFn: ({ pageParam }) =>
-      wakaService.getLeaderboard(language, countryCode, pageParam),
-    initialPageParam: 1,
-    staleTime: 0,
-    getNextPageParam: (lastPage) => {
-      if (lastPage.page < lastPage.total_pages) {
-        return lastPage.page + 1;
-      }
-      return undefined;
+  const {
+    data,
+    isLoading,
+    isFetchingNextPage,
+    error,
+    selectedCountry,
+    setSelectedCountry,
+    fetchLeaderboard,
+    fetchNextPage,
+    hasMore,
+  } = useLeaderboardStore();
+
+  useEffect(() => {
+    if (countryCode !== selectedCountry) {
+      setSelectedCountry(countryCode);
+    }
+  }, [countryCode, selectedCountry, setSelectedCountry]);
+
+  useEffect(() => {
+    if (data.length === 0) {
+      fetchLeaderboard();
+    }
+  }, [data.length, fetchLeaderboard]);
+
+  return {
+    data: {
+      pages: data,
+      pageParams: data.map((_, i) => i + 1),
     },
-  });
+    isLoading,
+    isRefetching: isLoading,
+    refetch: () => fetchLeaderboard(true),
+    fetchNextPage,
+    hasNextPage: hasMore,
+    isFetchingNextPage,
+    error,
+  };
 }

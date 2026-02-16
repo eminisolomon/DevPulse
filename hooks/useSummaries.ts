@@ -1,17 +1,21 @@
-import { wakaService } from '@/services/waka.service';
-import { useQuery } from '@tanstack/react-query';
-
-import { WakaTimeSummaries } from '@/interfaces/summary';
+import { useSummariesStore } from '@/stores/useSummariesStore';
+import { useEffect } from 'react';
 
 export function useSummaries(start: Date, end: Date) {
-  return useQuery<WakaTimeSummaries>({
-    queryKey: ['summaries', start, end],
-    queryFn: async () => {
-      const data = await wakaService.getSummaries(
-        start.toISOString().split('T')[0],
-        end.toISOString().split('T')[0],
-      );
-      return data;
-    },
-  });
+  const { data, isLoading, error, fetchSummaries } = useSummariesStore();
+  const key = `${start.toISOString().split('T')[0]}_${end.toISOString().split('T')[0]}`;
+
+  useEffect(() => {
+    if (!data[key]) {
+      fetchSummaries(start, end);
+    }
+  }, [key, data, fetchSummaries, start, end]);
+
+  return {
+    data: data[key] || undefined,
+    isLoading,
+    error,
+    refetch: () => fetchSummaries(start, end),
+    isRefetching: isLoading,
+  };
 }
