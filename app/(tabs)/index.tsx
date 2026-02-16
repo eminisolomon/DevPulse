@@ -1,7 +1,9 @@
-import { Card, Typography } from '@/components';
 import {
   DailyProgressCard,
+  DashboardBanner,
+  DashboardHeader,
   MonthlyCalendarCard,
+  QuickStats,
   TotalTimeCard,
 } from '@/features/dashboard';
 import { useStats } from '@/hooks/useStats';
@@ -10,31 +12,27 @@ import { useTheme } from '@/hooks/useTheme';
 import { useUser } from '@/hooks/useUser';
 import { useAuthStore } from '@/stores/useAuthStore';
 import { formatDuration } from '@/utilities/formatters';
-import { Ionicons } from '@expo/vector-icons';
 import { endOfMonth, startOfMonth } from 'date-fns';
-import { Redirect, useRouter } from 'expo-router';
+import { Redirect } from 'expo-router';
 import React, { useMemo, useState } from 'react';
 import {
   ActivityIndicator,
-  Image,
   RefreshControl,
   ScrollView,
   StyleSheet,
-  TouchableOpacity,
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function Dashboard() {
   const { theme } = useTheme();
-  const router = useRouter();
   const { apiKey } = useAuthStore();
 
   if (!apiKey) {
     return <Redirect href="/" />;
   }
 
-  const { data: user, isLoading: userLoading } = useUser();
+  const { isLoading: userLoading } = useUser();
 
   const today = useMemo(() => new Date(), []);
   const [viewingMonth, setViewingMonth] = useState(today);
@@ -49,29 +47,19 @@ export default function Dashboard() {
     isRefetching: isStatsRefetching,
   } = useStats('last_7_days');
 
-  const {
-    data: allTimeStats,
-    isLoading: allTimeLoading,
-    refetch: refetchAllTime,
-  } = useStats('all_time');
+  const { data: allTimeStats, refetch: refetchAllTime } = useStats('all_time');
 
-  const {
-    data: recentStats,
-    isLoading: recentLoading,
-    refetch: refetchRecent,
-  } = useStats('last_7_days');
+  const { data: recentStats, refetch: refetchRecent } = useStats('last_7_days');
 
-  const {
-    data: todaySummaries,
-    isLoading: todayLoading,
-    refetch: refetchToday,
-  } = useSummaries(today, today);
+  const { data: todaySummaries, refetch: refetchToday } = useSummaries(
+    today,
+    today,
+  );
 
-  const {
-    data: monthSummaries,
-    isLoading: monthLoading,
-    refetch: refetchMonth,
-  } = useSummaries(startMonth, endMonth);
+  const { data: monthSummaries, refetch: refetchMonth } = useSummaries(
+    startMonth,
+    endMonth,
+  );
 
   const isLoading = userLoading || statsLoading;
 
@@ -162,7 +150,7 @@ export default function Dashboard() {
       else if (ratio > 0.25) activityLevel = 2;
       else activityLevel = 1;
     } else if (totalSeconds > 0) {
-      activityLevel = 2; // Default if no average
+      activityLevel = 2;
     }
 
     return {
@@ -201,110 +189,15 @@ export default function Dashboard() {
           />
         }
       >
-        <View style={styles.header}>
-          <View style={styles.headerTop}>
-            <View>
-              <Typography
-                variant="caption"
-                weight="semibold"
-                color={theme.colors.textSecondary}
-                style={styles.greeting}
-              >
-                Welcome back
-              </Typography>
-              <Typography variant="headline" weight="bold">
-                {user?.data?.display_name ||
-                  user?.data?.username ||
-                  'Developer'}
-              </Typography>
-            </View>
-            <TouchableOpacity onPress={() => router.push('/settings')}>
-              <Image
-                source={{
-                  uri: user?.data?.photo || 'https://via.placeholder.com/150',
-                }}
-                style={styles.avatar}
-              />
-            </TouchableOpacity>
-          </View>
-        </View>
-        <TouchableOpacity
-          style={[
-            styles.banner,
-            { backgroundColor: theme.colors.primary + '10' },
-          ]}
-          onPress={() => router.push('/stats/numbers' as any)}
-        >
-          <View>
-            <Typography
-              variant="body"
-              weight="bold"
-              color={theme.colors.primary}
-            >
-              The Numbers
-            </Typography>
-            <Typography variant="caption" color={theme.colors.textSecondary}>
-              Tap for detailed analytics & charts
-            </Typography>
-          </View>
-          <Ionicons
-            name="chevron-forward"
-            size={20}
-            color={theme.colors.primary}
-          />
-        </TouchableOpacity>
+        <DashboardHeader />
 
-        {/* Quick Stats Grid */}
-        <View style={styles.statsGrid}>
-          <Card
-            style={[
-              styles.statCard,
-              {
-                borderColor: theme.colors.border,
-                borderWidth: 1,
-                marginRight: 8,
-              },
-            ]}
-          >
-            <Typography
-              variant="micro"
-              weight="medium"
-              color={theme.colors.textSecondary}
-              style={styles.statLabel}
-            >
-              7 Day Total
-            </Typography>
-            <Typography
-              variant="title"
-              color={theme.colors.primary}
-              weight="bold"
-            >
-              {stats?.data?.human_readable_total || '0h 0m'}
-            </Typography>
-          </Card>
-          <Card
-            style={[
-              styles.statCard,
-              {
-                borderColor: theme.colors.border,
-                borderWidth: 1,
-                marginLeft: 8,
-              },
-            ]}
-          >
-            <Typography
-              variant="micro"
-              weight="medium"
-              color={theme.colors.textSecondary}
-              style={styles.statLabel}
-            >
-              Daily Average
-            </Typography>
-            <Typography variant="title" weight="bold">
-              {stats?.data?.human_readable_daily_average || '0h 0m'}
-            </Typography>
-          </Card>
-        </View>
+        <DashboardBanner />
+
+        <QuickStats
+          totalDuration={stats?.data?.human_readable_total || '0h 0m'}
+          dailyAverage={stats?.data?.human_readable_daily_average || '0h 0m'}
+        />
+
         <TotalTimeCard
           totalTime={totalTimeDisplay}
           totalProjectsCount={totalProjects}
@@ -336,46 +229,5 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  header: {
-    marginBottom: 24,
-  },
-  headerTop: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  avatar: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    backgroundColor: 'rgba(0,0,0,0.05)',
-  },
-  greeting: {
-    textTransform: 'uppercase',
-    letterSpacing: 1,
-    marginBottom: 4,
-  },
-  banner: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    padding: 16,
-    borderRadius: 16,
-    marginBottom: 24,
-  },
-  statsGrid: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 24,
-  },
-  statCard: {
-    flex: 1,
-    padding: 16,
-  },
-  statLabel: {
-    textTransform: 'uppercase',
-    letterSpacing: 0.5,
-    marginBottom: 4,
   },
 });

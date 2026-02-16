@@ -1,4 +1,5 @@
 import { BottomSheet, Card } from '@/components';
+import { Avatar } from '@/components/Avatar';
 import { Typography } from '@/components/Typography';
 import { useTheme, useUser } from '@/hooks';
 import { settingsService } from '@/services/settings.service';
@@ -8,7 +9,6 @@ import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import { useRouter } from 'expo-router';
 import React, { useRef } from 'react';
 import {
-  Image,
   ScrollView,
   StyleSheet,
   Switch,
@@ -159,12 +159,12 @@ export default function SettingsScreen() {
         {/* Profile Header Card */}
         <Card style={styles.profileCard}>
           <View style={styles.profileInfo}>
-            <Image
-              source={{
-                uri: userData?.photo || 'https://via.placeholder.com/150',
-              }}
-              style={styles.largeAvatar}
+            <Avatar
+              source={userData?.photo ? { uri: userData.photo } : undefined}
+              initials={userData?.display_name || userData?.username}
+              size={120}
             />
+            <View style={{ height: 16 }} />
             <Typography variant="title" weight="bold" style={styles.userName}>
               {userData?.display_name || userData?.username || 'Developer'}
             </Typography>

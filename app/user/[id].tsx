@@ -1,4 +1,5 @@
 import { Card } from '@/components';
+import { Avatar } from '@/components/Avatar';
 import { Typography } from '@/components/Typography';
 import { useLeaderboard, useTheme } from '@/hooks';
 import { formatDuration } from '@/utilities/formatters';
@@ -6,7 +7,6 @@ import { Feather } from '@expo/vector-icons';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useMemo } from 'react';
 import {
-  Image,
   Linking,
   ScrollView,
   StyleSheet,
@@ -51,9 +51,10 @@ export default function UserProfileScreen() {
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <View style={styles.profileSection}>
           <View style={styles.avatarContainer}>
-            <Image
-              source={{ uri: user.photo || 'https://via.placeholder.com/150' }}
-              style={styles.avatar}
+            <Avatar
+              source={user.photo ? { uri: user.photo } : undefined}
+              initials={user.display_name || user.username}
+              size={120}
             />
             <View
               style={[
