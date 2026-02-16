@@ -5,7 +5,7 @@ export interface Country {
 }
 
 export const COUNTRIES: Country[] = [
-  { label: 'Global', value: undefined, icon: '🌍' },
+  { label: 'Global', value: 'GLOBAL', icon: '🌍' },
   { label: 'Nigeria', value: 'NG', icon: '🇳🇬' },
   // A
   { label: 'Afghanistan', value: 'AF', icon: '🇦🇫' },

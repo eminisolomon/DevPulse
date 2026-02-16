@@ -65,7 +65,7 @@ export default function LeaderboardScreen() {
         <ScreenHeader
           title="Leaderboard"
           subtitle={
-            selectedCountry
+            selectedCountry && selectedCountry !== 'GLOBAL'
               ? `${selectedCountry} Top Developers`
               : 'Global Top Developers'
           }
@@ -98,7 +98,7 @@ export default function LeaderboardScreen() {
       <ScreenHeader
         title="Leaderboard"
         subtitle={
-          selectedCountry
+          selectedCountry && selectedCountry !== 'GLOBAL'
             ? `${selectedCountry} Top Developers`
             : 'Global Top Developers'
         }

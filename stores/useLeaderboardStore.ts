@@ -49,9 +49,11 @@ export const useLeaderboardStore = create<LeaderboardState>()(
         });
 
         try {
+          const countryCode =
+            selectedCountry === 'GLOBAL' ? undefined : selectedCountry;
           const response = await wakaService.getLeaderboard(
             undefined,
-            selectedCountry,
+            countryCode,
             1,
           );
           set({
@@ -78,9 +80,11 @@ export const useLeaderboardStore = create<LeaderboardState>()(
         set({ isFetchingNextPage: true });
         try {
           const nextPage = page + 1;
+          const countryCode =
+            selectedCountry === 'GLOBAL' ? undefined : selectedCountry;
           const response = await wakaService.getLeaderboard(
             undefined,
-            selectedCountry,
+            countryCode,
             nextPage,
           );
           set({
