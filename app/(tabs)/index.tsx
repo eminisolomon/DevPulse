@@ -1,3 +1,4 @@
+import { Card } from '@/components/Card';
 import { Typography } from '@/components/Typography';
 import { DailyProgressCard } from '@/components/dashboard/DailyProgressCard';
 import { MonthlyCalendarCard } from '@/components/dashboard/MonthlyCalendarCard';
@@ -226,7 +227,6 @@ export default function Dashboard() {
             </TouchableOpacity>
           </View>
         </View>
-
         <TouchableOpacity
           style={[
             styles.banner,
@@ -255,12 +255,12 @@ export default function Dashboard() {
 
         {/* Quick Stats Grid */}
         <View style={styles.statsGrid}>
-          <View
+          <Card
             style={[
               styles.statCard,
               {
-                backgroundColor: theme.colors.surface,
                 borderColor: theme.colors.border,
+                borderWidth: 1,
                 marginRight: 8,
               },
             ]}
@@ -280,13 +280,13 @@ export default function Dashboard() {
             >
               {stats?.data?.human_readable_total || '0h 0m'}
             </Typography>
-          </View>
-          <View
+          </Card>
+          <Card
             style={[
               styles.statCard,
               {
-                backgroundColor: theme.colors.surface,
                 borderColor: theme.colors.border,
+                borderWidth: 1,
                 marginLeft: 8,
               },
             ]}
@@ -302,25 +302,19 @@ export default function Dashboard() {
             <Typography variant="title" weight="bold">
               {stats?.data?.human_readable_daily_average || '0h 0m'}
             </Typography>
-          </View>
+          </Card>
         </View>
-
-        {/* SECTION 1: Total Time & Recent Projects */}
         <TotalTimeCard
           totalTime={totalTimeDisplay}
           totalProjectsCount={totalProjects}
           recentProjects={recentProjects}
         />
-
-        {/* SECTION 2: Today's Progress */}
         <DailyProgressCard
           totalTime={todayTotal}
           projects={todayProjects}
           percent={todayPercent}
           goalDiffText={todayGoalDiffText}
         />
-
-        {/* SECTION 3: Monthly Calendar */}
         <MonthlyCalendarCard
           monthDate={viewingMonth}
           totalTime={monthTotal}
@@ -377,13 +371,6 @@ const styles = StyleSheet.create({
   statCard: {
     flex: 1,
     padding: 16,
-    borderRadius: 16,
-    borderWidth: 1,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 2,
-    elevation: 2,
   },
   statLabel: {
     textTransform: 'uppercase',

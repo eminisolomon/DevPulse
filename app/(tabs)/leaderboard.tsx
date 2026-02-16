@@ -3,11 +3,11 @@ import { Card } from '@/components/Card';
 import { ListItem } from '@/components/ListItem';
 import { ScreenHeader } from '@/components/ScreenHeader';
 import { Typography } from '@/components/Typography';
-import { COUNTRIES } from '@/constants/countries';
-import { useLeaderboard, useTheme, useUser } from '@/hooks';
+import { useLeaderboardContext } from '@/contexts/LeaderboardContext';
+import { useTheme } from '@/hooks';
 import { LeaderboardUser } from '@/interfaces/leaderboard';
 import { Feather } from '@expo/vector-icons';
-import { BottomSheetModal } from '@gorhom/bottom-sheet';
+import { BottomSheetFlatList, BottomSheetModal } from '@gorhom/bottom-sheet';
 import { useRouter } from 'expo-router';
 import React from 'react';
 import {
@@ -23,35 +23,21 @@ import {
 export default function LeaderboardScreen() {
   const { theme, isDark } = useTheme();
   const router = useRouter();
-  const { data: userData } = useUser();
-  const [selectedCountry, setSelectedCountry] = React.useState<
-    string | undefined
-  >(undefined);
   const bottomSheetRef = React.useRef<BottomSheetModal>(null);
 
-  React.useEffect(() => {
-    if (
-      userData?.data.timezone?.includes('Lagos') &&
-      selectedCountry === undefined
-    ) {
-      setSelectedCountry('NG');
-    }
-  }, [userData]);
-
   const {
-    data,
+    selectedCountry,
+    setSelectedCountry,
     isLoading,
     isRefetching,
     refetch,
-    hasNextPage,
+    leaderboardData,
+    currentUserRank,
     fetchNextPage,
+    hasNextPage,
     isFetchingNextPage,
-  } = useLeaderboard(selectedCountry);
-
-  const leaderboardData = React.useMemo(
-    () => data?.pages.flatMap((page) => page.data) || [],
-    [data],
-  );
+    countries,
+  } = useLeaderboardContext();
 
   const topThree = React.useMemo(
     () => leaderboardData.slice(0, 3),
@@ -215,7 +201,79 @@ export default function LeaderboardScreen() {
     );
   };
 
-  if (isLoading && !data) {
+  const renderCurrentUserRank = () => {
+    if (!currentUserRank) return null;
+
+    return (
+      <View
+        style={[
+          styles.currentUserContainer,
+          {
+            backgroundColor: theme.colors.surface,
+            borderTopColor: theme.colors.border,
+          },
+        ]}
+      >
+        <Typography
+          variant="caption"
+          weight="bold"
+          color={theme.colors.textSecondary}
+          style={styles.currentUserTitle}
+        >
+          Your Rank
+        </Typography>
+        <TouchableOpacity
+          activeOpacity={0.7}
+          onPress={() => router.push(`/user/${currentUserRank.user.id}`)}
+        >
+          <Card
+            style={[
+              styles.userCard,
+              {
+                marginBottom: 0,
+                backgroundColor: isDark
+                  ? 'rgba(255,255,255,0.05)'
+                  : 'rgba(0,0,0,0.02)',
+                borderWidth: 1,
+                borderColor: theme.colors.primary,
+              },
+            ]}
+          >
+            <View style={styles.rankContainer}>
+              <Typography
+                variant="body"
+                weight="bold"
+                color={theme.colors.primary}
+              >
+                #{currentUserRank.rank}
+              </Typography>
+            </View>
+            <Image
+              source={{
+                uri:
+                  currentUserRank.user.photo ||
+                  'https://via.placeholder.com/150',
+              }}
+              style={styles.avatar}
+            />
+            <View style={styles.userInfo}>
+              <Typography variant="caption" weight="bold">
+                {currentUserRank.user.display_name ||
+                  currentUserRank.user.username ||
+                  'You'}
+              </Typography>
+              <Typography variant="micro" color={theme.colors.textSecondary}>
+                {currentUserRank.running_total?.human_readable_total ||
+                  '0 secs'}
+              </Typography>
+            </View>
+          </Card>
+        </TouchableOpacity>
+      </View>
+    );
+  };
+
+  if (isLoading && !leaderboardData.length) {
     return (
       <View
         style={[styles.center, { backgroundColor: theme.colors.background }]}
@@ -247,7 +305,7 @@ export default function LeaderboardScreen() {
             onPress={handlePresentModalPress}
           >
             <Typography variant="title">
-              {COUNTRIES.find((c) => c.value === selectedCountry)?.icon || '🌍'}
+              {countries.find((c) => c.value === selectedCountry)?.icon || '🌍'}
             </Typography>
           </TouchableOpacity>
         }
@@ -257,7 +315,10 @@ export default function LeaderboardScreen() {
         data={remainingUsers}
         renderItem={renderLeaderboardItem}
         keyExtractor={(item) => item.user.id}
-        contentContainerStyle={styles.listContent}
+        contentContainerStyle={[
+          styles.listContent,
+          currentUserRank && styles.listContentWithFooter,
+        ]}
         ListHeaderComponent={renderTopThree}
         ListFooterComponent={
           isFetchingNextPage ? (
@@ -292,6 +353,13 @@ export default function LeaderboardScreen() {
                 Leaderboard Unavailable
               </Typography>
               <Typography
+                variant="title"
+                weight="semibold"
+                style={styles.emptyTitle}
+              >
+                Leaderboard Unavailable
+              </Typography>
+              <Typography
                 color={theme.colors.textSecondary}
                 style={styles.emptySubtitle}
               >
@@ -301,15 +369,26 @@ export default function LeaderboardScreen() {
           ) : null
         }
       />
+
+      {renderCurrentUserRank()}
+
       <BottomSheet
         ref={bottomSheetRef}
         title="Select Location"
-        snapPoints={['50%']}
+        snapPoints={['50%', '90%']}
       >
-        <FlatList
-          data={COUNTRIES}
-          keyExtractor={(item) => item.label}
-          renderItem={({ item }) => (
+        <BottomSheetFlatList
+          data={countries}
+          keyExtractor={(item: {
+            label: string;
+            value: string | undefined;
+            icon: string;
+          }) => item.label}
+          renderItem={({
+            item,
+          }: {
+            item: { label: string; value: string | undefined; icon: string };
+          }) => (
             <ListItem
               title={item.label}
               leftIcon={<Typography variant="title">{item.icon}</Typography>}
@@ -349,6 +428,9 @@ const styles = StyleSheet.create({
     padding: 16,
     paddingTop: 16,
     paddingBottom: 100,
+  },
+  listContentWithFooter: {
+    paddingBottom: 160, // Add extra padding for the fixed footer
   },
   podiumContainer: {
     flexDirection: 'row',
@@ -468,5 +550,26 @@ const styles = StyleSheet.create({
   footerLoader: {
     paddingVertical: 20,
     alignItems: 'center',
+  },
+  currentUserContainer: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    padding: 16,
+    paddingBottom: 24,
+    borderTopWidth: 1,
+    elevation: 20,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: -4,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 12,
+  },
+  currentUserTitle: {
+    marginBottom: 8,
+    paddingHorizontal: 4,
   },
 });

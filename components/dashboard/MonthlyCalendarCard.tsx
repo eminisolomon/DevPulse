@@ -1,3 +1,4 @@
+import { Card } from '@/components/Card';
 import { Typography } from '@/components/Typography';
 import { useTheme } from '@/hooks/useTheme';
 import { Ionicons } from '@expo/vector-icons';
@@ -35,7 +36,7 @@ export const MonthlyCalendarCard = ({
   onPrevMonth,
   onNextMonth,
 }: MonthlyCalendarCardProps) => {
-  const { theme } = useTheme();
+  const { theme, isDark } = useTheme();
   const router = useRouter();
 
   // Generate calendar days for the specific monthDate
@@ -126,8 +127,15 @@ export const MonthlyCalendarCard = ({
   };
 
   return (
-    <View
-      style={[styles.card, { backgroundColor: theme.colors.surfaceHighlight }]}
+    <Card
+      style={[
+        styles.card,
+        {
+          borderColor: theme.colors.border,
+          borderWidth: 1,
+          backgroundColor: theme.colors.surface,
+        },
+      ]}
     >
       <View style={styles.header}>
         <View style={styles.monthNav}>
@@ -159,7 +167,11 @@ export const MonthlyCalendarCard = ({
       <View
         style={[
           styles.calendarContainer,
-          { backgroundColor: theme.colors.surface },
+          {
+            backgroundColor: isDark
+              ? 'rgba(255,255,255,0.05)'
+              : 'rgba(0,0,0,0.02)',
+          },
         ]}
       >
         <View style={styles.daysHeader}>
@@ -183,10 +195,7 @@ export const MonthlyCalendarCard = ({
         ))}
 
         <TouchableOpacity
-          style={[
-            styles.button,
-            { backgroundColor: theme.colors.surfaceHighlight },
-          ]}
+          style={[styles.button, { backgroundColor: theme.colors.background }]}
           onPress={() => router.push('/stats/numbers?range=30_days' as any)}
         >
           <Typography
@@ -199,15 +208,14 @@ export const MonthlyCalendarCard = ({
           </Typography>
         </TouchableOpacity>
       </View>
-    </View>
+    </Card>
   );
 };
 
 const styles = StyleSheet.create({
   card: {
-    borderRadius: 24,
-    padding: 20,
     marginBottom: 16,
+    padding: 16,
   },
   header: {
     marginBottom: 20,
@@ -227,7 +235,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   calendarContainer: {
-    borderRadius: 16,
+    borderRadius: 12,
     padding: 16,
   },
   daysHeader: {

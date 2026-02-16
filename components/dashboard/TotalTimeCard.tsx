@@ -1,3 +1,4 @@
+import { Card } from '@/components/Card';
 import { Typography } from '@/components/Typography';
 import { useTheme } from '@/hooks/useTheme';
 import { useRouter } from 'expo-router';
@@ -20,12 +21,19 @@ export const TotalTimeCard = ({
   totalProjectsCount,
   recentProjects,
 }: TotalTimeCardProps) => {
-  const { theme } = useTheme();
+  const { theme, isDark } = useTheme();
   const router = useRouter();
 
   return (
-    <View
-      style={[styles.card, { backgroundColor: theme.colors.surfaceHighlight }]}
+    <Card
+      style={[
+        styles.card,
+        {
+          borderColor: theme.colors.border,
+          borderWidth: 1,
+          backgroundColor: theme.colors.surface,
+        },
+      ]}
     >
       <View style={styles.header}>
         <Typography variant="title" weight="bold" align="center">
@@ -44,7 +52,11 @@ export const TotalTimeCard = ({
       <View
         style={[
           styles.projectsContainer,
-          { backgroundColor: theme.colors.surface },
+          {
+            backgroundColor: isDark
+              ? 'rgba(255,255,255,0.05)'
+              : 'rgba(0,0,0,0.02)',
+          },
         ]}
       >
         <Typography
@@ -60,10 +72,7 @@ export const TotalTimeCard = ({
           <View key={index} style={styles.projectRow}>
             <View style={styles.projectInfo}>
               <View
-                style={[
-                  styles.dot,
-                  { backgroundColor: theme.colors.primary }, // Or project specific color if available
-                ]}
+                style={[styles.dot, { backgroundColor: theme.colors.primary }]}
               />
               <Typography variant="body" weight="medium">
                 {project.name}
@@ -76,10 +85,7 @@ export const TotalTimeCard = ({
         ))}
 
         <TouchableOpacity
-          style={[
-            styles.button,
-            { backgroundColor: theme.colors.surfaceHighlight },
-          ]}
+          style={[styles.button, { backgroundColor: theme.colors.background }]}
           onPress={() => router.push('/projects' as any)}
         >
           <Typography
@@ -92,22 +98,21 @@ export const TotalTimeCard = ({
           </Typography>
         </TouchableOpacity>
       </View>
-    </View>
+    </Card>
   );
 };
 
 const styles = StyleSheet.create({
   card: {
-    borderRadius: 24,
-    padding: 20,
     marginBottom: 16,
+    padding: 16,
   },
   header: {
     marginBottom: 20,
     alignItems: 'center',
   },
   projectsContainer: {
-    borderRadius: 16,
+    borderRadius: 12, // Slightly smaller radius for inner container
     padding: 16,
   },
   projectsTitle: {

@@ -1,3 +1,4 @@
+import { Card } from '@/components/Card';
 import { Typography } from '@/components/Typography';
 import { useTheme } from '@/hooks/useTheme';
 import {
@@ -34,7 +35,7 @@ export const DailyProgressCard = ({
   percent = 0,
   goalDiffText,
 }: DailyProgressCardProps) => {
-  const { theme } = useTheme();
+  const { theme, isDark } = useTheme();
   const router = useRouter();
 
   const strokeWidth = 20;
@@ -64,8 +65,15 @@ export const DailyProgressCard = ({
   );
 
   return (
-    <View
-      style={[styles.card, { backgroundColor: theme.colors.surfaceHighlight }]}
+    <Card
+      style={[
+        styles.card,
+        {
+          borderColor: theme.colors.border,
+          borderWidth: 1,
+          backgroundColor: theme.colors.surface,
+        },
+      ]}
     >
       <View style={styles.header}>
         <Typography variant="title" weight="bold" align="center">
@@ -88,7 +96,7 @@ export const DailyProgressCard = ({
             cx={center}
             cy={center}
             r={RADIUS}
-            color={theme.colors.surface}
+            color={isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)'}
             style="stroke"
             strokeWidth={strokeWidth}
           />
@@ -114,7 +122,11 @@ export const DailyProgressCard = ({
       <View
         style={[
           styles.projectsContainer,
-          { backgroundColor: theme.colors.surface },
+          {
+            backgroundColor: isDark
+              ? 'rgba(255,255,255,0.05)'
+              : 'rgba(0,0,0,0.02)',
+          },
         ]}
       >
         {projects.map((project, index) => (
@@ -137,10 +149,7 @@ export const DailyProgressCard = ({
         ))}
 
         <TouchableOpacity
-          style={[
-            styles.button,
-            { backgroundColor: theme.colors.surfaceHighlight },
-          ]}
+          style={[styles.button, { backgroundColor: theme.colors.background }]}
           onPress={() => router.push('/stats/daily')}
         >
           <Typography
@@ -153,15 +162,14 @@ export const DailyProgressCard = ({
           </Typography>
         </TouchableOpacity>
       </View>
-    </View>
+    </Card>
   );
 };
 
 const styles = StyleSheet.create({
   card: {
-    borderRadius: 24,
-    padding: 20,
     marginBottom: 16,
+    padding: 16,
   },
   header: {
     marginBottom: 20,
@@ -178,7 +186,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   projectsContainer: {
-    borderRadius: 16,
+    borderRadius: 12,
     padding: 16,
   },
   projectRow: {

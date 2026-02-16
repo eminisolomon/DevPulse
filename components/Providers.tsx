@@ -1,3 +1,4 @@
+import { LeaderboardProvider } from '@/contexts/LeaderboardContext';
 import { DatabaseProvider } from '@/db/DatabaseProvider';
 import { ThemeProvider } from '@/theme';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
@@ -33,7 +34,9 @@ export function AppProviders({ children }: AppProvidersProps) {
           <SafeAreaProvider>
             <QueryClientProvider client={queryClient}>
               <ThemeProvider>
-                <BottomSheetModalProvider>{children}</BottomSheetModalProvider>
+                <BottomSheetModalProvider>
+                  <LeaderboardProvider>{children}</LeaderboardProvider>
+                </BottomSheetModalProvider>
               </ThemeProvider>
             </QueryClientProvider>
           </SafeAreaProvider>
