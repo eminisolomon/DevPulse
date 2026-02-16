@@ -5,9 +5,10 @@ import { useLeaderboardStore } from '@/stores';
 import { formatDuration, getLanguageColor } from '@/utilities';
 import { Feather } from '@expo/vector-icons';
 import { useLocalSearchParams } from 'expo-router';
-import React, { useMemo } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import {
   Linking,
+  RefreshControl,
   ScrollView,
   StyleSheet,
   TouchableOpacity,
@@ -18,12 +19,30 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 export default function UserProfileScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const { theme } = useTheme();
-  const { data: leaderboardData, isLoading: isLeaderboardLoading } =
-    useLeaderboard();
-  const { data: currentUser, isLoading: isUserLoading } = useUser();
-  const { data: statsData, isLoading: isStatsLoading } =
-    useStats('last_7_days');
+  const {
+    data: leaderboardData,
+    isLoading: isLeaderboardLoading,
+    refetch: refetchLeaderboard,
+  } = useLeaderboard();
+  const {
+    data: currentUser,
+    isLoading: isUserLoading,
+    refetch: refetchUser,
+  } = useUser();
+  const {
+    data: statsData,
+    isLoading: isStatsLoading,
+    refetch: refetchStats,
+  } = useStats('last_7_days');
   const { userRanks } = useLeaderboardStore();
+
+  const [refreshing, setRefreshing] = useState(false);
+
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    await Promise.all([refetchLeaderboard(), refetchUser(), refetchStats()]);
+    setRefreshing(false);
+  }, [refetchLeaderboard, refetchUser, refetchStats]);
 
   const isSelf = currentUser?.data?.id === id;
 
@@ -108,7 +127,17 @@ export default function UserProfileScreen() {
       style={[styles.container, { backgroundColor: theme.colors.background }]}
       edges={['bottom', 'left', 'right']}
     >
-      <ScrollView contentContainerStyle={styles.scrollContent}>
+      <ScrollView
+        contentContainerStyle={styles.scrollContent}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            tintColor={theme.colors.primary}
+            colors={[theme.colors.primary]}
+          />
+        }
+      >
         <View style={styles.profileSection}>
           <View style={styles.avatarContainer}>
             <Avatar
@@ -135,12 +164,23 @@ export default function UserProfileScreen() {
           <Typography variant="title" weight="bold" style={styles.displayName}>
             {user.display_name || user.username || 'Anonymous'}
           </Typography>
-          <Typography
-            color={theme.colors.textSecondary}
-            style={styles.username}
-          >
-            @{user.username || 'anonymous'}
-          </Typography>
+
+          <View style={styles.usernameRow}>
+            <Typography
+              color={theme.colors.textSecondary}
+              style={styles.username}
+            >
+              @{user.username || 'anonymous'}
+            </Typography>
+            {user.created_at && (
+              <Typography
+                variant="micro"
+                color={theme.colors.textSecondary + '80'}
+              >
+                • JOINED {new Date(user.created_at).getFullYear()}
+              </Typography>
+            )}
+          </View>
 
           {user.city?.title && (
             <View style={styles.locationContainer}>
@@ -267,6 +307,7 @@ export default function UserProfileScreen() {
         >
           TOP LANGUAGES
         </Typography>
+
         <Card style={styles.languagesCard}>
           {(userRank.running_total.languages || []).map(
             (lang: { name: string; total_seconds: number }, index: number) => (
@@ -407,6 +448,13 @@ const styles = StyleSheet.create({
     paddingVertical: 16,
     borderRadius: 16,
   },
+  usernameRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    marginTop: 2,
+    marginBottom: 8,
+  },
   locationContainer: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -417,6 +465,10 @@ const styles = StyleSheet.create({
   locationText: {
     textTransform: 'uppercase',
     letterSpacing: 0.5,
+  },
+  chartWrapper: {
+    marginVertical: 20,
+    alignItems: 'center',
   },
   langLeft: {
     flexDirection: 'row',

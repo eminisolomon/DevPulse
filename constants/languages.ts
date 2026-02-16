@@ -99,6 +99,19 @@ export const LANGUAGE_COLORS: Record<string, string> = {
   Astro: '#ff5d01',
   Svelte: '#ff3e00',
   Arduino: '#00979D',
+  Protobuf: '#F38B00',
+  CoffeeScript: '#244776',
+  Clojure: '#db5855',
+  Elm: '#60B5CC',
+  Liquid: '#67ae3f',
+  HCL: '#844FBA',
+  BitBake: '#00b152',
+  Processing: '#006699',
+  ActionScript: '#882B0F',
+  ColdFusion: '#ed2024',
+  VHDL: '#adb2cb',
+  Verilog: '#b2b7f8',
+  PostScript: '#da291c',
 };
 
 const DEFAULT_COLOR = '#6e7681';
