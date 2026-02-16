@@ -1,8 +1,6 @@
-import { Card } from '@/components';
-import { Avatar } from '@/components/Avatar';
-import { Typography } from '@/components/Typography';
+import { Avatar, Card, Typography } from '@/components';
 import { useLeaderboard, useTheme } from '@/hooks';
-import { formatDuration } from '@/utilities/formatters';
+import { formatDuration } from '@/utilities';
 import { Feather } from '@expo/vector-icons';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useMemo } from 'react';
@@ -82,24 +80,76 @@ export default function UserProfileScreen() {
             @{user.username || 'anonymous'}
           </Typography>
 
-          {user.is_hireable && (
-            <View
-              style={[
-                styles.hireableBadge,
-                { backgroundColor: theme.colors.primary + '15' },
-              ]}
-            >
-              <Feather name="zap" size={14} color={theme.colors.primary} />
-              <Typography
-                variant="micro"
-                weight="bold"
-                color={theme.colors.primary}
-                style={styles.badgeText}
+          <View style={styles.badgesContainer}>
+            {user.is_hireable && (
+              <View
+                style={[
+                  styles.badge,
+                  { backgroundColor: theme.colors.primary + '15' },
+                ]}
               >
-                HIREABLE
-              </Typography>
-            </View>
-          )}
+                <Feather name="zap" size={12} color={theme.colors.primary} />
+                <Typography
+                  variant="micro"
+                  weight="bold"
+                  color={theme.colors.primary}
+                  style={styles.badgeText}
+                >
+                  HIREABLE
+                </Typography>
+              </View>
+            )}
+
+            {user.website && (
+              <TouchableOpacity
+                activeOpacity={0.7}
+                style={[
+                  styles.badge,
+                  { backgroundColor: theme.colors.surfaceHighlight },
+                ]}
+                onPress={() => Linking.openURL(user.website!)}
+              >
+                <Feather
+                  name="globe"
+                  size={12}
+                  color={theme.colors.textSecondary}
+                />
+                <Typography
+                  variant="micro"
+                  weight="bold"
+                  color={theme.colors.textSecondary}
+                  style={styles.badgeText}
+                >
+                  PORTFOLIO
+                </Typography>
+              </TouchableOpacity>
+            )}
+
+            {user.email && user.is_email_public && (
+              <TouchableOpacity
+                activeOpacity={0.7}
+                style={[
+                  styles.badge,
+                  { backgroundColor: theme.colors.surfaceHighlight },
+                ]}
+                onPress={() => Linking.openURL(`mailto:${user.email}`)}
+              >
+                <Feather
+                  name="mail"
+                  size={12}
+                  color={theme.colors.textSecondary}
+                />
+                <Typography
+                  variant="micro"
+                  weight="bold"
+                  color={theme.colors.textSecondary}
+                  style={styles.badgeText}
+                >
+                  EMAIL
+                </Typography>
+              </TouchableOpacity>
+            )}
+          </View>
         </View>
 
         <View style={styles.statsRow}>
@@ -164,38 +214,6 @@ export default function UserProfileScreen() {
             </Typography>
           )}
         </Card>
-
-        <View style={styles.socialGrid}>
-          {user.email && user.is_email_public && (
-            <TouchableOpacity
-              style={[
-                styles.socialButton,
-                { backgroundColor: theme.colors.surface },
-              ]}
-              onPress={() => Linking.openURL(`mailto:${user.email}`)}
-            >
-              <Feather name="mail" size={18} color={theme.colors.text} />
-              <Typography weight="bold" style={{ marginLeft: 12 }}>
-                MAIL ME
-              </Typography>
-            </TouchableOpacity>
-          )}
-
-          {user.website && (
-            <TouchableOpacity
-              style={[
-                styles.socialButton,
-                { backgroundColor: theme.colors.surface },
-              ]}
-              onPress={() => Linking.openURL(user.website!)}
-            >
-              <Feather name="globe" size={18} color={theme.colors.text} />
-              <Typography weight="bold" style={{ marginLeft: 12 }}>
-                {user.human_readable_website || 'ON THE WEB'}
-              </Typography>
-            </TouchableOpacity>
-          )}
-        </View>
       </ScrollView>
     </SafeAreaView>
   );
@@ -240,15 +258,22 @@ const styles = StyleSheet.create({
   username: {
     marginBottom: 12,
   },
-  hireableBadge: {
+  badgesContainer: {
+    flexDirection: 'row',
+    gap: 8,
+    marginTop: 4,
+    flexWrap: 'wrap',
+    justifyContent: 'center',
+  },
+  badge: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 12,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 8,
   },
   badgeText: {
-    marginLeft: 6,
+    marginLeft: 4,
   },
   statsRow: {
     flexDirection: 'row',
