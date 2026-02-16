@@ -1,0 +1,275 @@
+import { Card } from '@/components/Card';
+import { Typography } from '@/components/Typography';
+import { useTheme } from '@/hooks/useTheme';
+import { Ionicons } from '@expo/vector-icons';
+import {
+  eachDayOfInterval,
+  endOfMonth,
+  format,
+  getDay,
+  isSameDay,
+  startOfMonth,
+} from 'date-fns';
+import { useRouter } from 'expo-router';
+import React from 'react';
+import { StyleSheet, TouchableOpacity, View } from 'react-native';
+
+interface DailySummary {
+  date: string;
+  totalTime: string;
+  hasActivity: boolean;
+  activityLevel: number;
+}
+
+interface MonthlyCalendarCardProps {
+  monthDate: Date;
+  totalTime: string;
+  days: DailySummary[];
+  onPrevMonth: () => void;
+  onNextMonth: () => void;
+}
+
+export const MonthlyCalendarCard = ({
+  monthDate,
+  totalTime,
+  days,
+  onPrevMonth,
+  onNextMonth,
+}: MonthlyCalendarCardProps) => {
+  const { theme, isDark } = useTheme();
+  const router = useRouter();
+
+  // Generate calendar days for the specific monthDate
+  const start = startOfMonth(monthDate);
+  const end = endOfMonth(monthDate);
+  const currentMonthName = format(monthDate, 'MMMM');
+
+  const calendarDays = eachDayOfInterval({ start, end });
+  const startDay = getDay(start);
+
+  // Determine weeks
+  const weeks = [];
+  let week = Array(7).fill(null);
+
+  // Fill initial empty days
+  for (let i = 0; i < startDay; i++) {
+    week[i] = null;
+  }
+
+  calendarDays.forEach((day, index) => {
+    const dayOfWeek = getDay(day);
+    if (dayOfWeek === 0 && week.some((d) => d !== null)) {
+      weeks.push([...week]);
+      week = Array(7).fill(null);
+    }
+
+    // Find matching summary data
+    const summary = days.find((d) => isSameDay(new Date(d.date), day));
+
+    week[dayOfWeek] = {
+      day: format(day, 'd'),
+      date: day,
+      summary,
+    };
+  });
+  weeks.push(week);
+
+  const getHeatmapColor = (level: number) => {
+    if (level === 0) return 'transparent';
+    const opacityMap: Record<number, string> = {
+      1: '20', // 12% is too small, let's use hex alpha
+      2: '40',
+      3: '70',
+      4: 'FF',
+    };
+    return theme.colors.primary + (opacityMap[level] || '20');
+  };
+
+  const renderDay = (dayData: any | null, index: number) => {
+    if (!dayData) return <View key={index} style={styles.dayCell} />;
+
+    const { summary, day } = dayData;
+    const hasActivity = summary?.hasActivity;
+    const activityLevel = summary?.activityLevel || 0;
+    const bgColor = getHeatmapColor(activityLevel);
+
+    return (
+      <TouchableOpacity
+        key={index}
+        style={styles.dayCell}
+        onPress={() => {
+          const dateStr = format(dayData.date, 'yyyy-MM-dd');
+          router.push(`/stats/daily?date=${dateStr}`);
+        }}
+        activeOpacity={0.7}
+      >
+        <View
+          style={[
+            styles.dayCircle,
+            hasActivity && { backgroundColor: bgColor },
+            activityLevel === 4 && {
+              borderColor: theme.colors.primary,
+              borderWidth: 1,
+            },
+          ]}
+        >
+          <Typography
+            variant="body"
+            weight={hasActivity ? 'bold' : 'medium'}
+            color={activityLevel >= 3 ? '#fff' : theme.colors.text}
+            align="center"
+          >
+            {day}
+          </Typography>
+        </View>
+      </TouchableOpacity>
+    );
+  };
+
+  return (
+    <Card
+      style={[
+        styles.card,
+        {
+          borderColor: theme.colors.border,
+          borderWidth: 1,
+          backgroundColor: theme.colors.surface,
+        },
+      ]}
+    >
+      <View style={styles.header}>
+        <View style={styles.monthNav}>
+          <TouchableOpacity onPress={onPrevMonth} style={styles.navButton}>
+            <Ionicons name="chevron-back" size={24} color={theme.colors.text} />
+          </TouchableOpacity>
+          <View style={styles.monthInfo}>
+            <Typography variant="title" weight="bold" align="center">
+              {totalTime}
+            </Typography>
+            <Typography
+              variant="caption"
+              color={theme.colors.textSecondary}
+              align="center"
+            >
+              worked in {currentMonthName}
+            </Typography>
+          </View>
+          <TouchableOpacity onPress={onNextMonth} style={styles.navButton}>
+            <Ionicons
+              name="chevron-forward"
+              size={24}
+              color={theme.colors.text}
+            />
+          </TouchableOpacity>
+        </View>
+      </View>
+
+      <View
+        style={[
+          styles.calendarContainer,
+          {
+            backgroundColor: isDark
+              ? 'rgba(255,255,255,0.05)'
+              : 'rgba(0,0,0,0.02)',
+          },
+        ]}
+      >
+        <View style={styles.daysHeader}>
+          {['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'].map((day) => (
+            <Typography
+              key={day}
+              variant="caption"
+              weight="bold"
+              color={theme.colors.textSecondary}
+              style={{ width: '14.28%', textAlign: 'center' }}
+            >
+              {day}
+            </Typography>
+          ))}
+        </View>
+
+        {weeks.map((week, weekIndex) => (
+          <View key={weekIndex} style={styles.weekRow}>
+            {week.map((day, dayIndex) => renderDay(day, dayIndex))}
+          </View>
+        ))}
+
+        <TouchableOpacity
+          style={[styles.button, { backgroundColor: theme.colors.background }]}
+          onPress={() => router.push('/stats/numbers?range=30_days' as any)}
+        >
+          <Typography
+            variant="caption"
+            weight="bold"
+            color={theme.colors.textSecondary}
+            style={{ textTransform: 'uppercase' }}
+          >
+            VIEW DETAILS OF THIS MONTH
+          </Typography>
+        </TouchableOpacity>
+      </View>
+    </Card>
+  );
+};
+
+const styles = StyleSheet.create({
+  card: {
+    marginBottom: 16,
+    padding: 16,
+  },
+  header: {
+    marginBottom: 20,
+    alignItems: 'center',
+  },
+  monthNav: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    width: '100%',
+  },
+  navButton: {
+    padding: 8,
+  },
+  monthInfo: {
+    flex: 1,
+    alignItems: 'center',
+  },
+  calendarContainer: {
+    borderRadius: 12,
+    padding: 16,
+  },
+  daysHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 12,
+  },
+  weekRow: {
+    flexDirection: 'row',
+    marginBottom: 8,
+  },
+  dayCell: {
+    width: '14.28%',
+    aspectRatio: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  dayCircle: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  activityBackground: {
+    ...StyleSheet.absoluteFillObject,
+    borderRadius: 16,
+    opacity: 0.5,
+  },
+  button: {
+    marginTop: 16,
+    paddingVertical: 12,
+    borderRadius: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+});
