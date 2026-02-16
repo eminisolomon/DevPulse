@@ -1,6 +1,7 @@
 import { Card } from '@/components';
 import { Typography } from '@/components/Typography';
 import { useLeaderboard, useTheme } from '@/hooks';
+import { formatDuration } from '@/utilities/formatters';
 import { Feather } from '@expo/vector-icons';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useMemo } from 'react';
@@ -145,7 +146,7 @@ export default function UserProfileScreen() {
             >
               <Typography weight="medium">{lang.name}</Typography>
               <Typography color={theme.colors.textSecondary}>
-                {Math.round(lang.total_seconds / 3600)}h
+                {formatDuration(lang.total_seconds)}
               </Typography>
             </View>
           ))}

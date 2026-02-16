@@ -1,12 +1,24 @@
 import { format, isToday, isYesterday } from 'date-fns';
 
 /**
- * Format total seconds into a readable string like "5h 23m"
+ * Format total seconds into a readable string like "5h 23m" or "23m"
  */
 export const formatDuration = (totalSeconds: number): string => {
   const hours = Math.floor(totalSeconds / 3600);
   const minutes = Math.floor((totalSeconds % 3600) / 60);
-  return `${hours}h ${minutes}m`;
+
+  if (hours > 0) {
+    return `${hours}h ${minutes}m`;
+  }
+  return `${minutes}m`;
+};
+
+/**
+ * Format total seconds into a decimal hours string like "5.2h"
+ */
+export const formatHoursDecimal = (totalSeconds: number): string => {
+  const hours = totalSeconds / 3600;
+  return `${hours.toFixed(1)}h`;
 };
 
 /**

@@ -7,6 +7,7 @@ import { useSummaries } from '@/hooks/useSummaries';
 import { useTheme } from '@/hooks/useTheme';
 import { useUser } from '@/hooks/useUser';
 import { useAuthStore } from '@/stores/useAuthStore';
+import { formatDuration } from '@/utilities/formatters';
 import { Ionicons } from '@expo/vector-icons';
 import { endOfMonth, format, startOfMonth } from 'date-fns';
 import { Redirect, useRouter } from 'expo-router';
@@ -78,19 +79,6 @@ export default function Dashboard() {
     refetchMonth();
   };
 
-  // Helper to format time
-  const formatTime = (
-    text: string | undefined,
-    seconds: number | undefined,
-  ) => {
-    if (text) return text;
-    if (seconds === undefined) return '0 mins';
-    const hrs = Math.floor(seconds / 3600);
-    const mins = Math.floor((seconds % 3600) / 60);
-    if (hrs > 0) return `${hrs} hrs ${mins} mins`;
-    return `${mins} mins`;
-  };
-
   // Derived Data
   const totalTimeDisplay =
     allTimeStats?.data.human_readable_total || '0 HRS 0 MINS';
@@ -100,7 +88,7 @@ export default function Dashboard() {
     .slice(0, 3)
     .map((p) => ({
       name: p.name,
-      text: p.text || formatTime(undefined, p.total_seconds),
+      text: p.text || formatDuration(p.total_seconds),
     }));
 
   const todayTotal = todaySummaries?.cumulative_total?.text || '0 mins';
