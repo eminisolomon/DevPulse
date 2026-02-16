@@ -1,4 +1,4 @@
-import { WakaTimeGoalsResponse } from '@/interfaces/goal';
+import { WakaTimeGoal, WakaTimeGoalsResponse } from '@/interfaces/goal';
 import { WakaTimeLeaderboard } from '@/interfaces/leaderboard';
 import { WakaTimeProjectsResponse } from '@/interfaces/project';
 import { WakaTimeAllTime, WakaTimeStats } from '@/interfaces/stats';
@@ -34,6 +34,23 @@ export const wakaService = {
   getGoals: (): Promise<WakaTimeGoalsResponse> =>
     fetchWithAuth<WakaTimeGoalsResponse>('/users/current/goals'),
 
+  createGoal: (data: Partial<WakaTimeGoal>): Promise<any> =>
+    fetchWithAuth<any>('/users/current/goals', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
+
+  updateGoal: (id: string, data: Partial<WakaTimeGoal>): Promise<any> =>
+    fetchWithAuth<any>(`/users/current/goals/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    }),
+
+  deleteGoal: (id: string): Promise<any> =>
+    fetchWithAuth<any>(`/users/current/goals/${id}`, {
+      method: 'DELETE',
+    }),
+
   getLeaderboard: (
     language?: string,
     countryCode?: string,
@@ -56,4 +73,12 @@ export const wakaService = {
 
   getAllTimeSinceToday: (): Promise<WakaTimeAllTime> =>
     fetchWithAuth<WakaTimeAllTime>('/users/current/all_time_since_today'),
+
+  getOrganizations: (): Promise<any> =>
+    fetchWithAuth<any>('/users/current/organizations'),
+
+  getOrgStats: (orgId: string, range: string): Promise<any> =>
+    fetchWithAuth<any>(
+      `/users/current/organizations/${orgId}/stats?range=${range}`,
+    ),
 };

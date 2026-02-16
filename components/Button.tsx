@@ -166,13 +166,9 @@ export const Button = ({
         <>
           {leftIcon}
           <Typography
-            variant={size === 'sm' ? 'caption' : 'body'}
-            weight="semibold"
-            style={[
-              { color: getLabelColor() },
-              { fontFamily: theme.typography.families.medium },
-              labelStyle,
-            ]}
+            variant={size === 'sm' ? 'caption' : size === 'md' ? 'body' : 'lg'}
+            weight="bold"
+            style={[{ color: getLabelColor() }, labelStyle]}
           >
             {label}
           </Typography>

@@ -1,5 +1,6 @@
 export * from './useAllTime';
 export * from './useDurations';
+export * from './useGoalMutation';
 export * from './useGoals';
 export * from './useLeaderboard';
 export * from './useProjects';

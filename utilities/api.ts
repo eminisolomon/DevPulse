@@ -16,13 +16,23 @@ export const getHeaders = (token: string) => {
   };
 };
 
-export async function fetchWithAuth<T>(endpoint: string): Promise<T> {
+export async function fetchWithAuth<T>(
+  endpoint: string,
+  options: RequestInit = {},
+): Promise<T> {
   let token = getAuthToken();
   const baseUrl = process.env.EXPO_PUBLIC_WAKATIME_API_BASE_URL!;
   const url = `${baseUrl}${endpoint}`;
 
+  const headers = {
+    ...getHeaders(token),
+    ...(options.headers || {}),
+    'Content-Type': 'application/json',
+  };
+
   let response = await fetch(url, {
-    headers: getHeaders(token),
+    ...options,
+    headers,
   });
 
   if (response.status === 401) {

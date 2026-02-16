@@ -4,17 +4,20 @@ import { Typography } from '@/components/Typography';
 import { useGoals, useTheme } from '@/hooks';
 import { WakaTimeGoal } from '@/interfaces/goal';
 import { Feather } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
 import React from 'react';
 import {
   ActivityIndicator,
   FlatList,
   RefreshControl,
   StyleSheet,
+  TouchableOpacity,
   View,
 } from 'react-native';
 
 export default function GoalsScreen() {
   const { theme } = useTheme();
+  const router = useRouter();
   const { data, isLoading, refetch, isRefetching } = useGoals();
 
   const getStatusColor = (status: string) => {
@@ -35,70 +38,75 @@ export default function GoalsScreen() {
       : 0;
 
     return (
-      <Card style={styles.goalCard}>
-        <View style={styles.goalHeader}>
-          <View style={styles.titleContainer}>
-            <Typography variant="title" weight="bold">
-              {item.title}
-            </Typography>
-            <Typography variant="micro" color={theme.colors.textSecondary}>
-              {item.range_text}
-            </Typography>
-          </View>
-          <View
-            style={[
-              styles.statusBadge,
-              { backgroundColor: getStatusColor(item.status) + '20' },
-            ]}
-          >
-            <Typography
-              variant="micro"
-              weight="bold"
-              style={{ color: getStatusColor(item.status) }}
-            >
-              {item.status.toUpperCase()}
-            </Typography>
-          </View>
-        </View>
-
-        <View style={styles.progressSection}>
-          <View style={styles.progressInfo}>
-            <Typography variant="caption" weight="semibold">
-              {item.delta}
-            </Typography>
-            <Typography variant="micro" color={theme.colors.textSecondary}>
-              {Math.round(progress * 100)}%
-            </Typography>
-          </View>
-          <View
-            style={[
-              styles.progressBarBg,
-              { backgroundColor: theme.colors.border },
-            ]}
-          >
+      <TouchableOpacity
+        onPress={() => router.push(`/goals/${item.id}`)}
+        activeOpacity={0.7}
+      >
+        <Card style={styles.goalCard}>
+          <View style={styles.goalHeader}>
+            <View style={styles.titleContainer}>
+              <Typography variant="title" weight="bold">
+                {item.title}
+              </Typography>
+              <Typography variant="micro" color={theme.colors.textSecondary}>
+                {item.range_text}
+              </Typography>
+            </View>
             <View
               style={[
-                styles.progressBarFill,
-                {
-                  backgroundColor: getStatusColor(item.status),
-                  width: `${progress * 100}%`,
-                },
+                styles.statusBadge,
+                { backgroundColor: getStatusColor(item.status) + '20' },
               ]}
-            />
+            >
+              <Typography
+                variant="micro"
+                weight="bold"
+                style={{ color: getStatusColor(item.status) }}
+              >
+                {item.status.toUpperCase()}
+              </Typography>
+            </View>
           </View>
-        </View>
 
-        <View style={styles.footer}>
-          <Typography variant="micro" color={theme.colors.textSecondary}>
-            Average: {item.average_status.toUpperCase()}
-          </Typography>
-          {item.languages.length > 0 && (
+          <View style={styles.progressSection}>
+            <View style={styles.progressInfo}>
+              <Typography variant="caption" weight="semibold">
+                {item.delta}
+              </Typography>
+              <Typography variant="micro" color={theme.colors.textSecondary}>
+                {Math.round(progress * 100)}%
+              </Typography>
+            </View>
+            <View
+              style={[
+                styles.progressBarBg,
+                { backgroundColor: theme.colors.border },
+              ]}
+            >
+              <View
+                style={[
+                  styles.progressBarFill,
+                  {
+                    backgroundColor: getStatusColor(item.status),
+                    width: `${progress * 100}%`,
+                  },
+                ]}
+              />
+            </View>
+          </View>
+
+          <View style={styles.footer}>
             <Typography variant="micro" color={theme.colors.textSecondary}>
-              {item.languages.slice(0, 2).join(', ')}
+              Average: {item.average_status.toUpperCase()}
             </Typography>
-          )}
-        </View>
-      </Card>
+            {item.languages.length > 0 && (
+              <Typography variant="micro" color={theme.colors.textSecondary}>
+                {item.languages.slice(0, 2).join(', ')}
+              </Typography>
+            )}
+          </View>
+        </Card>
+      </TouchableOpacity>
     );
   };
 
@@ -122,9 +130,7 @@ export default function GoalsScreen() {
         actions={[
           {
             icon: 'plus',
-            onPress: () => {
-              /* TODO: Open goal creation */
-            },
+            onPress: () => router.push('/goals/create'),
           },
         ]}
       />

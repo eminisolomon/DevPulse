@@ -6,6 +6,7 @@ export default function StatsLayout() {
     <DefaultStackLayout>
       <Stack.Screen name="numbers" options={{ title: 'The Numbers' }} />
       <Stack.Screen name="daily" options={{ title: '' }} />
+      <Stack.Screen name="sessions" options={{ title: 'Sessions' }} />
     </DefaultStackLayout>
   );
 }

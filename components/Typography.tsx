@@ -7,6 +7,7 @@ type TypographyVariant =
   | 'subtitle'
   | 'title'
   | 'body'
+  | 'lg'
   | 'caption'
   | 'micro';
 
@@ -63,6 +64,12 @@ export const Typography = ({
           fontSize: sizes.md,
           lineHeight: lineHeights.md,
           fontFamily: families.regular,
+        };
+      case 'lg':
+        return {
+          fontSize: sizes.lg,
+          lineHeight: lineHeights.lg,
+          fontFamily: families.medium,
         };
       case 'caption':
         return {

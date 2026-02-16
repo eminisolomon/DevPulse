@@ -61,6 +61,9 @@
 - [x] **High-Density Segmented Stats**: Detailed bars for Languages, Categories, Editors, and OS.
 - [x] **The Numbers Screen**: Comprehensive lifetime analytics deep-dive.
 - [x] **Global Time-Range Filtering**: Dynamic filtering (Week, Month, Year, All-Time).
+- [x] **Write Access for Goals**: Create/Edit goals in-app.
+- [x] **Detailed Session Timeline**: Visual breakdown of individual coding sessions.
+- [x] **Advanced Organization Filtering**: Filter metrics by organization or team.
 
 ---
 
@@ -68,10 +71,9 @@
 
 ### Features
 
-- [ ] **Write Access for Goals**: Create/Edit goals in-app.
-- [ ] **Detailed Session Timeline**: Visual breakdown of individual coding sessions.
-- [ ] **Advanced Organization filtering**: Filter metrics by organization or team.
 - [ ] **Push Notifications**: Milestone alerts and goal reminders.
+- [ ] **Native Widgets**: Android home screen widgets for at-a-glance daily progress.
+- [ ] **Unit & E2E Testing**: Implement robust testing for data transformations and sync logic.
 
 ### Technical
 

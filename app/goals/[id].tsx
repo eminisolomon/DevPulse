@@ -1,0 +1,86 @@
+import { GoalForm } from '@/features/goals/GoalForm';
+import { useGoalMutation, useGoals, useTheme } from '@/hooks';
+import { Feather } from '@expo/vector-icons';
+import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
+import React from 'react';
+import {
+  ActivityIndicator,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+
+export default function EditGoalScreen() {
+  const { id } = useLocalSearchParams<{ id: string }>();
+  const { theme } = useTheme();
+  const router = useRouter();
+  const { data: goalsData, isLoading: goalsLoading } = useGoals();
+  const { updateGoal, deleteGoal } = useGoalMutation();
+
+  const goal = goalsData?.data.find((g: any) => g.id === id);
+
+  const handleSubmit = async (data: any) => {
+    if (!id) return;
+    try {
+      await updateGoal.mutateAsync({ id, data });
+      router.back();
+    } catch (error) {
+      console.error('Failed to update goal:', error);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!id) return;
+    try {
+      await deleteGoal.mutateAsync(id);
+      router.back();
+    } catch (error) {
+      console.error('Failed to delete goal:', error);
+    }
+  };
+
+  if (goalsLoading) {
+    return (
+      <View
+        style={[styles.center, { backgroundColor: theme.colors.background }]}
+      >
+        <ActivityIndicator size="large" color={theme.colors.primary} />
+      </View>
+    );
+  }
+
+  return (
+    <View
+      style={[styles.container, { backgroundColor: theme.colors.background }]}
+    >
+      <Stack.Screen
+        options={{
+          headerRight: () => (
+            <TouchableOpacity onPress={handleDelete} style={{ marginRight: 8 }}>
+              <Feather name="trash-2" size={24} color={theme.colors.error} />
+            </TouchableOpacity>
+          ),
+        }}
+      />
+      {goal && (
+        <GoalForm
+          initialData={goal}
+          onSubmit={handleSubmit}
+          isLoading={updateGoal.isPending || deleteGoal.isPending}
+          isEdit
+        />
+      )}
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  center: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+});
