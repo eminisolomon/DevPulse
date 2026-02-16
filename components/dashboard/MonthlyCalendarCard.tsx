@@ -81,7 +81,7 @@ export const MonthlyCalendarCard = ({
         style={styles.dayCell}
         onPress={() => {
           const dateStr = format(dayData.date, 'yyyy-MM-dd');
-          router.push(`/stats/today?date=${dateStr}`);
+          router.push(`/stats/daily?date=${dateStr}`);
         }}
         activeOpacity={0.7}
       >

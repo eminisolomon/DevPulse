@@ -1,3 +1,5 @@
+import { format, isToday, isYesterday } from 'date-fns';
+
 /**
  * Format total seconds into a readable string like "5h 23m"
  */
@@ -5,6 +7,24 @@ export const formatDuration = (totalSeconds: number): string => {
   const hours = Math.floor(totalSeconds / 3600);
   const minutes = Math.floor((totalSeconds % 3600) / 60);
   return `${hours}h ${minutes}m`;
+};
+
+/**
+ * Format total seconds into a readable string like "X HRS Y MINS"
+ */
+export const formatDisplayDuration = (totalSeconds: number): string => {
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  return `${hours} HRS ${minutes} MINS`;
+};
+
+/**
+ * Get contextually relevant title for daily stats
+ */
+export const getDailyStatsTitle = (date: Date): string => {
+  if (isToday(date)) return 'TODAY';
+  if (isYesterday(date)) return 'YESTERDAY';
+  return format(date, 'EEEE, dd MMM').toUpperCase();
 };
 
 /**

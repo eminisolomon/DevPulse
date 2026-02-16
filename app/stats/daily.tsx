@@ -5,13 +5,10 @@ import { useDurations } from '@/hooks/useDurations';
 import { useSummaries } from '@/hooks/useSummaries';
 import { useTheme } from '@/hooks/useTheme';
 import {
-  endOfDay,
-  format,
-  isToday,
-  isYesterday,
-  parseISO,
-  startOfDay,
-} from 'date-fns';
+  formatDisplayDuration,
+  getDailyStatsTitle,
+} from '@/utilities/formatters';
+import { endOfDay, parseISO, startOfDay } from 'date-fns';
 import { Stack, useLocalSearchParams } from 'expo-router';
 import React, { useMemo } from 'react';
 import {
@@ -23,7 +20,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-export default function TodayScreen() {
+export default function DailyScreen() {
   const { theme } = useTheme();
   const params = useLocalSearchParams<{ date?: string }>();
 
@@ -32,7 +29,7 @@ export default function TodayScreen() {
       try {
         return parseISO(params.date);
       } catch (e) {
-        console.warn('Invalid date passed to today screen:', params.date);
+        console.warn('Invalid date passed to daily screen:', params.date);
         return new Date();
       }
     }
@@ -42,11 +39,7 @@ export default function TodayScreen() {
   const start = startOfDay(selectedDate);
   const end = endOfDay(selectedDate);
 
-  const title = useMemo(() => {
-    if (isToday(selectedDate)) return 'TODAY';
-    if (isYesterday(selectedDate)) return 'YESTERDAY';
-    return format(selectedDate, 'EEEE, dd MMM').toUpperCase();
-  }, [selectedDate]);
+  const title = useMemo(() => getDailyStatsTitle(selectedDate), [selectedDate]);
 
   const {
     data: summaries,
@@ -58,35 +51,32 @@ export default function TodayScreen() {
   const { data: durationSessions, isLoading: durationsLoading } =
     useDurations(selectedDate);
 
-  const todayData = useMemo(() => {
+  const dayData = useMemo(() => {
     if (!summaries?.data?.[0]) return null;
     return summaries.data[0];
   }, [summaries]);
 
-  const totalTime = useMemo(() => {
-    if (!todayData?.grand_total) return '0 HRS 0 MINS';
-    const total = todayData.grand_total.total_seconds || 0;
-    const hours = Math.floor(total / 3600);
-    const mins = Math.floor((total % 3600) / 60);
-    return `${hours} HRS ${mins} MINS`;
-  }, [todayData]);
+  const totalTimeLabel = useMemo(() => {
+    if (!dayData?.grand_total) return '0 HRS 0 MINS';
+    return formatDisplayDuration(dayData.grand_total.total_seconds || 0);
+  }, [dayData]);
 
   const projects = useMemo(() => {
-    if (!todayData?.projects) return [];
-    return todayData.projects.slice(0, 5).map((p, idx) => ({
+    if (!dayData?.projects) return [];
+    return dayData.projects.slice(0, 5).map((p, idx) => ({
       name: p.name,
       time: p.text,
       color: p.color || theme.colors.primary,
-      icon: idx === 0 ? 'ellipse' : 'ellipse',
+      icon: 'circle',
     }));
-  }, [todayData, theme.colors.primary]);
+  }, [dayData, theme.colors.primary]);
 
   const clockSessions = useMemo(() => {
     if (!durationSessions || !Array.isArray(durationSessions)) return [];
     return durationSessions;
   }, [durationSessions]);
 
-  if ((isLoading || durationsLoading) && !todayData) {
+  if ((isLoading || durationsLoading) && !dayData) {
     return (
       <View
         style={[styles.loading, { backgroundColor: theme.colors.background }]}
@@ -120,7 +110,7 @@ export default function TodayScreen() {
             align="center"
             style={styles.totalTime}
           >
-            {totalTime}
+            {totalTimeLabel}
           </Typography>
           <Typography
             variant="caption"
@@ -162,11 +152,11 @@ export default function TodayScreen() {
           </Card>
         )}
 
-        {/* Languages */}
-        {todayData?.languages && todayData.languages.length > 0 && (
+        {/* Segmented Stats */}
+        {dayData?.languages && dayData.languages.length > 0 && (
           <SegmentedStatsCard
             title="LANGUAGES"
-            segments={todayData.languages.slice(0, 4).map((l) => ({
+            segments={dayData.languages.slice(0, 4).map((l) => ({
               label: l.name,
               percent: l.percent,
               color: l.color || theme.colors.primary,
@@ -175,11 +165,10 @@ export default function TodayScreen() {
           />
         )}
 
-        {/* Categories */}
-        {todayData?.categories && todayData.categories.length > 0 && (
+        {dayData?.categories && dayData.categories.length > 0 && (
           <SegmentedStatsCard
             title="CATEGORIES"
-            segments={todayData.categories.slice(0, 3).map((c) => ({
+            segments={dayData.categories.slice(0, 3).map((c) => ({
               label: c.name,
               percent: c.percent,
               color: c.color || theme.colors.primary,
@@ -188,11 +177,10 @@ export default function TodayScreen() {
           />
         )}
 
-        {/* Editors */}
-        {todayData?.editors && todayData.editors.length > 0 && (
+        {dayData?.editors && dayData.editors.length > 0 && (
           <SegmentedStatsCard
             title="EDITORS"
-            segments={todayData.editors.slice(0, 2).map((e) => ({
+            segments={dayData.editors.slice(0, 2).map((e) => ({
               label: e.name,
               percent: e.percent,
               color: e.color || theme.colors.primary,
@@ -201,25 +189,22 @@ export default function TodayScreen() {
           />
         )}
 
-        {/* Operating Systems */}
-        {todayData?.operating_systems &&
-          todayData.operating_systems.length > 0 && (
-            <SegmentedStatsCard
-              title="OPERATING SYSTEMS"
-              segments={todayData.operating_systems.slice(0, 1).map((os) => ({
-                label: os.name,
-                percent: os.percent,
-                color: os.color || theme.colors.primary,
-                valueText: os.text,
-              }))}
-            />
-          )}
+        {dayData?.operating_systems && dayData.operating_systems.length > 0 && (
+          <SegmentedStatsCard
+            title="OPERATING SYSTEMS"
+            segments={dayData.operating_systems.slice(0, 1).map((os) => ({
+              label: os.name,
+              percent: os.percent,
+              color: os.color || theme.colors.primary,
+              valueText: os.text,
+            }))}
+          />
+        )}
 
-        {/* Workstations */}
-        {todayData?.machines && todayData.machines.length > 0 && (
+        {dayData?.machines && dayData.machines.length > 0 && (
           <SegmentedStatsCard
             title="WORKSTATIONS"
-            segments={todayData.machines.slice(0, 2).map((m) => ({
+            segments={dayData.machines.slice(0, 2).map((m) => ({
               label: m.name,
               percent: m.percent,
               color: m.color || theme.colors.primary,
@@ -244,9 +229,6 @@ const styles = StyleSheet.create({
   scrollContent: {
     padding: 16,
     paddingBottom: 100,
-  },
-  header: {
-    marginBottom: 16,
   },
   totalCard: {
     paddingVertical: 24,
