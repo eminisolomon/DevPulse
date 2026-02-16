@@ -7,6 +7,7 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useMemo } from 'react';
 import {
   Image,
+  Linking,
   ScrollView,
   StyleSheet,
   TouchableOpacity,
@@ -21,7 +22,10 @@ export default function UserProfileScreen() {
   const router = useRouter();
 
   const userRank = useMemo(() => {
-    return leaderboardData?.data.find((item) => item.user.id === id);
+    if (!leaderboardData?.pages) return null;
+    return leaderboardData.pages
+      .flatMap((page) => page.data)
+      .find((item) => item.user.id === id);
   }, [leaderboardData, id]);
 
   if (!userRank) {
@@ -160,19 +164,37 @@ export default function UserProfileScreen() {
           )}
         </Card>
 
-        {user.website && (
-          <TouchableOpacity
-            style={[
-              styles.webButton,
-              { backgroundColor: theme.colors.surface },
-            ]}
-          >
-            <Feather name="globe" size={18} color={theme.colors.text} />
-            <Typography weight="bold" style={{ marginLeft: 12 }}>
-              {user.human_readable_website || 'Visit Website'}
-            </Typography>
-          </TouchableOpacity>
-        )}
+        <View style={styles.socialGrid}>
+          {user.email && user.is_email_public && (
+            <TouchableOpacity
+              style={[
+                styles.socialButton,
+                { backgroundColor: theme.colors.surface },
+              ]}
+              onPress={() => Linking.openURL(`mailto:${user.email}`)}
+            >
+              <Feather name="mail" size={18} color={theme.colors.text} />
+              <Typography weight="bold" style={{ marginLeft: 12 }}>
+                MAIL ME
+              </Typography>
+            </TouchableOpacity>
+          )}
+
+          {user.website && (
+            <TouchableOpacity
+              style={[
+                styles.socialButton,
+                { backgroundColor: theme.colors.surface },
+              ]}
+              onPress={() => Linking.openURL(user.website!)}
+            >
+              <Feather name="globe" size={18} color={theme.colors.text} />
+              <Typography weight="bold" style={{ marginLeft: 12 }}>
+                {user.human_readable_website || 'ON THE WEB'}
+              </Typography>
+            </TouchableOpacity>
+          )}
+        </View>
       </ScrollView>
     </SafeAreaView>
   );
@@ -253,7 +275,13 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     padding: 16,
   },
-  webButton: {
+  socialGrid: {
+    flexDirection: 'row',
+    gap: 12,
+    marginTop: 8,
+  },
+  socialButton: {
+    flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
