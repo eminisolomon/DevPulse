@@ -2,6 +2,7 @@ import { RadialClockChart, SegmentedStatsCard } from '@/components';
 import { Card } from '@/components/Card';
 import { Typography } from '@/components/Typography';
 import { useDurations } from '@/hooks/useDurations';
+import { useStats } from '@/hooks/useStats';
 import { useSummaries } from '@/hooks/useSummaries';
 import { useTheme } from '@/hooks/useTheme';
 import {
@@ -56,10 +57,32 @@ export default function DailyScreen() {
     return summaries.data[0];
   }, [summaries]);
 
-  const totalTimeLabel = useMemo(() => {
-    if (!dayData?.grand_total) return '0 HRS 0 MINS';
-    return formatDisplayDuration(dayData.grand_total.total_seconds || 0);
-  }, [dayData]);
+  const { data: stats } = useStats('last_7_days');
+  const dailyAverage = stats?.data?.daily_average || 0;
+
+  const { goalDiffText, totalTimeLabel } = useMemo(() => {
+    const seconds = dayData?.grand_total?.total_seconds || 0;
+    const label = dayData?.grand_total
+      ? formatDisplayDuration(seconds)
+      : '0 HRS 0 MINS';
+
+    let diffText = '';
+    if (dailyAverage > 0 && seconds > 0) {
+      const diff = seconds - dailyAverage;
+      const sign = diff >= 0 ? '+' : '-';
+      const absDiff = Math.abs(diff);
+      const h = Math.floor(absDiff / 3600);
+      const m = Math.floor((absDiff % 3600) / 60);
+
+      if (h > 0) {
+        diffText = `${sign}${h}h ${m}m from average`;
+      } else {
+        diffText = `${sign}${m}m from average`;
+      }
+    }
+
+    return { totalTimeLabel: label, goalDiffText: diffText };
+  }, [dayData, dailyAverage]);
 
   const projects = useMemo(() => {
     if (!dayData?.projects) return [];
@@ -117,7 +140,7 @@ export default function DailyScreen() {
             color={theme.colors.textSecondary}
             align="center"
           >
-            worked
+            worked {goalDiffText && `• ${goalDiffText}`}
           </Typography>
         </Card>
 

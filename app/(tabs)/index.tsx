@@ -9,9 +9,9 @@ import { useUser } from '@/hooks/useUser';
 import { useAuthStore } from '@/stores/useAuthStore';
 import { formatDuration } from '@/utilities/formatters';
 import { Ionicons } from '@expo/vector-icons';
-import { endOfMonth, format, startOfMonth } from 'date-fns';
+import { endOfMonth, startOfMonth } from 'date-fns';
 import { Redirect, useRouter } from 'expo-router';
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import {
   ActivityIndicator,
   Image,
@@ -35,8 +35,10 @@ export default function Dashboard() {
   const { data: user, isLoading: userLoading } = useUser();
 
   const today = useMemo(() => new Date(), []);
-  const startMonth = useMemo(() => startOfMonth(today), [today]);
-  const endMonth = useMemo(() => endOfMonth(today), [today]);
+  const [viewingMonth, setViewingMonth] = useState(today);
+
+  const startMonth = useMemo(() => startOfMonth(viewingMonth), [viewingMonth]);
+  const endMonth = useMemo(() => endOfMonth(viewingMonth), [viewingMonth]);
 
   const {
     data: stats,
@@ -79,6 +81,8 @@ export default function Dashboard() {
     refetchMonth();
   };
 
+  const dailyAverage = stats?.data?.daily_average || 0;
+
   // Derived Data
   const totalTimeDisplay =
     allTimeStats?.data.human_readable_total || '0 HRS 0 MINS';
@@ -91,8 +95,37 @@ export default function Dashboard() {
       text: p.text || formatDuration(p.total_seconds),
     }));
 
-  const todayTotal = todaySummaries?.cumulative_total?.text || '0 mins';
-  const todayPercent = 0; // TODO: Calculate based on goal if available
+  // Calculate Today's Progress
+  const { todayTotal, todayPercent, todayGoalDiffText } = useMemo(() => {
+    const seconds = todaySummaries?.cumulative_total?.seconds || 0;
+    const text = todaySummaries?.cumulative_total?.text || '0 mins';
+    const percent =
+      dailyAverage > 0
+        ? Math.min(100, Math.round((seconds / dailyAverage) * 100))
+        : 0;
+
+    let goalDiffText = '';
+    if (dailyAverage > 0) {
+      const diff = seconds - dailyAverage;
+      const sign = diff >= 0 ? '+' : '-';
+      const absDiff = Math.abs(diff);
+      const h = Math.floor(absDiff / 3600);
+      const m = Math.floor((absDiff % 3600) / 60);
+
+      if (h > 0) {
+        goalDiffText = `${sign}${h}h ${m}m`;
+      } else {
+        goalDiffText = `${sign}${m}m`;
+      }
+    }
+
+    return {
+      todayTotal: text,
+      todayPercent: percent,
+      todayGoalDiffText: goalDiffText,
+    };
+  }, [todaySummaries, dailyAverage]);
+
   const todayProjects = (todaySummaries?.data?.[0]?.projects || [])
     .slice(0, 3)
     .map((p) => ({
@@ -102,15 +135,41 @@ export default function Dashboard() {
     }));
 
   const monthTotal = monthSummaries?.cumulative_total?.text || '0 hrs 0 mins';
-  const currentMonthName = format(today, 'MMMM');
 
-  // Transform Month Summary Data for Calendar
-  const calendarDays = (monthSummaries?.data || []).map((dayData) => ({
-    date: dayData.range.date,
-    totalTime: dayData.grand_total.text,
-    hasActivity: dayData.grand_total.total_seconds > 0,
-    activityLevel: 0,
-  }));
+  const handlePrevMonth = () => {
+    setViewingMonth((prev: Date) =>
+      startOfMonth(new Date(prev.getFullYear(), prev.getMonth() - 1, 1)),
+    );
+  };
+
+  const handleNextMonth = () => {
+    setViewingMonth((prev: Date) =>
+      startOfMonth(new Date(prev.getFullYear(), prev.getMonth() + 1, 1)),
+    );
+  };
+
+  // Transform Month Summary Data for Calendar with Heatmap
+  const calendarDays = (monthSummaries?.data || []).map((dayData) => {
+    const totalSeconds = dayData.grand_total.total_seconds;
+    let activityLevel = 0;
+
+    if (totalSeconds > 0 && dailyAverage > 0) {
+      const ratio = totalSeconds / dailyAverage;
+      if (ratio > 1) activityLevel = 4;
+      else if (ratio > 0.75) activityLevel = 3;
+      else if (ratio > 0.25) activityLevel = 2;
+      else activityLevel = 1;
+    } else if (totalSeconds > 0) {
+      activityLevel = 2; // Default if no average
+    }
+
+    return {
+      date: dayData.range.date,
+      totalTime: dayData.grand_total.text,
+      hasActivity: totalSeconds > 0,
+      activityLevel,
+    };
+  });
 
   if (isLoading && !stats) {
     return (
@@ -258,13 +317,16 @@ export default function Dashboard() {
           totalTime={todayTotal}
           projects={todayProjects}
           percent={todayPercent}
+          goalDiffText={todayGoalDiffText}
         />
 
         {/* SECTION 3: Monthly Calendar */}
         <MonthlyCalendarCard
-          currentMonth={currentMonthName}
+          monthDate={viewingMonth}
           totalTime={monthTotal}
           days={calendarDays}
+          onPrevMonth={handlePrevMonth}
+          onNextMonth={handleNextMonth}
         />
       </ScrollView>
     </SafeAreaView>

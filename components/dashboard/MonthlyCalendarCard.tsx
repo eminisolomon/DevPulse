@@ -1,5 +1,6 @@
 import { Typography } from '@/components/Typography';
 import { useTheme } from '@/hooks/useTheme';
+import { Ionicons } from '@expo/vector-icons';
 import {
   eachDayOfInterval,
   endOfMonth,
@@ -20,23 +21,28 @@ interface DailySummary {
 }
 
 interface MonthlyCalendarCardProps {
-  currentMonth: string;
+  monthDate: Date;
   totalTime: string;
   days: DailySummary[];
+  onPrevMonth: () => void;
+  onNextMonth: () => void;
 }
 
 export const MonthlyCalendarCard = ({
-  currentMonth,
+  monthDate,
   totalTime,
   days,
+  onPrevMonth,
+  onNextMonth,
 }: MonthlyCalendarCardProps) => {
   const { theme } = useTheme();
   const router = useRouter();
 
-  // Generate calendar days
-  const today = new Date();
-  const start = startOfMonth(today);
-  const end = endOfMonth(today);
+  // Generate calendar days for the specific monthDate
+  const start = startOfMonth(monthDate);
+  const end = endOfMonth(monthDate);
+  const currentMonthName = format(monthDate, 'MMMM');
+
   const calendarDays = eachDayOfInterval({ start, end });
   const startDay = getDay(start);
 
@@ -67,13 +73,24 @@ export const MonthlyCalendarCard = ({
   });
   weeks.push(week);
 
+  const getHeatmapColor = (level: number) => {
+    if (level === 0) return 'transparent';
+    const opacityMap: Record<number, string> = {
+      1: '20', // 12% is too small, let's use hex alpha
+      2: '40',
+      3: '70',
+      4: 'FF',
+    };
+    return theme.colors.primary + (opacityMap[level] || '20');
+  };
+
   const renderDay = (dayData: any | null, index: number) => {
     if (!dayData) return <View key={index} style={styles.dayCell} />;
 
     const { summary, day } = dayData;
     const hasActivity = summary?.hasActivity;
-    const activityColor = hasActivity ? theme.colors.primary : 'transparent';
-    const textColor = hasActivity ? '#000' : theme.colors.text;
+    const activityLevel = summary?.activityLevel || 0;
+    const bgColor = getHeatmapColor(activityLevel);
 
     return (
       <TouchableOpacity
@@ -88,21 +105,17 @@ export const MonthlyCalendarCard = ({
         <View
           style={[
             styles.dayCircle,
-            hasActivity && { backgroundColor: theme.colors.surfaceHighlight },
+            hasActivity && { backgroundColor: bgColor },
+            activityLevel === 4 && {
+              borderColor: theme.colors.primary,
+              borderWidth: 1,
+            },
           ]}
         >
-          {hasActivity && (
-            <View
-              style={[
-                styles.activityBackground,
-                { backgroundColor: theme.colors.surfaceHighlight },
-              ]}
-            />
-          )}
           <Typography
             variant="body"
-            weight="medium"
-            color={theme.colors.text}
+            weight={hasActivity ? 'bold' : 'medium'}
+            color={activityLevel >= 3 ? '#fff' : theme.colors.text}
             align="center"
           >
             {day}
@@ -117,17 +130,30 @@ export const MonthlyCalendarCard = ({
       style={[styles.card, { backgroundColor: theme.colors.surfaceHighlight }]}
     >
       <View style={styles.header}>
-        <Typography variant="title" weight="bold" align="center">
-          {totalTime}
-        </Typography>
-        <Typography
-          variant="caption"
-          color={theme.colors.textSecondary}
-          align="center"
-          style={{ marginTop: 4 }}
-        >
-          worked in {currentMonth}
-        </Typography>
+        <View style={styles.monthNav}>
+          <TouchableOpacity onPress={onPrevMonth} style={styles.navButton}>
+            <Ionicons name="chevron-back" size={24} color={theme.colors.text} />
+          </TouchableOpacity>
+          <View style={styles.monthInfo}>
+            <Typography variant="title" weight="bold" align="center">
+              {totalTime}
+            </Typography>
+            <Typography
+              variant="caption"
+              color={theme.colors.textSecondary}
+              align="center"
+            >
+              worked in {currentMonthName}
+            </Typography>
+          </View>
+          <TouchableOpacity onPress={onNextMonth} style={styles.navButton}>
+            <Ionicons
+              name="chevron-forward"
+              size={24}
+              color={theme.colors.text}
+            />
+          </TouchableOpacity>
+        </View>
       </View>
 
       <View
@@ -185,6 +211,19 @@ const styles = StyleSheet.create({
   },
   header: {
     marginBottom: 20,
+    alignItems: 'center',
+  },
+  monthNav: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    width: '100%',
+  },
+  navButton: {
+    padding: 8,
+  },
+  monthInfo: {
+    flex: 1,
     alignItems: 'center',
   },
   calendarContainer: {

@@ -25,12 +25,14 @@ interface DailyProgressCardProps {
   totalTime: string;
   projects: ProjectTime[];
   percent: number; // 0-100
+  goalDiffText?: string;
 }
 
 export const DailyProgressCard = ({
   totalTime,
   projects,
   percent = 0,
+  goalDiffText,
 }: DailyProgressCardProps) => {
   const { theme } = useTheme();
   const router = useRouter();
@@ -75,7 +77,7 @@ export const DailyProgressCard = ({
           align="center"
           style={{ marginTop: 4 }}
         >
-          worked today
+          worked today {goalDiffText && `• ${goalDiffText}`}
         </Typography>
       </View>
 
@@ -104,7 +106,7 @@ export const DailyProgressCard = ({
             {percent}%
           </Typography>
           <Typography variant="micro" color={theme.colors.textSecondary}>
-            of goal
+            of average
           </Typography>
         </View>
       </View>
