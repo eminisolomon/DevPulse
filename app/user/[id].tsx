@@ -1,6 +1,7 @@
 import { Avatar, Card, Typography } from '@/components';
 import { UserProfileSkeleton } from '@/components/skeletons';
-import { useLeaderboard, useTheme } from '@/hooks';
+import { useLeaderboard, useStats, useTheme, useUser } from '@/hooks';
+import { useLeaderboardStore } from '@/stores';
 import { formatDuration } from '@/utilities';
 import { Feather } from '@expo/vector-icons';
 import { useLocalSearchParams } from 'expo-router';
@@ -17,14 +18,53 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 export default function UserProfileScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const { theme } = useTheme();
-  const { data: leaderboardData, isLoading } = useLeaderboard();
+  const { data: leaderboardData, isLoading: isLeaderboardLoading } =
+    useLeaderboard();
+  const { data: currentUser, isLoading: isUserLoading } = useUser();
+  const { data: statsData, isLoading: isStatsLoading } =
+    useStats('last_7_days');
+  const { userRanks } = useLeaderboardStore();
+
+  const isSelf = currentUser?.data?.id === id;
 
   const userRank = useMemo(() => {
-    if (!leaderboardData?.pages) return null;
-    return leaderboardData.pages
-      .flatMap((page) => page.data)
-      .find((item) => item.user.id === id);
-  }, [leaderboardData, id]);
+    if (leaderboardData?.pages) {
+      const found = leaderboardData.pages
+        .flatMap((page: any) => page.data)
+        .find((item: any) => item.user.id === id);
+      if (found) return found;
+    }
+
+    if (isSelf && currentUser?.data && statsData?.data) {
+      return {
+        rank: userRanks.global || '?',
+        user: currentUser.data,
+        running_total: {
+          total_seconds: statsData.data.total_seconds,
+          human_readable_total: statsData.data.human_readable_total,
+          daily_average: statsData.data.daily_average,
+          human_readable_daily_average:
+            statsData.data.human_readable_daily_average,
+          languages: statsData.data.languages.map((l: any) => ({
+            name: l.name,
+            total_seconds: l.total_seconds,
+          })),
+        },
+      };
+    }
+
+    return null;
+  }, [
+    leaderboardData,
+    id,
+    isSelf,
+    currentUser,
+    statsData,
+    userRanks.global,
+  ]) as any;
+
+  const isLoading =
+    isLeaderboardLoading || (isSelf && (isUserLoading || isStatsLoading));
 
   if (isLoading) {
     return (
@@ -210,7 +250,7 @@ export default function UserProfileScreen() {
           TOP LANGUAGES
         </Typography>
         <Card style={styles.languagesCard}>
-          {running_total.languages.map((lang, index) => (
+          {running_total.languages.map((lang: any, index: number) => (
             <View
               key={lang.name}
               style={[
