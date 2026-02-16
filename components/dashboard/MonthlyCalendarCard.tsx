@@ -76,7 +76,15 @@ export const MonthlyCalendarCard = ({
     const textColor = hasActivity ? '#000' : theme.colors.text;
 
     return (
-      <View key={index} style={styles.dayCell}>
+      <TouchableOpacity
+        key={index}
+        style={styles.dayCell}
+        onPress={() => {
+          const dateStr = format(dayData.date, 'yyyy-MM-dd');
+          router.push(`/stats/today?date=${dateStr}`);
+        }}
+        activeOpacity={0.7}
+      >
         <View
           style={[
             styles.dayCircle,
@@ -100,7 +108,7 @@ export const MonthlyCalendarCard = ({
             {day}
           </Typography>
         </View>
-      </View>
+      </TouchableOpacity>
     );
   };
 

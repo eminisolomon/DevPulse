@@ -4,7 +4,15 @@ import { Typography } from '@/components/Typography';
 import { useDurations } from '@/hooks/useDurations';
 import { useSummaries } from '@/hooks/useSummaries';
 import { useTheme } from '@/hooks/useTheme';
-import { endOfDay, startOfDay } from 'date-fns';
+import {
+  endOfDay,
+  format,
+  isToday,
+  isYesterday,
+  parseISO,
+  startOfDay,
+} from 'date-fns';
+import { Stack, useLocalSearchParams } from 'expo-router';
 import React, { useMemo } from 'react';
 import {
   ActivityIndicator,
@@ -17,9 +25,28 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function TodayScreen() {
   const { theme } = useTheme();
-  const today = new Date();
-  const start = startOfDay(today);
-  const end = endOfDay(today);
+  const params = useLocalSearchParams<{ date?: string }>();
+
+  const selectedDate = useMemo(() => {
+    if (params.date) {
+      try {
+        return parseISO(params.date);
+      } catch (e) {
+        console.warn('Invalid date passed to today screen:', params.date);
+        return new Date();
+      }
+    }
+    return new Date();
+  }, [params.date]);
+
+  const start = startOfDay(selectedDate);
+  const end = endOfDay(selectedDate);
+
+  const title = useMemo(() => {
+    if (isToday(selectedDate)) return 'TODAY';
+    if (isYesterday(selectedDate)) return 'YESTERDAY';
+    return format(selectedDate, 'EEEE, dd MMM').toUpperCase();
+  }, [selectedDate]);
 
   const {
     data: summaries,
@@ -29,7 +56,7 @@ export default function TodayScreen() {
   } = useSummaries(start, end);
 
   const { data: durationSessions, isLoading: durationsLoading } =
-    useDurations(today);
+    useDurations(selectedDate);
 
   const todayData = useMemo(() => {
     if (!summaries?.data?.[0]) return null;
@@ -74,6 +101,7 @@ export default function TodayScreen() {
       style={[styles.container, { backgroundColor: theme.colors.background }]}
       edges={['top']}
     >
+      <Stack.Screen options={{ title }} />
       <ScrollView
         contentContainerStyle={styles.scrollContent}
         refreshControl={
@@ -84,13 +112,6 @@ export default function TodayScreen() {
           />
         }
       >
-        {/* Header Section */}
-        <View style={styles.header}>
-          <Typography variant="display" weight="bold">
-            TODAY
-          </Typography>
-        </View>
-
         {/* Total Time Card */}
         <Card style={styles.totalCard}>
           <Typography
