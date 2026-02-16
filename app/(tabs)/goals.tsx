@@ -1,4 +1,5 @@
 import { Card } from '@/components/Card';
+import { ScreenHeader } from '@/components/ScreenHeader';
 import { Typography } from '@/components/Typography';
 import { useGoals, useTheme } from '@/hooks';
 import { WakaTimeGoal } from '@/interfaces/goal';
@@ -29,7 +30,6 @@ export default function GoalsScreen() {
   };
 
   const renderGoalItem = ({ item }: { item: WakaTimeGoal }) => {
-    // Basic progress calculation if chart_data exists
     const latestData = item.chart_data?.[item.chart_data.length - 1];
     const progress = latestData
       ? Math.min(latestData.actual_seconds / latestData.goal_seconds, 1)
@@ -118,14 +118,7 @@ export default function GoalsScreen() {
       style={[styles.container, { backgroundColor: theme.colors.background }]}
       edges={['top']}
     >
-      <View style={styles.header}>
-        <Typography variant="headline" weight="bold">
-          Goals
-        </Typography>
-        <Typography color={theme.colors.textSecondary}>
-          Track your coding milestones
-        </Typography>
-      </View>
+      <ScreenHeader title="Goals" subtitle="Track your coding milestones" />
 
       <FlatList
         data={data?.data}
@@ -170,10 +163,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  header: {
-    padding: 24,
-    paddingBottom: 16,
   },
   listContent: {
     padding: 16,

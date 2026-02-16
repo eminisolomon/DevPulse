@@ -1,4 +1,5 @@
 import { Card } from '@/components/Card';
+import { ScreenHeader } from '@/components/ScreenHeader';
 import { Typography } from '@/components/Typography';
 import { useLeaderboard, useTheme } from '@/hooks';
 import { LeaderboardUser } from '@/interfaces/leaderboard';
@@ -19,18 +20,39 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 export default function LeaderboardScreen() {
   const { theme, isDark } = useTheme();
   const router = useRouter();
-  const { data, isLoading, refetch, isRefetching } = useLeaderboard();
+  const {
+    data,
+    isLoading,
+    isRefetching,
+    refetch,
+    hasNextPage,
+    fetchNextPage,
+    isFetchingNextPage,
+  } = useLeaderboard();
 
-  const leaderboardData = data?.data || [];
-  const topThree = leaderboardData.slice(0, 3);
+  const leaderboardData = React.useMemo(
+    () => data?.pages.flatMap((page) => page.data) || [],
+    [data],
+  );
+
+  const topThree = React.useMemo(
+    () => leaderboardData.slice(0, 3),
+    [leaderboardData],
+  );
+
   // Reorder for display: [2nd, 1st, 3rd]
-  const displayTopThree = [
-    topThree[1], // 2nd
-    topThree[0], // 1st
-    topThree[2], // 3rd
-  ].filter(Boolean);
+  const displayTopThree = React.useMemo(() => {
+    return [
+      topThree[1], // 2nd
+      topThree[0], // 1st
+      topThree[2], // 3rd
+    ].filter(Boolean);
+  }, [topThree]);
 
-  const remainingUsers = leaderboardData.slice(3);
+  const remainingUsers = React.useMemo(
+    () => leaderboardData.slice(3),
+    [leaderboardData],
+  );
 
   const renderLeaderboardItem = ({ item }: { item: LeaderboardUser }) => (
     <TouchableOpacity
@@ -186,14 +208,7 @@ export default function LeaderboardScreen() {
       style={[styles.container, { backgroundColor: theme.colors.background }]}
       edges={['top']}
     >
-      <View style={styles.header}>
-        <Typography variant="headline" weight="bold">
-          Leaderboard
-        </Typography>
-        <Typography color={theme.colors.textSecondary} style={{ marginTop: 4 }}>
-          Top developers this week
-        </Typography>
-      </View>
+      <ScreenHeader title="Leaderboard" subtitle="Top developers this week" />
 
       <FlatList
         data={remainingUsers}
@@ -201,6 +216,19 @@ export default function LeaderboardScreen() {
         keyExtractor={(item) => item.user.id}
         contentContainerStyle={styles.listContent}
         ListHeaderComponent={renderTopThree}
+        ListFooterComponent={
+          isFetchingNextPage ? (
+            <View style={styles.footerLoader}>
+              <ActivityIndicator color={theme.colors.primary} />
+            </View>
+          ) : null
+        }
+        onEndReached={() => {
+          if (hasNextPage && !isFetchingNextPage) {
+            fetchNextPage();
+          }
+        }}
+        onEndReachedThreshold={0.5}
         showsVerticalScrollIndicator={false}
         refreshControl={
           <RefreshControl
@@ -366,5 +394,9 @@ const styles = StyleSheet.create({
   },
   emptySubtitle: {
     textAlign: 'center',
+  },
+  footerLoader: {
+    paddingVertical: 20,
+    alignItems: 'center',
   },
 });

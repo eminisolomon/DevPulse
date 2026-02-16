@@ -25,10 +25,19 @@ export const wakaService = {
     ),
   getGoals: (): Promise<WakaTimeGoalsResponse> =>
     fetchWithAuth<WakaTimeGoalsResponse>('/users/current/goals'),
-  getLeaderboard: (language?: string): Promise<WakaTimeLeaderboard> =>
-    fetchWithAuth<WakaTimeLeaderboard>(
-      language ? `/leaders?language=${language}` : '/leaders',
-    ),
+  getLeaderboard: (
+    language?: string,
+    countryCode?: string,
+    page?: number,
+  ): Promise<WakaTimeLeaderboard> => {
+    let url = '/leaders';
+    const params = new URLSearchParams();
+    if (language) params.append('language', language);
+    if (countryCode) params.append('country_code', countryCode);
+    if (page) params.append('page', page.toString());
+    if (params.toString()) url += `?${params.toString()}`;
+    return fetchWithAuth<WakaTimeLeaderboard>(url);
+  },
   getDurations: (date: string): Promise<any> =>
     fetchWithAuth<any>(`/users/current/durations?date=${date}`),
 };

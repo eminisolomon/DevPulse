@@ -1,4 +1,5 @@
 import { Card } from '@/components/Card';
+import { ScreenHeader } from '@/components/ScreenHeader';
 import { Typography } from '@/components/Typography';
 import { useProjects, useTheme } from '@/hooks';
 import { WakaTimeProject } from '@/interfaces/project';
@@ -80,14 +81,10 @@ export default function ProjectsScreen() {
       style={[styles.container, { backgroundColor: theme.colors.background }]}
       edges={['top']}
     >
-      <View style={styles.header}>
-        <Typography variant="headline" weight="bold">
-          Projects
-        </Typography>
-        <Typography color={theme.colors.textSecondary}>
-          {data?.data?.length || 0} active projects
-        </Typography>
-      </View>
+      <ScreenHeader
+        title="Projects"
+        subtitle={`${data?.data?.length || 0} active projects`}
+      />
 
       <FlatList
         data={data?.data}
@@ -132,10 +129,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  header: {
-    padding: 24,
-    paddingBottom: 16,
   },
   listContent: {
     padding: 16,
