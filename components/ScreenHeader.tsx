@@ -28,10 +28,10 @@ export const ScreenHeader = ({ title, subtitle, style }: ScreenHeaderProps) => {
 
 const styles = StyleSheet.create({
   header: {
-    padding: 24,
-    paddingBottom: 0,
+    padding: 16,
+    paddingBottom: 8,
   },
   subtitle: {
-    marginTop: 4,
+    marginTop: 2,
   },
 });

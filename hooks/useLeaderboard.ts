@@ -1,12 +1,18 @@
 import { WakaTimeLeaderboard } from '@/interfaces/leaderboard';
 import { wakaService } from '@/services/waka.service';
-import { useInfiniteQuery } from '@tanstack/react-query';
+import { InfiniteData, useInfiniteQuery } from '@tanstack/react-query';
 
 export function useLeaderboard(language?: string, countryCode?: string) {
-  return useInfiniteQuery<WakaTimeLeaderboard>({
+  return useInfiniteQuery<
+    WakaTimeLeaderboard,
+    Error,
+    InfiniteData<WakaTimeLeaderboard>,
+    (string | undefined)[],
+    number
+  >({
     queryKey: ['leaderboard', language, countryCode],
-    queryFn: ({ pageParam = 1 }) =>
-      wakaService.getLeaderboard(language, countryCode, pageParam as number),
+    queryFn: ({ pageParam }) =>
+      wakaService.getLeaderboard(language, countryCode, pageParam),
     initialPageParam: 1,
     getNextPageParam: (lastPage) => {
       if (lastPage.page < lastPage.total_pages) {

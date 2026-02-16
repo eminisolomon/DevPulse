@@ -118,7 +118,11 @@ export default function GoalsScreen() {
       style={[styles.container, { backgroundColor: theme.colors.background }]}
       edges={['top']}
     >
-      <ScreenHeader title="Goals" subtitle="Track your coding milestones" />
+      <ScreenHeader
+        title="Goals"
+        subtitle="Track your coding milestones"
+        style={{ paddingBottom: 16 }}
+      />
 
       <FlatList
         data={data?.data}

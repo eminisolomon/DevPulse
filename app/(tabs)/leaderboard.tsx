@@ -208,7 +208,11 @@ export default function LeaderboardScreen() {
       style={[styles.container, { backgroundColor: theme.colors.background }]}
       edges={['top']}
     >
-      <ScreenHeader title="Leaderboard" subtitle="Top developers this week" />
+      <ScreenHeader
+        title="Leaderboard"
+        subtitle="Top developers this week"
+        style={{ paddingBottom: 0 }}
+      />
 
       <FlatList
         data={remainingUsers}

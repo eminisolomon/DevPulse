@@ -14,8 +14,11 @@ export const wakaService = {
       `/users/current/summaries?start=${start}&end=${end}`,
     ),
   getUser: (): Promise<User> => fetchWithAuth<User>('/users/current'),
-  getProjects: (): Promise<WakaTimeProjectsResponse> =>
-    fetchWithAuth<WakaTimeProjectsResponse>('/users/current/projects'),
+  getProjects: (page?: number): Promise<WakaTimeProjectsResponse> => {
+    let url = '/users/current/projects';
+    if (page) url += `?page=${page}`;
+    return fetchWithAuth<WakaTimeProjectsResponse>(url);
+  },
   getProjectStats: (
     projectName: string,
     range: string = 'last_7_days',
