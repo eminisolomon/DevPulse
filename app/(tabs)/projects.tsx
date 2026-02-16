@@ -1,23 +1,25 @@
+import { BottomSheet, ListItem, Typography } from '@/components';
 import { ScreenHeader } from '@/components/ScreenHeader';
-import { ProjectListSkeleton } from '@/components/skeletons/ProjectListSkeleton';
-import { Typography } from '@/components/Typography';
+import { ProjectListSkeleton } from '@/components/skeletons';
 import { ProjectCard } from '@/features/projects/ProjectCard';
 import { useProjects, useTheme } from '@/hooks';
-import { WakaTimeProject } from '@/interfaces/project';
+import { WakaTimeProject } from '@/interfaces';
+import { toastSuccess } from '@/utilities';
 import { Feather } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';
+import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import React from 'react';
 import {
   ActivityIndicator,
   FlatList,
   RefreshControl,
   StyleSheet,
+  TextInput,
+  TouchableOpacity,
   View,
 } from 'react-native';
 
 export default function ProjectsScreen() {
   const { theme } = useTheme();
-  const router = useRouter();
   const {
     data,
     isLoading,
@@ -28,13 +30,51 @@ export default function ProjectsScreen() {
     isFetchingNextPage,
   } = useProjects();
 
+  const [searchQuery, setSearchQuery] = React.useState('');
+  const [showSearch, setShowSearch] = React.useState(false);
+  const [sortBy, setSortBy] = React.useState<'recent' | 'name'>('recent');
+  const sortSheetRef = React.useRef<BottomSheetModal>(null);
+
   const projectsData = React.useMemo(
     () => data?.pages.flatMap((page) => page.data) || [],
     [data],
   );
 
+  const filteredProjects = React.useMemo(() => {
+    let result = [...projectsData];
+
+    // Filter by search query
+    if (searchQuery) {
+      const query = searchQuery.toLowerCase();
+      result = result.filter((p) => p.name.toLowerCase().includes(query));
+    }
+
+    // Sort
+    result.sort((a, b) => {
+      if (sortBy === 'name') {
+        return a.name.localeCompare(b.name);
+      }
+      // Recent
+      const dateA = new Date(a.last_heartbeat_at || a.created_at).getTime();
+      const dateB = new Date(b.last_heartbeat_at || b.created_at).getTime();
+      return dateB - dateA;
+    });
+
+    return result;
+  }, [projectsData, searchQuery, sortBy]);
+
   const renderProjectItem = ({ item }: { item: WakaTimeProject }) => {
     return <ProjectCard item={item} />;
+  };
+
+  const handlePresentSortSheet = React.useCallback(() => {
+    sortSheetRef.current?.present();
+  }, []);
+
+  const handleSortSelect = (sort: 'recent' | 'name') => {
+    setSortBy(sort);
+    sortSheetRef.current?.dismiss();
+    toastSuccess(`Sorted by ${sort === 'recent' ? 'Recently Active' : 'Name'}`);
   };
 
   if (isLoading && !data) {
@@ -48,15 +88,11 @@ export default function ProjectsScreen() {
           actions={[
             {
               icon: 'filter-variant',
-              onPress: () => {
-                /* TODO: Implement filtering */
-              },
+              onPress: handlePresentSortSheet,
             },
             {
               icon: 'magnify',
-              onPress: () => {
-                /* TODO: Implement search */
-              },
+              onPress: () => setShowSearch(!showSearch),
             },
           ]}
         />
@@ -75,26 +111,55 @@ export default function ProjectsScreen() {
         actions={[
           {
             icon: 'filter-variant',
-            onPress: () => {
-              /* TODO: Implement filtering */
-            },
+            onPress: handlePresentSortSheet,
           },
           {
             icon: 'magnify',
             onPress: () => {
-              /* TODO: Implement search */
+              setShowSearch((prev) => !prev);
+              if (showSearch) setSearchQuery('');
             },
           },
         ]}
       />
 
+      {showSearch && (
+        <View
+          style={[
+            styles.searchContainer,
+            { backgroundColor: theme.colors.surface },
+          ]}
+        >
+          <Feather
+            name="search"
+            size={20}
+            color={theme.colors.textSecondary}
+            style={styles.searchIcon}
+          />
+          <TextInput
+            style={[styles.searchInput, { color: theme.colors.text }]}
+            placeholder="Search projects..."
+            placeholderTextColor={theme.colors.textSecondary}
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+            autoFocus
+          />
+          {searchQuery.length > 0 && (
+            <TouchableOpacity onPress={() => setSearchQuery('')}>
+              <Feather name="x" size={18} color={theme.colors.textSecondary} />
+            </TouchableOpacity>
+          )}
+        </View>
+      )}
+
       <FlatList
-        data={projectsData}
+        data={filteredProjects}
         renderItem={renderProjectItem}
         keyExtractor={(item) => item.id}
         contentContainerStyle={styles.listContent}
         onEndReached={() => {
-          if (hasNextPage && !isFetchingNextPage) {
+          if (hasNextPage && !isFetchingNextPage && !searchQuery) {
+            // Disable pagination when searching for now
             fetchNextPage();
           }
         }}
@@ -132,18 +197,49 @@ export default function ProjectsScreen() {
               weight="semibold"
               style={styles.emptyTitle}
             >
-              No Projects Found
+              {searchQuery ? 'No Projects Match' : 'No Projects Found'}
             </Typography>
             <Typography
               color={theme.colors.textSecondary}
               style={styles.emptySubtitle}
             >
-              Make sure you have projects tracked in WakaTime.
+              {searchQuery
+                ? `No projects found matching "${searchQuery}"`
+                : 'Make sure you have projects tracked in WakaTime.'}
             </Typography>
           </View>
         }
         showsVerticalScrollIndicator={false}
       />
+
+      <BottomSheet
+        ref={sortSheetRef}
+        title="Sort Projects"
+        snapPoints={['30%']}
+      >
+        <View style={{ paddingBottom: 24 }}>
+          <ListItem
+            title="Recently Active"
+            onPress={() => handleSortSelect('recent')}
+            showChevron={false}
+            rightIcon={
+              sortBy === 'recent' ? (
+                <Feather name="check" size={20} color={theme.colors.primary} />
+              ) : undefined
+            }
+          />
+          <ListItem
+            title="Name (A-Z)"
+            onPress={() => handleSortSelect('name')}
+            showChevron={false}
+            rightIcon={
+              sortBy === 'name' ? (
+                <Feather name="check" size={20} color={theme.colors.primary} />
+              ) : undefined
+            }
+          />
+        </View>
+      </BottomSheet>
     </View>
   );
 }
@@ -185,5 +281,23 @@ const styles = StyleSheet.create({
   emptySubtitle: {
     textAlign: 'center',
     maxWidth: 250,
+  },
+  searchContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    marginHorizontal: 16,
+    borderRadius: 8,
+    marginBottom: 8,
+  },
+  searchIcon: {
+    marginRight: 8,
+  },
+  searchInput: {
+    flex: 1,
+    fontSize: 16,
+    height: 24, // Minimal height to contain text
+    padding: 0,
   },
 });

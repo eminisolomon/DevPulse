@@ -1,5 +1,6 @@
 import { WakaTimeGoal, WakaTimeGoalsResponse } from '@/interfaces/goal';
 import { WakaTimeLeaderboard } from '@/interfaces/leaderboard';
+import { WakaTimeOrganizationsResponse } from '@/interfaces/organization';
 import { WakaTimeProjectsResponse } from '@/interfaces/project';
 import { WakaTimeAllTime, WakaTimeStats } from '@/interfaces/stats';
 import { WakaTimeSummaries } from '@/interfaces/summary';
@@ -79,11 +80,13 @@ export const wakaService = {
   getAllTimeSinceToday: (): Promise<WakaTimeAllTime> =>
     fetchWithAuth<WakaTimeAllTime>('/users/current/all_time_since_today'),
 
-  getOrganizations: (): Promise<any> =>
-    fetchWithAuth<any>('/users/current/organizations'),
+  getOrganizations: (): Promise<WakaTimeOrganizationsResponse> =>
+    fetchWithAuth<WakaTimeOrganizationsResponse>(
+      '/users/current/organizations',
+    ),
 
-  getOrgStats: (orgId: string, range: string): Promise<any> =>
-    fetchWithAuth<any>(
-      `/users/current/organizations/${orgId}/stats?range=${range}`,
+  getOrgStats: (orgId: string, range: string): Promise<WakaTimeStats> =>
+    fetchWithAuth<WakaTimeStats>(
+      `/users/current/organizations/${orgId}/stats/${range}`,
     ),
 };

@@ -1,6 +1,5 @@
-import { BottomSheet, ListItem, Typography } from '@/components';
-import { ScreenHeader } from '@/components/ScreenHeader';
-import { LeaderboardSkeleton } from '@/components/skeletons/LeaderboardSkeleton';
+import { BottomSheet, ListItem, ScreenHeader, Typography } from '@/components';
+import { LeaderboardSkeleton } from '@/components/skeletons';
 import { useLeaderboardContext } from '@/contexts/LeaderboardContext';
 import {
   CurrentUserRank,
@@ -8,6 +7,7 @@ import {
   TopThreePodium,
 } from '@/features/leaderboard';
 import { useTheme } from '@/hooks';
+import { useOrganizationStore } from '@/stores';
 import { Feather } from '@expo/vector-icons';
 import { BottomSheetFlatList, BottomSheetModal } from '@gorhom/bottom-sheet';
 import React from 'react';
@@ -23,6 +23,7 @@ import {
 export default function LeaderboardScreen() {
   const { theme } = useTheme();
   const bottomSheetRef = React.useRef<BottomSheetModal>(null);
+  const { selectedOrganization } = useOrganizationStore();
 
   const {
     selectedCountry,
@@ -57,6 +58,17 @@ export default function LeaderboardScreen() {
     bottomSheetRef.current?.dismiss();
   };
 
+  const getSubtitle = () => {
+    if (selectedOrganization) {
+      return `${selectedOrganization.name} Leaderboard`;
+    }
+    return selectedCountry && selectedCountry !== 'GLOBAL'
+      ? `${selectedCountry} Top Developers`
+      : 'Global Top Developers';
+  };
+
+  const showCountrySelector = !selectedOrganization;
+
   if (isLoading && !leaderboardData.length) {
     return (
       <View
@@ -64,12 +76,40 @@ export default function LeaderboardScreen() {
       >
         <ScreenHeader
           title="Leaderboard"
-          subtitle={
-            selectedCountry && selectedCountry !== 'GLOBAL'
-              ? `${selectedCountry} Top Developers`
-              : 'Global Top Developers'
-          }
+          subtitle={getSubtitle()}
           rightElement={
+            showCountrySelector ? (
+              <TouchableOpacity
+                activeOpacity={0.7}
+                style={{
+                  padding: 8,
+                  backgroundColor: theme.colors.surfaceHighlight,
+                  borderRadius: 8,
+                }}
+                onPress={handlePresentModalPress}
+              >
+                <Typography variant="title">
+                  {countries.find((c) => c.value === selectedCountry)?.icon ||
+                    '🌍'}
+                </Typography>
+              </TouchableOpacity>
+            ) : null
+          }
+        />
+        <LeaderboardSkeleton />
+      </View>
+    );
+  }
+
+  return (
+    <View
+      style={[styles.container, { backgroundColor: theme.colors.background }]}
+    >
+      <ScreenHeader
+        title="Leaderboard"
+        subtitle={getSubtitle()}
+        rightElement={
+          showCountrySelector ? (
             <TouchableOpacity
               activeOpacity={0.7}
               style={{
@@ -84,38 +124,7 @@ export default function LeaderboardScreen() {
                   '🌍'}
               </Typography>
             </TouchableOpacity>
-          }
-        />
-        <LeaderboardSkeleton />
-      </View>
-    );
-  }
-
-  return (
-    <View
-      style={[styles.container, { backgroundColor: theme.colors.background }]}
-    >
-      <ScreenHeader
-        title="Leaderboard"
-        subtitle={
-          selectedCountry && selectedCountry !== 'GLOBAL'
-            ? `${selectedCountry} Top Developers`
-            : 'Global Top Developers'
-        }
-        rightElement={
-          <TouchableOpacity
-            activeOpacity={0.7}
-            style={{
-              padding: 8,
-              backgroundColor: theme.colors.surfaceHighlight,
-              borderRadius: 8,
-            }}
-            onPress={handlePresentModalPress}
-          >
-            <Typography variant="title">
-              {countries.find((c) => c.value === selectedCountry)?.icon || '🌍'}
-            </Typography>
-          </TouchableOpacity>
+          ) : null
         }
       />
 
@@ -125,7 +134,9 @@ export default function LeaderboardScreen() {
         keyExtractor={(item) => item.user.id}
         contentContainerStyle={[
           styles.listContent,
-          currentUserRank && styles.listContentWithFooter,
+          currentUserRank &&
+            !selectedOrganization &&
+            styles.listContentWithFooter,
         ]}
         ListHeaderComponent={<TopThreePodium users={topThree} />}
         ListFooterComponent={
@@ -147,8 +158,8 @@ export default function LeaderboardScreen() {
             refreshing={isRefetching}
             onRefresh={refetch}
             tintColor={theme.colors.primary}
-            colors={[theme.colors.primary]} // For Android
-            progressBackgroundColor={theme.colors.surface} // For Android
+            colors={[theme.colors.primary]}
+            progressBackgroundColor={theme.colors.surface}
           />
         }
         ListEmptyComponent={
@@ -160,20 +171,24 @@ export default function LeaderboardScreen() {
                 weight="semibold"
                 style={styles.emptyTitle}
               >
-                Leaderboard Unavailable
+                {selectedOrganization
+                  ? 'No Organization Data'
+                  : 'Leaderboard Unavailable'}
               </Typography>
               <Typography
                 color={theme.colors.textSecondary}
                 style={styles.emptySubtitle}
               >
-                Unable to fetch leaderboard data at this time.
+                {selectedOrganization
+                  ? `Leaderboard for ${selectedOrganization.name} is not available yet.`
+                  : 'Unable to fetch leaderboard data at this time.'}
               </Typography>
             </View>
           ) : null
         }
       />
 
-      <CurrentUserRank />
+      {!selectedOrganization && <CurrentUserRank />}
 
       <BottomSheet
         ref={bottomSheetRef}

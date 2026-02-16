@@ -13,6 +13,7 @@ export * from './nav';
 export * from './Progress';
 export * from './Providers';
 export * from './Radio';
+export * from './ScreenHeader';
 export * from './SegmentedStatsCard';
 export * from './Select';
 export * from './Skeleton';

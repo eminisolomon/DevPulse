@@ -1,10 +1,9 @@
-import { Avatar } from '@/components/Avatar';
-import { Typography } from '@/components/Typography';
-import { useTheme } from '@/hooks/useTheme';
-import { useUser } from '@/hooks/useUser';
+import { Avatar, Typography } from '@/components';
+import { useTheme, useUser } from '@/hooks';
 import { useRouter } from 'expo-router';
 import React from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
+import { OrganizationSwitcher } from './OrganizationSwitcher';
 
 export const DashboardHeader = () => {
   const { theme } = useTheme();
@@ -29,6 +28,7 @@ export const DashboardHeader = () => {
         </View>
 
         <View style={styles.rightContainer}>
+          <OrganizationSwitcher />
           <TouchableOpacity onPress={() => router.push('/settings')}>
             <Avatar
               source={user?.data?.photo ? { uri: user.data.photo } : undefined}

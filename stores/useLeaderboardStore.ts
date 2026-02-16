@@ -18,8 +18,8 @@ interface LeaderboardState {
   page: number;
   hasMore: boolean;
   setSelectedCountry: (country: string | undefined) => void;
-  fetchLeaderboard: (reset?: boolean) => Promise<void>;
-  fetchNextPage: () => Promise<void>;
+  fetchLeaderboard: (reset?: boolean, orgId?: string) => Promise<void>;
+  fetchNextPage: (orgId?: string) => Promise<void>;
   fetchUserRanks: (countryCode?: string) => Promise<void>;
 }
 
@@ -40,7 +40,7 @@ export const useLeaderboardStore = create<LeaderboardState>()(
         set({ selectedCountry: country });
         get().fetchLeaderboard(true);
       },
-      fetchLeaderboard: async (reset = false) => {
+      fetchLeaderboard: async (reset = false, orgId?: string) => {
         const { selectedCountry } = get();
         set({
           isLoading: true,
@@ -49,6 +49,16 @@ export const useLeaderboardStore = create<LeaderboardState>()(
         });
 
         try {
+          if (orgId) {
+            set({
+              data: [],
+              isLoading: false,
+              page: 1,
+              hasMore: false,
+            });
+            return;
+          }
+
           const countryCode =
             selectedCountry === 'GLOBAL' ? undefined : selectedCountry;
           const response = await wakaService.getLeaderboard(
@@ -66,7 +76,7 @@ export const useLeaderboardStore = create<LeaderboardState>()(
           set({ error: error.message, isLoading: false });
         }
       },
-      fetchNextPage: async () => {
+      fetchNextPage: async (orgId?: string) => {
         const {
           page,
           hasMore,
@@ -76,6 +86,7 @@ export const useLeaderboardStore = create<LeaderboardState>()(
           data,
         } = get();
         if (!hasMore || isFetchingNextPage || isLoading) return;
+        if (orgId) return;
 
         set({ isFetchingNextPage: true });
         try {

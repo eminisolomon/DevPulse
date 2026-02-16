@@ -1,9 +1,7 @@
-import { Card } from '@/components/Card';
-import { ScreenHeader } from '@/components/ScreenHeader';
-import { GoalsSkeleton } from '@/components/skeletons/GoalsSkeleton';
-import { Typography } from '@/components/Typography';
+import { Card, ScreenHeader, Typography } from '@/components';
+import { GoalsSkeleton } from '@/components/skeletons';
 import { useGoals, useTheme } from '@/hooks';
-import { WakaTimeGoal } from '@/interfaces/goal';
+import { WakaTimeGoal } from '@/interfaces';
 import { Feather } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import React from 'react';

@@ -1,4 +1,4 @@
-import { useLeaderboardStore } from '@/stores/useLeaderboardStore';
+import { useLeaderboardStore, useOrganizationStore } from '@/stores';
 import { useEffect } from 'react';
 
 export function useLeaderboard() {
@@ -12,12 +12,12 @@ export function useLeaderboard() {
     fetchNextPage,
     hasMore,
   } = useLeaderboardStore();
+  const { selectedOrganization } = useOrganizationStore();
+  const orgId = selectedOrganization?.id;
 
   useEffect(() => {
-    if (data.length === 0 && !isLoading && !error) {
-      fetchLeaderboard();
-    }
-  }, [data.length, fetchLeaderboard, isLoading, error]);
+    fetchLeaderboard(true, orgId);
+  }, [fetchLeaderboard, orgId, selectedCountry]);
 
   return {
     data: {
@@ -26,8 +26,8 @@ export function useLeaderboard() {
     },
     isLoading,
     isRefetching: isLoading,
-    refetch: () => fetchLeaderboard(true),
-    fetchNextPage,
+    refetch: () => fetchLeaderboard(true, orgId),
+    fetchNextPage: () => fetchNextPage(orgId),
     hasNextPage: hasMore,
     isFetchingNextPage,
     error,

@@ -13,7 +13,7 @@ interface StatsState {
   data: StatsCache;
   isLoading: boolean;
   error: string | null;
-  fetchStats: (range: StatsRange) => Promise<void>;
+  fetchStats: (range: StatsRange, orgId?: string) => Promise<void>;
 }
 
 export const useStatsStore = create<StatsState>()(
@@ -22,12 +22,16 @@ export const useStatsStore = create<StatsState>()(
       data: {},
       isLoading: false,
       error: null,
-      fetchStats: async (range) => {
+      fetchStats: async (range, orgId) => {
+        const cacheKey = orgId ? `${range}_${orgId}` : range;
         set({ isLoading: true, error: null });
         try {
-          const stats = await wakaService.getStats(range);
+          const stats = orgId
+            ? await wakaService.getOrgStats(orgId, range)
+            : await wakaService.getStats(range);
+
           set((state) => ({
-            data: { ...state.data, [range]: stats },
+            data: { ...state.data, [cacheKey]: stats },
             isLoading: false,
           }));
         } catch (error: any) {

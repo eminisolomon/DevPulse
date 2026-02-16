@@ -1,4 +1,4 @@
-import { DashboardSkeleton } from '@/components/skeletons/DashboardSkeleton';
+import { DashboardSkeleton } from '@/components/skeletons';
 import {
   DailyProgressCard,
   DashboardHeader,
@@ -7,8 +7,8 @@ import {
   TotalTimeCard,
 } from '@/features/dashboard';
 import { useAllTime, useStats, useSummaries, useTheme, useUser } from '@/hooks';
-import { useAuthStore } from '@/stores/useAuthStore';
-import { formatDuration } from '@/utilities/formatters';
+import { useAuthStore } from '@/stores';
+import { formatDuration } from '@/utilities';
 import { endOfMonth, startOfMonth } from 'date-fns';
 import { Redirect, useRouter } from 'expo-router';
 import React, { useMemo, useState } from 'react';
