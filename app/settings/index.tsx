@@ -327,7 +327,7 @@ export default function SettingsScreen() {
         <BottomSheet
           ref={logoutBottomSheetRef}
           title="Logout"
-          snapPoints={['35%']}
+          snapPoints={['50%']}
         >
           <View style={styles.logoutContent}>
             <View style={styles.logoutIconContainer}>

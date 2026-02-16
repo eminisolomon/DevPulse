@@ -28,10 +28,6 @@ export default function Dashboard() {
   const { theme } = useTheme();
   const { apiKey } = useAuthStore();
 
-  if (!apiKey) {
-    return <Redirect href="/" />;
-  }
-
   const { isLoading: userLoading } = useUser();
 
   const today = useMemo(() => new Date(), []);
@@ -160,6 +156,10 @@ export default function Dashboard() {
       activityLevel,
     };
   });
+
+  if (!apiKey) {
+    return <Redirect href="/" />;
+  }
 
   if (isLoading && !stats) {
     return (
