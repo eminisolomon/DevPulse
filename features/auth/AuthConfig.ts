@@ -6,7 +6,13 @@ export const AuthConfig = {
   redirectUri: makeRedirectUri({
     scheme: 'devpulse',
   }),
-  scopes: ['email', 'read_logged_time', 'read_stats'],
+  scopes: [
+    'email',
+    'read_stats',
+    'read_summaries',
+    'read_goals',
+    'read_heartbeats',
+  ],
   discovery: {
     authorizationEndpoint: process.env.EXPO_PUBLIC_WAKATIME_AUTH_ENDPOINT!,
     tokenEndpoint: process.env.EXPO_PUBLIC_WAKATIME_TOKEN_ENDPOINT!,

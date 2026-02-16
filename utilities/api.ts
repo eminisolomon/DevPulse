@@ -34,7 +34,6 @@ export async function fetchWithAuth<T>(endpoint: string): Promise<T> {
     }
 
     try {
-      // Attempt to refresh the token
       const refreshResponse = await fetch(AuthConfig.discovery.tokenEndpoint, {
         method: 'POST',
         headers: {
@@ -57,20 +56,17 @@ export async function fetchWithAuth<T>(endpoint: string): Promise<T> {
         );
       }
 
-      // Update the store with new tokens
       setTokens(
         refreshData.access_token,
         refreshData.refresh_token,
         refreshData.expires_in,
       );
 
-      // Retry the original request with the new token
       token = refreshData.access_token;
       response = await fetch(url, {
         headers: getHeaders(token),
       });
 
-      // If still 401, then logout
       if (response.status === 401) {
         logout();
         throw new Error('Unauthorized: Session expired after refresh');

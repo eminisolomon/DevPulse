@@ -21,10 +21,10 @@ export function useLeaderboard(countryCode?: string, language?: string) {
   }, [countryCode, selectedCountry, setSelectedCountry]);
 
   useEffect(() => {
-    if (data.length === 0) {
+    if (data.length === 0 && !isLoading && !error) {
       fetchLeaderboard();
     }
-  }, [data.length, fetchLeaderboard]);
+  }, [data.length, fetchLeaderboard, isLoading, error]);
 
   return {
     data: {

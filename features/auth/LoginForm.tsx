@@ -42,6 +42,7 @@ export function LoginForm() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
+          Accept: 'application/json, application/x-www-form-urlencoded',
         },
         body: new URLSearchParams({
           client_id: AuthConfig.clientId,
@@ -52,13 +53,38 @@ export function LoginForm() {
         }).toString(),
       });
 
-      const data = await tokenResponse.json();
+      const responseText = await tokenResponse.text();
+      let data;
 
-      if (!tokenResponse.ok) {
-        throw new Error(data.error_description || 'Failed to exchange token');
+      const contentType = tokenResponse.headers.get('content-type');
+      if (
+        contentType?.includes('application/json') ||
+        responseText.trim().startsWith('{')
+      ) {
+        try {
+          data = JSON.parse(responseText);
+        } catch (e) {
+          data = Object.fromEntries(
+            new URLSearchParams(responseText).entries(),
+          );
+        }
+      } else {
+        data = Object.fromEntries(new URLSearchParams(responseText).entries());
       }
 
-      setTokens(data.access_token, data.refresh_token, data.expires_in);
+      if (!tokenResponse.ok) {
+        throw new Error(
+          data.error_description ||
+            data.error ||
+            `Failed to exchange token (${tokenResponse.status})`,
+        );
+      }
+
+      const expiresIn = data.expires_in
+        ? parseInt(String(data.expires_in), 10)
+        : 0;
+
+      setTokens(data.access_token, data.refresh_token, expiresIn);
       toastSuccess('Success', 'Logged in successfully');
     } catch (error: any) {
       toastError('Login Error', error.message);
@@ -95,7 +121,7 @@ export function LoginForm() {
           disabled={!request}
           leftIcon={
             <Ionicons
-              name="logo-github" // WakaTime often associated with GitHub, or use a generic login icon
+              name="logo-github"
               size={20}
               color={theme.colors.textInverse}
             />
