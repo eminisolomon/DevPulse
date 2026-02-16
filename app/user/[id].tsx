@@ -1,8 +1,9 @@
 import { Avatar, Card, Typography } from '@/components';
+import { UserProfileSkeleton } from '@/components/skeletons';
 import { useLeaderboard, useTheme } from '@/hooks';
 import { formatDuration } from '@/utilities';
 import { Feather } from '@expo/vector-icons';
-import { useLocalSearchParams, useRouter } from 'expo-router';
+import { useLocalSearchParams } from 'expo-router';
 import React, { useMemo } from 'react';
 import {
   Linking,
@@ -16,8 +17,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 export default function UserProfileScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const { theme } = useTheme();
-  const { data: leaderboardData } = useLeaderboard();
-  const router = useRouter();
+  const { data: leaderboardData, isLoading } = useLeaderboard();
 
   const userRank = useMemo(() => {
     if (!leaderboardData?.pages) return null;
@@ -26,14 +26,36 @@ export default function UserProfileScreen() {
       .find((item) => item.user.id === id);
   }, [leaderboardData, id]);
 
+  if (isLoading) {
+    return (
+      <SafeAreaView
+        style={[styles.container, { backgroundColor: theme.colors.background }]}
+        edges={['bottom', 'left', 'right']}
+      >
+        <UserProfileSkeleton />
+      </SafeAreaView>
+    );
+  }
+
   if (!userRank) {
     return (
       <SafeAreaView
         style={[styles.container, { backgroundColor: theme.colors.background }]}
         edges={['bottom', 'left', 'right']}
       >
-        <Typography variant="headline" weight="bold" style={{ margin: 16 }}>
+        <Typography
+          variant="headline"
+          weight="bold"
+          style={{ margin: 16, textAlign: 'center', marginTop: 100 }}
+        >
           User Not Found
+        </Typography>
+        <Typography
+          color={theme.colors.textSecondary}
+          style={{ textAlign: 'center', marginHorizontal: 32 }}
+        >
+          We couldn't find this user in the current leaderboard. They might not
+          have any activity for this period.
         </Typography>
       </SafeAreaView>
     );
@@ -88,9 +110,9 @@ export default function UserProfileScreen() {
                   { backgroundColor: theme.colors.primary + '15' },
                 ]}
               >
-                <Feather name="zap" size={12} color={theme.colors.primary} />
+                <Feather name="zap" size={14} color={theme.colors.primary} />
                 <Typography
-                  variant="micro"
+                  variant="caption"
                   weight="bold"
                   color={theme.colors.primary}
                   style={styles.badgeText}
@@ -111,11 +133,11 @@ export default function UserProfileScreen() {
               >
                 <Feather
                   name="globe"
-                  size={12}
+                  size={14}
                   color={theme.colors.textSecondary}
                 />
                 <Typography
-                  variant="micro"
+                  variant="caption"
                   weight="bold"
                   color={theme.colors.textSecondary}
                   style={styles.badgeText}
@@ -136,11 +158,11 @@ export default function UserProfileScreen() {
               >
                 <Feather
                   name="mail"
-                  size={12}
+                  size={14}
                   color={theme.colors.textSecondary}
                 />
                 <Typography
-                  variant="micro"
+                  variant="caption"
                   weight="bold"
                   color={theme.colors.textSecondary}
                   style={styles.badgeText}
@@ -268,8 +290,8 @@ const styles = StyleSheet.create({
   badge: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 10,
-    paddingVertical: 4,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
     borderRadius: 8,
   },
   badgeText: {
