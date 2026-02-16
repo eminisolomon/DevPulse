@@ -1,9 +1,13 @@
+import { BottomSheet } from '@/components/BottomSheet';
 import { Card } from '@/components/Card';
+import { ListItem } from '@/components/ListItem';
 import { ScreenHeader } from '@/components/ScreenHeader';
 import { Typography } from '@/components/Typography';
-import { useLeaderboard, useTheme } from '@/hooks';
+import { COUNTRIES } from '@/constants/countries';
+import { useLeaderboard, useTheme, useUser } from '@/hooks';
 import { LeaderboardUser } from '@/interfaces/leaderboard';
 import { Feather } from '@expo/vector-icons';
+import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import { useRouter } from 'expo-router';
 import React from 'react';
 import {
@@ -19,6 +23,21 @@ import {
 export default function LeaderboardScreen() {
   const { theme, isDark } = useTheme();
   const router = useRouter();
+  const { data: userData } = useUser();
+  const [selectedCountry, setSelectedCountry] = React.useState<
+    string | undefined
+  >(undefined);
+  const bottomSheetRef = React.useRef<BottomSheetModal>(null);
+
+  React.useEffect(() => {
+    if (
+      userData?.data.timezone?.includes('Lagos') &&
+      selectedCountry === undefined
+    ) {
+      setSelectedCountry('NG');
+    }
+  }, [userData]);
+
   const {
     data,
     isLoading,
@@ -27,7 +46,7 @@ export default function LeaderboardScreen() {
     hasNextPage,
     fetchNextPage,
     isFetchingNextPage,
-  } = useLeaderboard();
+  } = useLeaderboard(selectedCountry);
 
   const leaderboardData = React.useMemo(
     () => data?.pages.flatMap((page) => page.data) || [],
@@ -39,19 +58,23 @@ export default function LeaderboardScreen() {
     [leaderboardData],
   );
 
-  // Reorder for display: [2nd, 1st, 3rd]
   const displayTopThree = React.useMemo(() => {
-    return [
-      topThree[1], // 2nd
-      topThree[0], // 1st
-      topThree[2], // 3rd
-    ].filter(Boolean);
+    return [topThree[1], topThree[0], topThree[2]].filter(Boolean);
   }, [topThree]);
 
   const remainingUsers = React.useMemo(
     () => leaderboardData.slice(3),
     [leaderboardData],
   );
+
+  const handlePresentModalPress = React.useCallback(() => {
+    bottomSheetRef.current?.present();
+  }, []);
+
+  const handleCountrySelect = (country: string | undefined) => {
+    setSelectedCountry(country);
+    bottomSheetRef.current?.dismiss();
+  };
 
   const renderLeaderboardItem = ({ item }: { item: LeaderboardUser }) => (
     <TouchableOpacity
@@ -208,13 +231,26 @@ export default function LeaderboardScreen() {
     >
       <ScreenHeader
         title="Leaderboard"
-        subtitle="Top developers this week"
-        actions={[
-          {
-            icon: 'refresh',
-            onPress: () => refetch(),
-          },
-        ]}
+        subtitle={
+          selectedCountry
+            ? `${selectedCountry} Top Developers`
+            : 'Global Top Developers'
+        }
+        rightElement={
+          <TouchableOpacity
+            activeOpacity={0.7}
+            style={{
+              padding: 8,
+              backgroundColor: theme.colors.surfaceHighlight,
+              borderRadius: 8,
+            }}
+            onPress={handlePresentModalPress}
+          >
+            <Typography variant="title">
+              {COUNTRIES.find((c) => c.value === selectedCountry)?.icon || '🌍'}
+            </Typography>
+          </TouchableOpacity>
+        }
       />
 
       <FlatList
@@ -265,6 +301,33 @@ export default function LeaderboardScreen() {
           ) : null
         }
       />
+      <BottomSheet
+        ref={bottomSheetRef}
+        title="Select Location"
+        snapPoints={['50%']}
+      >
+        <FlatList
+          data={COUNTRIES}
+          keyExtractor={(item) => item.label}
+          renderItem={({ item }) => (
+            <ListItem
+              title={item.label}
+              leftIcon={<Typography variant="title">{item.icon}</Typography>}
+              rightIcon={
+                selectedCountry === item.value ? (
+                  <Feather
+                    name="check"
+                    size={20}
+                    color={theme.colors.primary}
+                  />
+                ) : undefined
+              }
+              onPress={() => handleCountrySelect(item.value)}
+            />
+          )}
+          contentContainerStyle={{ paddingBottom: 24 }}
+        />
+      </BottomSheet>
     </View>
   );
 }

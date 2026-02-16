@@ -78,4 +78,3 @@
 - [ ] **Performance Audit**: Optimize Skia and Drizzle query performance for massive datasets.
 - [ ] **Native Widgets**: Android home screen widgets for at-a-glance daily progress.
 - [ ] **Unit & E2E Testing**: Implement robust testing for data transformations and sync logic.
-- [ ] **Stabilize UI**: Fix intermittent crashes on dashboard rendering.
