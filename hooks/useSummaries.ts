@@ -6,10 +6,8 @@ export function useSummaries(start: Date, end: Date) {
   const key = `${start.toISOString().split('T')[0]}_${end.toISOString().split('T')[0]}`;
 
   useEffect(() => {
-    if (!data[key]) {
-      fetchSummaries(start, end);
-    }
-  }, [key, data, fetchSummaries, start, end]);
+    fetchSummaries(start, end);
+  }, [key, fetchSummaries, start, end]);
 
   return {
     data: data[key] || undefined,

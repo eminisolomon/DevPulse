@@ -98,7 +98,6 @@ const styles = StyleSheet.create({
     padding: 12,
     paddingBottom: 16,
     borderTopWidth: 1,
-    elevation: 20,
     shadowColor: '#000',
     shadowOffset: {
       width: 0,

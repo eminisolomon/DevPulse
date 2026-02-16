@@ -6,10 +6,8 @@ export function useStats(range: StatsRange = 'last_7_days') {
   const { data, isLoading, error, fetchStats } = useStatsStore();
 
   useEffect(() => {
-    if (!data[range]) {
-      fetchStats(range);
-    }
-  }, [range, data, fetchStats]);
+    fetchStats(range);
+  }, [range, fetchStats]);
 
   return {
     data: data[range] || null,

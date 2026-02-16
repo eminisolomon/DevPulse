@@ -11,8 +11,8 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 export const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: 60 * 60 * 1000,
-      gcTime: 60 * 60 * 1000,
+      staleTime: 2 * 60 * 1000,
+      gcTime: 5 * 60 * 1000,
       retry: 1,
       refetchOnWindowFocus: false,
     },
