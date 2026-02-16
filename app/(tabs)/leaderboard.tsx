@@ -1,11 +1,7 @@
 import { BottomSheet, ListItem, ScreenHeader, Typography } from '@/components';
 import { LeaderboardSkeleton } from '@/components/skeletons';
-import { useLeaderboardContext } from '@/contexts/LeaderboardContext';
-import {
-  CurrentUserRank,
-  LeaderboardItem,
-  TopThreePodium,
-} from '@/features/leaderboard';
+import { useLeaderboardContext } from '@/contexts';
+import { CurrentUserRank, LeaderboardItem, TopThreePodium } from '@/features';
 import { useTheme } from '@/hooks';
 import { useOrganizationStore } from '@/stores';
 import { Feather } from '@expo/vector-icons';

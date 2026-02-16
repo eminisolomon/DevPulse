@@ -1,7 +1,6 @@
-import { BottomSheet, ListItem, Typography } from '@/components';
-import { ScreenHeader } from '@/components/ScreenHeader';
+import { BottomSheet, ListItem, ScreenHeader, Typography } from '@/components';
 import { ProjectListSkeleton } from '@/components/skeletons';
-import { ProjectCard } from '@/features/projects/ProjectCard';
+import { ProjectCard } from '@/features';
 import { useProjects, useTheme } from '@/hooks';
 import { WakaTimeProject } from '@/interfaces';
 import { toastSuccess } from '@/utilities';

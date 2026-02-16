@@ -5,7 +5,7 @@ import {
   MonthlyCalendarCard,
   RankPulseCard,
   TotalTimeCard,
-} from '@/features/dashboard';
+} from '@/features';
 import { useAllTime, useStats, useSummaries, useTheme, useUser } from '@/hooks';
 import { useAuthStore } from '@/stores';
 import { formatDuration } from '@/utilities';
