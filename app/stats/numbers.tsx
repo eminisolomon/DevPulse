@@ -22,24 +22,27 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-const rangeApiMap: Record<TimeRange, string> = {
-  '7_days': 'last_7_days',
-  '30_days': 'last_30_days',
-  year: 'last_year',
+const rangeApiMap: Record<TimeRange, any> = {
+  last_7_days: 'last_7_days',
+  last_30_days: 'last_30_days',
+  last_year: 'last_year',
   all_time: 'all_time',
+  last_6_months: 'last_6_months',
 };
 
 const getDates = (r: TimeRange) => {
   const today = new Date();
   switch (r) {
-    case '7_days':
+    case 'last_7_days':
       return { start: subDays(today, 6), end: today };
-    case '30_days':
+    case 'last_30_days':
       return { start: subDays(today, 29), end: today };
-    case 'year':
+    case 'last_year':
       return { start: subDays(today, 364), end: today };
     case 'all_time':
       return { start: subDays(today, 3650), end: today };
+    case 'last_6_months':
+      return { start: subDays(today, 180), end: today };
     default:
       return { start: subDays(today, 6), end: today };
   }
@@ -47,16 +50,20 @@ const getDates = (r: TimeRange) => {
 
 export default function NumbersScreen() {
   const { theme } = useTheme();
-  const params = useLocalSearchParams<{ range?: TimeRange }>();
-  const [range, setRange] = useState<TimeRange>('7_days');
-  const { start, end } = useMemo(() => getDates(range), [range]);
+  const params = useLocalSearchParams<{ range?: string }>();
+  const [range, setRange] = useState<TimeRange>('last_7_days');
+  useMemo(() => getDates(range), [range]);
 
   useEffect(() => {
-    if (
-      params.range &&
-      ['7_days', '30_days', 'year', 'all_time'].includes(params.range)
-    ) {
-      setRange(params.range);
+    const validRanges: TimeRange[] = [
+      'last_7_days',
+      'last_30_days',
+      'last_6_months',
+      'last_year',
+      'all_time',
+    ];
+    if (params.range && validRanges.includes(params.range as TimeRange)) {
+      setRange(params.range as TimeRange);
     }
   }, [params.range]);
 

@@ -1,5 +1,6 @@
 import { GoalForm } from '@/features/goals/GoalForm';
 import { useGoalMutation, useGoals, useTheme } from '@/hooks';
+import { scheduleGoalReminders } from '@/utilities';
 import { Feather } from '@expo/vector-icons';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import React from 'react';
@@ -23,6 +24,11 @@ export default function EditGoalScreen() {
     if (!id) return;
     try {
       await updateGoal.mutateAsync({ id, data });
+      await scheduleGoalReminders(
+        data.title,
+        data.seconds / 3600,
+        data.delta || 'day',
+      );
       router.back();
     } catch (error) {
       console.error('Failed to update goal:', error);

@@ -84,15 +84,38 @@ export async function scheduleSmartDailyReminders(): Promise<void> {
   }
 }
 
-export async function scheduleGoalReminder(
-  goalTitle: string,
-  targetHours: number,
+export async function sendImmediateGoalNotification(
+  title: string,
+  body: string,
 ): Promise<void> {
   try {
     await Notifications.scheduleNotificationAsync({
       content: {
-        title: '🎯 Goal Milestone',
-        body: `You set a goal for ${goalTitle} (${targetHours}h). Let's make it happen!`,
+        title,
+        body,
+        sound: 'default',
+        data: { type: 'goal_milestone' },
+      },
+      trigger: null,
+    });
+  } catch (error) {
+    console.error(
+      '[Notifications] Failed to send immediate notification:',
+      error,
+    );
+  }
+}
+
+export async function scheduleGoalReminders(
+  goalTitle: string,
+  targetHours: number,
+  delta: 'day' | 'week' | 'month',
+): Promise<void> {
+  try {
+    await Notifications.scheduleNotificationAsync({
+      content: {
+        title: '🎯 Goal Track',
+        body: `Don't forget your ${goalTitle} goal today!`,
         sound: 'default',
         data: { type: 'goal_reminder' },
       },
@@ -102,8 +125,31 @@ export async function scheduleGoalReminder(
         minute: 0,
       },
     });
+
+    if (delta === 'week' || delta === 'month') {
+      const trigger =
+        delta === 'week'
+          ? { weekday: 1, hour: 9, minute: 0 }
+          : { day: 1, hour: 9, minute: 0 };
+
+      await Notifications.scheduleNotificationAsync({
+        content: {
+          title: '🗓️ Period Review',
+          body: `Time to check your ${delta}ly progress on ${goalTitle}!`,
+          sound: 'default',
+          data: { type: 'goal_deadline' },
+        },
+        trigger: {
+          type:
+            delta === 'week'
+              ? Notifications.SchedulableTriggerInputTypes.WEEKLY
+              : Notifications.SchedulableTriggerInputTypes.MONTHLY,
+          ...(trigger as any),
+        },
+      });
+    }
   } catch (error) {
-    console.error('[Notifications] Failed to schedule goal reminder:', error);
+    console.error('[Notifications] Failed to schedule goal reminders:', error);
   }
 }
 

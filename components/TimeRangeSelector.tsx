@@ -27,9 +27,10 @@ export const TimeRangeSelector = ({
 }: TimeRangeSelectorProps) => {
   const { theme } = useTheme();
   const { width } = useWindowDimensions();
-  const containerPadding = 4;
+  const containerPadding = 2;
+  const horizontalMargin = 32; // Matches scrollContent padding 16 * 2
   const segmentWidth =
-    (width - 32 - containerPadding * 2) / availableRanges.length;
+    (width - horizontalMargin - containerPadding * 2) / availableRanges.length;
 
   const animatedValue = useRef(new Animated.Value(0)).current;
 
@@ -49,7 +50,10 @@ export const TimeRangeSelector = ({
     <View
       style={[
         styles.container,
-        { backgroundColor: theme.colors.surfaceHighlight },
+        {
+          backgroundColor: theme.colors.surfaceHighlight,
+          padding: containerPadding,
+        },
       ]}
     >
       <Animated.View
@@ -59,12 +63,17 @@ export const TimeRangeSelector = ({
             width: segmentWidth,
             transform: [{ translateX: animatedValue }],
             backgroundColor: theme.colors.surface,
+            borderColor: theme.colors.primary,
+            left: containerPadding,
           },
         ]}
       />
       <View style={styles.segmentsContainer}>
         {availableRanges.map((range) => {
           const isSelected = value === range.value;
+          // Use non-breaking space to prevent wrapping that causes truncation to "1"
+          const displayLabel = range.label.replace(' ', '\u00A0');
+
           return (
             <TouchableOpacity
               key={range.value}
@@ -73,14 +82,18 @@ export const TimeRangeSelector = ({
               activeOpacity={0.7}
             >
               <Typography
-                variant="caption"
+                variant="micro"
                 weight={isSelected ? 'bold' : 'medium'}
                 color={
                   isSelected ? theme.colors.primary : theme.colors.textSecondary
                 }
                 align="center"
+                numberOfLines={1}
+                adjustsFontSizeToFit
+                minimumFontScale={0.7}
+                style={styles.label}
               >
-                {range.label}
+                {displayLabel}
               </Typography>
             </TouchableOpacity>
           );
@@ -92,8 +105,7 @@ export const TimeRangeSelector = ({
 
 const styles = StyleSheet.create({
   container: {
-    padding: 4,
-    borderRadius: 12,
+    borderRadius: 24,
     marginVertical: 12,
     position: 'relative',
     height: 40,
@@ -104,18 +116,18 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   segment: {
-    height: 32,
+    height: 36,
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: 8,
+    borderRadius: 20,
     zIndex: 1,
   },
   activeSegment: {
     position: 'absolute',
-    left: 4,
-    top: 4,
-    bottom: 4,
-    borderRadius: 8,
+    top: 2,
+    bottom: 2,
+    borderRadius: 20,
+    borderWidth: 2,
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
@@ -123,5 +135,8 @@ const styles = StyleSheet.create({
     },
     shadowOpacity: 0.1,
     shadowRadius: 2,
+  },
+  label: {
+    paddingHorizontal: 2,
   },
 });

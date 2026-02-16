@@ -7,6 +7,12 @@ export const goals = sqliteTable('goals', {
   seconds: integer('seconds').notNull().default(0),
   improvementStatus: text('improvement_status'),
   isEnabled: integer('is_enabled', { mode: 'boolean' }).default(true),
+  notifiedHalfway: integer('notified_halfway', { mode: 'boolean' }).default(
+    false,
+  ),
+  notifiedCompleted: integer('notified_completed', { mode: 'boolean' }).default(
+    false,
+  ),
   rangeText: text('range_text'),
   chartData: text('chart_data'),
   languages: text('languages'),
