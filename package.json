@@ -13,7 +13,8 @@
     "build:dev:android": "eas build --platform android --profile development",
     "submit:ios": "eas submit --platform ios",
     "submit:android": "eas submit --platform android",
-    "preview": "eas build --profile preview --platform android",
+    "preview:android": "eas build --profile preview --platform android",
+    "preview:ios": "eas build --profile preview --platform ios",
     "format": "prettier --write ."
   },
   "dependencies": {
