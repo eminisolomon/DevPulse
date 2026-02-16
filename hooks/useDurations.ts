@@ -13,12 +13,18 @@ export function useDurations(date: Date = new Date()) {
 
       const dayStart = startOfDay(date).getTime() / 1000;
 
-      return response.data.map((d: any) => ({
-        // Use epoch start minus day start to get seconds from 00:00:00
-        start: Math.max(0, d.start - dayStart),
-        duration: d.duration,
-        color: d.color,
-      }));
+      return response.data.map((d: any) => {
+        const startTime =
+          typeof d.time === 'string'
+            ? new Date(d.time).getTime() / 1000
+            : d.time || d.start;
+
+        return {
+          start: Math.max(0, startTime - dayStart),
+          duration: d.duration,
+          color: d.color,
+        };
+      });
     },
   });
 }

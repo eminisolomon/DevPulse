@@ -1,8 +1,5 @@
-import { Card } from '@/components/Card';
-import { Typography } from '@/components/Typography';
 import {
   DailyProgressCard,
-  DashboardBanner,
   DashboardHeader,
   MonthlyCalendarCard,
   TotalTimeCard,
@@ -10,7 +7,6 @@ import {
 import { useAllTime, useStats, useSummaries, useTheme, useUser } from '@/hooks';
 import { useAuthStore } from '@/stores/useAuthStore';
 import { formatDuration } from '@/utilities/formatters';
-import { Feather } from '@expo/vector-icons';
 import { endOfMonth, startOfMonth } from 'date-fns';
 import { Redirect, useRouter } from 'expo-router';
 import React, { useMemo, useState } from 'react';
@@ -19,7 +15,6 @@ import {
   RefreshControl,
   ScrollView,
   StyleSheet,
-  TouchableOpacity,
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -193,29 +188,6 @@ export default function Dashboard() {
       >
         <DashboardHeader />
 
-        <DashboardBanner />
-
-        <TouchableOpacity
-          onPress={() => router.push('/stats/sessions')}
-          style={styles.sessionHistoryLink}
-        >
-          <Card style={styles.sessionHistoryCard}>
-            <View style={styles.sessionHistoryContent}>
-              <Typography variant="body" weight="bold">
-                Session History
-              </Typography>
-              <Typography variant="caption" color={theme.colors.textSecondary}>
-                View detailed daily coding activity
-              </Typography>
-            </View>
-            <Feather
-              name="chevron-right"
-              size={20}
-              color={theme.colors.textSecondary}
-            />
-          </Card>
-        </TouchableOpacity>
-
         <TotalTimeCard
           totalTime={totalTimeDisplay}
           totalProjectsCount={totalProjects}
@@ -247,17 +219,5 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  sessionHistoryLink: {
-    marginBottom: 16,
-  },
-  sessionHistoryCard: {
-    padding: 16,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  sessionHistoryContent: {
-    flex: 1,
   },
 });

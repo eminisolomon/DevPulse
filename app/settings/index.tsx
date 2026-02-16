@@ -9,6 +9,7 @@ import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import { useRouter } from 'expo-router';
 import React, { useRef } from 'react';
 import {
+  Linking,
   ScrollView,
   StyleSheet,
   Switch,
@@ -162,105 +163,73 @@ export default function SettingsScreen() {
             <Avatar
               source={userData?.photo ? { uri: userData.photo } : undefined}
               initials={userData?.display_name || userData?.username}
-              size={120}
+              size={90}
             />
-            <View style={{ height: 16 }} />
+            <View style={{ height: 12 }} />
             <Typography variant="title" weight="bold" style={styles.userName}>
               {userData?.display_name || userData?.username || 'Developer'}
             </Typography>
-            <Typography color={theme.colors.textSecondary}>
+            <Typography color={theme.colors.textSecondary} variant="body">
               Software Engineer
             </Typography>
-          </View>
-
-          <View style={styles.badgesRow}>
-            <View
-              style={[styles.badge, { backgroundColor: theme.colors.surface }]}
-            >
-              <Feather name="zap" size={14} color={theme.colors.primary} />
-              <Typography
-                variant="micro"
-                weight="bold"
-                style={styles.badgeText}
-              >
-                HIREABLE
-              </Typography>
-            </View>
-            <View
-              style={[styles.badge, { backgroundColor: theme.colors.surface }]}
-            >
+            <View style={styles.locationContainer}>
               <Feather
                 name="map-pin"
-                size={14}
-                color={theme.colors.textSecondary}
+                size={12}
+                color={theme.colors.textTertiary}
               />
               <Typography
-                variant="micro"
-                color={theme.colors.textSecondary}
-                style={styles.badgeText}
+                variant="caption"
+                color={theme.colors.textTertiary}
+                style={{ marginLeft: 4 }}
               >
                 {(userData as any)?.city?.name || 'World'}
               </Typography>
             </View>
-          </View>
-
-          <View style={styles.socialGrid}>
-            <TouchableOpacity
-              style={[
-                styles.socialButton,
-                { backgroundColor: theme.colors.surface },
-              ]}
-            >
-              <Feather name="mail" size={16} color={theme.colors.text} />
-              <Typography
-                variant="micro"
-                weight="bold"
-                style={{ marginLeft: 8 }}
-              >
-                MAIL ME
-              </Typography>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[
-                styles.socialButton,
-                { backgroundColor: theme.colors.surface },
-              ]}
-            >
-              <Feather name="globe" size={16} color={theme.colors.text} />
-              <Typography
-                variant="micro"
-                weight="bold"
-                style={{ marginLeft: 8 }}
-              >
-                ON THE WEB
-              </Typography>
-            </TouchableOpacity>
           </View>
         </Card>
 
         {/* About Section */}
         <SectionHeader title="About" />
         <Card style={styles.sectionCard}>
-          <View style={styles.appInfo}>
-            <View style={styles.appInfoMain}>
-              <Typography weight="bold">DevPulse</Typography>
-              <Typography variant="micro" color={theme.colors.textSecondary}>
-                2026.1.0 (BETA)
-              </Typography>
-            </View>
-            <TouchableOpacity style={styles.infoButton}>
-              <Feather
-                name="info"
-                size={20}
-                color={theme.colors.textSecondary}
-              />
-            </TouchableOpacity>
-          </View>
+          <SettingItem
+            icon="star"
+            label="Rate The App"
+            description="Support development with a review"
+          />
+          <SettingItem
+            icon="coffee"
+            label="Buy Me A Coffee"
+            description="Every cup fuels more features"
+            onPress={() =>
+              Linking.openURL('https://buymeacoffee.com/eminisolomon')
+            }
+          />
+          <SettingItem
+            icon="help-circle"
+            label="Who even made this?"
+            description="Meet the developer behind DevPulse"
+            onPress={() =>
+              Linking.openURL('https://solomon-olatunji.vercel.app/')
+            }
+          />
+        </Card>
 
-          <SettingItem icon="star" label="Rate on Google Play Store" />
-          <SettingItem icon="tool" label="Feedback or Bugs" />
-          <SettingItem icon="book" label="Changelog" />
-          <SettingItem icon="file-text" label="Licenses" />
+        {/* Activity & Stats Section */}
+        <SectionHeader title="Activity & Stats" />
+        <Card style={styles.sectionCard}>
+          <SettingItem
+            icon="bar-chart-2"
+            label="Coding Stats"
+            description="Detailed analytics and charts"
+            onPress={() => router.push('/stats/numbers' as any)}
+          />
+          <SettingItem
+            icon="clock"
+            label="Session History"
+            description="Daily session activity timeline"
+            onPress={() => router.push('/stats/sessions' as any)}
+          />
         </Card>
 
         {/* Theming Section */}
@@ -300,17 +269,6 @@ export default function SettingsScreen() {
             isSwitch
             switchValue={settingsState.collectAnalytics}
             onSwitchChange={() => toggleSetting('collectAnalytics')}
-          />
-        </Card>
-
-        {/* Account Section */}
-        <SectionHeader title="Account" />
-        <Card style={styles.sectionCard}>
-          <SettingItem
-            icon="trash-2"
-            label="Delete Account"
-            color={theme.colors.error}
-            description="Delete your account and all your data."
           />
         </Card>
 
@@ -405,33 +363,10 @@ const styles = StyleSheet.create({
   userName: {
     marginBottom: 4,
   },
-  badgesRow: {
-    flexDirection: 'row',
-    gap: 8,
-    marginBottom: 20,
-  },
-  badge: {
+  locationContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 12,
-  },
-  badgeText: {
-    marginLeft: 6,
-  },
-  socialGrid: {
-    flexDirection: 'row',
-    gap: 8,
-    width: '100%',
-  },
-  socialButton: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 12,
-    borderRadius: 12,
+    marginTop: 4,
   },
   sectionHeader: {
     marginLeft: 4,
@@ -461,21 +396,6 @@ const styles = StyleSheet.create({
   settingValue: {
     flexDirection: 'row',
     alignItems: 'center',
-  },
-  appInfo: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: 16,
-    backgroundColor: 'rgba(0,0,0,0.02)',
-    borderRadius: 16,
-    margin: 8,
-  },
-  appInfoMain: {
-    flex: 1,
-  },
-  infoButton: {
-    padding: 4,
   },
   logoutButton: {
     flexDirection: 'row',

@@ -5,8 +5,8 @@ import React from 'react';
 import { StyleSheet, View, useWindowDimensions } from 'react-native';
 
 interface Session {
-  start: number; // seconds from start of day
-  duration: number; // duration in seconds
+  start: number;
+  duration: number;
   color?: string;
 }
 
@@ -21,10 +21,9 @@ export const SessionTimeline = ({
 }: SessionTimelineProps) => {
   const { theme } = useTheme();
   const { width: windowWidth } = useWindowDimensions();
-  const containerWidth = windowWidth - 40; // Horizontal padding
+  const containerWidth = windowWidth - 40;
   const SECONDS_IN_DAY = 86400;
 
-  // Scale factor: pixels per second
   const scale = containerWidth / SECONDS_IN_DAY;
 
   const hours = [0, 6, 12, 18, 24];
@@ -89,7 +88,7 @@ export const SessionTimeline = ({
 
 const styles = StyleSheet.create({
   container: {
-    padding: 20,
+    padding: 8,
   },
   label: {
     marginBottom: 12,
