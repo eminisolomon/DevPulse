@@ -5,13 +5,16 @@ import m0000 from './0000_spooky_carlie_cooper.sql';
 import m0001 from './0001_cold_siren.sql';
 import m0002 from './0002_cultured_loners.sql';
 import m0003 from './0003_special_mephisto.sql';
+import m0004 from './0004_fast_puff_adder.sql';
 
-export default {
-  journal,
-  migrations: {
-    m0000,
-    m0001,
-    m0002,
-    m0003,
-  },
-};
+  export default {
+    journal,
+    migrations: {
+      m0000,
+m0001,
+m0002,
+m0003,
+m0004
+    }
+  }
+  

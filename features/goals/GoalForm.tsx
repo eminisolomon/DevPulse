@@ -1,13 +1,17 @@
-import { Button } from '@/components/Button';
-import { Card } from '@/components/Card';
-import { TextInput } from '@/components/Input';
-import { Select, SelectOption } from '@/components/Select';
-import { useTheme } from '@/hooks/useTheme';
-import { WakaTimeGoal } from '@/interfaces/goal';
+import {
+  Button,
+  Card,
+  Select,
+  SelectOption,
+  TextInput,
+  Typography,
+} from '@/components';
+import { useTheme } from '@/hooks';
+import { WakaTimeGoal } from '@/interfaces';
 import { zodResolver } from '@hookform/resolvers/zod';
 import React from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, Switch, View } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { GoalFormData, goalSchema } from './schemas';
 
@@ -21,7 +25,16 @@ interface GoalFormProps {
 const DELTA_OPTIONS: SelectOption[] = [
   { label: 'Day', value: 'day' },
   { label: 'Week', value: 'week' },
-  { label: 'Month', value: 'month' },
+];
+
+const WEEKDAY_OPTIONS = [
+  'Monday',
+  'Tuesday',
+  'Wednesday',
+  'Thursday',
+  'Friday',
+  'Saturday',
+  'Sunday',
 ];
 
 export const GoalForm = ({
@@ -37,13 +50,18 @@ export const GoalForm = ({
     handleSubmit,
     formState: { errors },
   } = useForm<GoalFormData>({
-    resolver: zodResolver(goalSchema),
+    resolver: zodResolver(goalSchema) as any,
     defaultValues: {
       title: initialData?.title || '',
       hours: initialData?.seconds
         ? (initialData.seconds / 3600).toString()
         : '1',
-      delta: (initialData?.delta as any) || 'day',
+      delta: (initialData?.delta as 'day' | 'week') || 'day',
+      is_inverse: initialData?.is_inverse || false,
+      ignore_zero_days: initialData?.ignore_zero_days || false,
+      ignore_days: initialData?.ignore_days || [],
+      languages: initialData?.languages || [],
+      projects: initialData?.projects || [],
     },
   });
 
@@ -53,6 +71,11 @@ export const GoalForm = ({
       seconds: parseFloat(data.hours) * 3600,
       delta: data.delta,
       is_enabled: true,
+      is_inverse: data.is_inverse,
+      ignore_zero_days: data.ignore_zero_days,
+      ignore_days: data.ignore_days,
+      languages: data.languages,
+      projects: data.projects,
     });
   };
 
@@ -107,6 +130,138 @@ export const GoalForm = ({
           />
         </Card>
 
+        {/* Advanced Options */}
+        <Card style={styles.card}>
+          <Typography
+            variant="caption"
+            weight="bold"
+            color={theme.colors.textSecondary}
+            style={styles.sectionTitle}
+          >
+            ADVANCED OPTIONS
+          </Typography>
+
+          <Controller
+            control={control}
+            name="is_inverse"
+            render={({ field: { onChange, value } }) => (
+              <View style={styles.switchRow}>
+                <View style={styles.switchLabel}>
+                  <Typography variant="body" weight="medium">
+                    Inverse Goal
+                  </Typography>
+                  <Typography
+                    variant="caption"
+                    color={theme.colors.textSecondary}
+                  >
+                    Code less, not more
+                  </Typography>
+                </View>
+                <Switch
+                  value={value}
+                  onValueChange={onChange}
+                  trackColor={{
+                    false: theme.colors.border,
+                    true: theme.colors.primary,
+                  }}
+                />
+              </View>
+            )}
+          />
+
+          <Controller
+            control={control}
+            name="ignore_zero_days"
+            render={({ field: { onChange, value } }) => (
+              <View style={styles.switchRow}>
+                <View style={styles.switchLabel}>
+                  <Typography variant="body" weight="medium">
+                    Ignore Zero Days
+                  </Typography>
+                  <Typography
+                    variant="caption"
+                    color={theme.colors.textSecondary}
+                  >
+                    Skip days with no coding activity
+                  </Typography>
+                </View>
+                <Switch
+                  value={value}
+                  onValueChange={onChange}
+                  trackColor={{
+                    false: theme.colors.border,
+                    true: theme.colors.primary,
+                  }}
+                />
+              </View>
+            )}
+          />
+
+          <Controller
+            control={control}
+            name="ignore_days"
+            render={({ field: { onChange, value } }) => (
+              <View style={styles.chipSection}>
+                <Typography
+                  variant="body"
+                  weight="medium"
+                  style={{ marginBottom: 4 }}
+                >
+                  Ignore Days
+                </Typography>
+                <Typography
+                  variant="caption"
+                  color={theme.colors.textSecondary}
+                  style={{ marginBottom: 8 }}
+                >
+                  Skip these weekdays from goal tracking
+                </Typography>
+                <View style={styles.chipContainer}>
+                  {WEEKDAY_OPTIONS.map((day) => {
+                    const isSelected = value?.includes(day.toLowerCase());
+                    return (
+                      <View
+                        key={day}
+                        style={[
+                          styles.chip,
+                          {
+                            backgroundColor: isSelected
+                              ? theme.colors.primary
+                              : theme.colors.surface,
+                            borderColor: isSelected
+                              ? theme.colors.primary
+                              : theme.colors.border,
+                          },
+                        ]}
+                        onTouchEnd={() => {
+                          const lower = day.toLowerCase();
+                          onChange(
+                            isSelected
+                              ? value?.filter((d: string) => d !== lower)
+                              : [...(value || []), lower],
+                          );
+                        }}
+                      >
+                        <Typography
+                          variant="micro"
+                          weight={isSelected ? 'bold' : 'medium'}
+                          style={{
+                            color: isSelected
+                              ? '#FFFFFF'
+                              : theme.colors.textSecondary,
+                          }}
+                        >
+                          {day.slice(0, 3)}
+                        </Typography>
+                      </View>
+                    );
+                  })}
+                </View>
+              </View>
+            )}
+          />
+        </Card>
+
         <Button
           label={isEdit ? 'Update Goal' : 'Create Goal'}
           onPress={handleSubmit(onFormSubmit)}
@@ -132,6 +287,37 @@ const styles = StyleSheet.create({
   },
   card: {
     padding: 20,
+  },
+  sectionTitle: {
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+    marginBottom: 16,
+  },
+  switchRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: 'rgba(0,0,0,0.05)',
+  },
+  switchLabel: {
+    flex: 1,
+    marginRight: 12,
+  },
+  chipSection: {
+    paddingVertical: 12,
+  },
+  chipContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+  },
+  chip: {
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 16,
+    borderWidth: 1,
   },
   button: {
     marginTop: 8,

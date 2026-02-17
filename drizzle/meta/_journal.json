@@ -29,6 +29,13 @@
       "when": 1771225864021,
       "tag": "0003_special_mephisto",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "6",
+      "when": 1771364793174,
+      "tag": "0004_fast_puff_adder",
+      "breakpoints": true
     }
   ]
 }
