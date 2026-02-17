@@ -1,10 +1,11 @@
 import { BottomSheet } from '@/components/BottomSheet';
+import { Button } from '@/components/Button';
 import { Typography } from '@/components/Typography';
 import { useTheme } from '@/hooks/useTheme';
 import { MaterialIcons } from '@expo/vector-icons';
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import React, { forwardRef } from 'react';
-import { StyleSheet, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 
 interface LogoutBottomSheetProps {
   onConfirm: () => void;
@@ -33,23 +34,18 @@ export const LogoutBottomSheet = forwardRef<
           You will need to enter your API key again to access your stats.
         </Typography>
         <View style={styles.logoutActions}>
-          <TouchableOpacity
-            style={[styles.cancelButton, { borderColor: theme.colors.border }]}
+          <Button
+            label="CANCEL"
+            variant="outline"
             onPress={onCancel}
-          >
-            <Typography weight="bold">CANCEL</Typography>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[
-              styles.confirmLogoutButton,
-              { backgroundColor: theme.colors.error },
-            ]}
+            style={{ flex: 1 }}
+          />
+          <Button
+            label="LOGOUT"
+            variant="destructive"
             onPress={onConfirm}
-          >
-            <Typography weight="bold" style={{ color: '#fff' }}>
-              LOGOUT
-            </Typography>
-          </TouchableOpacity>
+            style={{ flex: 2 }}
+          />
         </View>
       </View>
     </BottomSheet>
@@ -81,18 +77,5 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: 12,
     width: '100%',
-  },
-  cancelButton: {
-    flex: 1,
-    paddingVertical: 14,
-    borderRadius: 12,
-    alignItems: 'center',
-    borderWidth: 1,
-  },
-  confirmLogoutButton: {
-    flex: 2,
-    paddingVertical: 14,
-    borderRadius: 12,
-    alignItems: 'center',
   },
 });

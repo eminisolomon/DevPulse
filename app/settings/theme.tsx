@@ -1,22 +1,11 @@
-import { Card } from '@/components';
-import { Typography } from '@/components/Typography';
+import { Card, Typography } from '@/components';
+import { ACCENT_COLORS } from '@/constants';
 import { useTheme } from '@/hooks';
 import { Feather } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import React from 'react';
 import { ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-
-const ACCENT_COLORS = [
-  { name: 'Deep Blue', color: '#3B82F6' },
-  { name: 'Royal Purple', color: '#8B5CF6' },
-  { name: 'Emerald', color: '#10B981' },
-  { name: 'Crimson', color: '#EF4444' },
-  { name: 'Amber', color: '#F59E0B' },
-  { name: 'Rose', color: '#F43F5E' },
-  { name: 'Indigo', color: '#6366F1' },
-  { name: 'Slate', color: '#475569' },
-];
 
 export default function ThemeSelectionScreen() {
   const { theme, themeMode, setThemeMode, accentColor, setAccentColor } =

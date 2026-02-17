@@ -1,4 +1,4 @@
-import { Avatar, Card, Typography } from '@/components';
+import { Avatar, Button, Card, Typography } from '@/components';
 import { ACCENT_COLORS } from '@/constants';
 import {
   LogoutBottomSheet,
@@ -12,13 +12,7 @@ import { Feather, MaterialIcons } from '@expo/vector-icons';
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import { useRouter } from 'expo-router';
 import React, { useRef } from 'react';
-import {
-  Linking,
-  ScrollView,
-  StyleSheet,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import { Linking, ScrollView, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function SettingsScreen() {
@@ -190,15 +184,15 @@ export default function SettingsScreen() {
           />
         </Card>
 
-        <TouchableOpacity
-          style={[styles.logoutButton, { backgroundColor: '#FACC15' }]}
+        <Button
+          variant="destructive"
+          size="lg"
+          label="LOGOUT"
           onPress={handleLogout}
-        >
-          <MaterialIcons name="logout" size={20} color="#000" />
-          <Typography weight="bold" style={{ color: '#000', marginLeft: 12 }}>
-            LOGOUT
-          </Typography>
-        </TouchableOpacity>
+          leftIcon={<MaterialIcons name="logout" size={20} color="#fff" />}
+          fullWidth
+          style={{ marginTop: 24 }}
+        />
 
         <LogoutBottomSheet
           ref={logoutBottomSheetRef}
@@ -238,13 +232,5 @@ const styles = StyleSheet.create({
   sectionCard: {
     padding: 4,
     marginBottom: 12,
-  },
-  logoutButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 16,
-    borderRadius: 16,
-    marginTop: 24,
   },
 });
