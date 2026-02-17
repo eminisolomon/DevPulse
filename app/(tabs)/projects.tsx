@@ -1,7 +1,7 @@
 import { BottomSheet, ListItem, ScreenHeader, Typography } from '@/components';
 import { ProjectListSkeleton } from '@/components/skeletons';
 import { ProjectCard } from '@/features';
-import { useProjects, useTheme } from '@/hooks';
+import { useDebounce, useProjects, useTheme } from '@/hooks';
 import { WakaTimeProject } from '@/interfaces';
 import { toastSuccess } from '@/utilities';
 import { Feather } from '@expo/vector-icons';
@@ -30,6 +30,7 @@ export default function ProjectsScreen() {
   } = useProjects();
 
   const [searchQuery, setSearchQuery] = React.useState('');
+  const [debouncedSearchQuery] = useDebounce(searchQuery, 300);
   const [showSearch, setShowSearch] = React.useState(false);
   const [sortBy, setSortBy] = React.useState<'recent' | 'name'>('recent');
   const sortSheetRef = React.useRef<BottomSheetModal>(null);
@@ -49,8 +50,8 @@ export default function ProjectsScreen() {
   const filteredProjects = React.useMemo(() => {
     let result = [...projectsData];
 
-    if (searchQuery) {
-      const query = searchQuery.toLowerCase();
+    if (debouncedSearchQuery) {
+      const query = debouncedSearchQuery.toLowerCase();
       result = result.filter((p) => p.name.toLowerCase().includes(query));
     }
 
@@ -58,14 +59,13 @@ export default function ProjectsScreen() {
       if (sortBy === 'name') {
         return a.name.localeCompare(b.name);
       }
-      // Recent
       const dateA = new Date(a.last_heartbeat_at || a.created_at).getTime();
       const dateB = new Date(b.last_heartbeat_at || b.created_at).getTime();
       return dateB - dateA;
     });
 
     return result;
-  }, [projectsData, searchQuery, sortBy]);
+  }, [projectsData, debouncedSearchQuery, sortBy]);
 
   const renderProjectItem = ({ item }: { item: WakaTimeProject }) => {
     return <ProjectCard item={item} />;
@@ -301,7 +301,7 @@ const styles = StyleSheet.create({
   searchInput: {
     flex: 1,
     fontSize: 16,
-    height: 24, // Minimal height to contain text
+    height: 24,
     padding: 0,
   },
 });

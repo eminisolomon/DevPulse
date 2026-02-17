@@ -1,7 +1,9 @@
+import { SegmentedStatsCard } from '@/components';
 import { Card } from '@/components/Card';
 import LanguageChart from '@/components/LanguageChart';
 import { ProjectDetailsSkeleton } from '@/components/skeletons';
 import { Typography } from '@/components/Typography';
+import { getEditorColor } from '@/constants';
 import { useProjectStats, useProjectSummaries, useTheme } from '@/hooks';
 import { formatDisplayDuration } from '@/utilities/formatters';
 import { subDays } from 'date-fns';
@@ -46,7 +48,6 @@ export default function ProjectDetailScreen() {
     );
   }, [summariesData]);
 
-  // Calculate daily average from summaries
   const dailyAverage7d = useMemo(() => {
     if (!summariesData?.data || summariesData.data.length === 0) return 0;
     return totalSeconds7d / summariesData.data.length;
@@ -171,25 +172,15 @@ export default function ProjectDetailScreen() {
         </View>
 
         {project7d?.editors && project7d.editors.length > 0 && (
-          <View style={styles.section}>
-            <Typography
-              variant="title"
-              weight="bold"
-              style={styles.sectionTitle}
-            >
-              Editors
-            </Typography>
-            <Card style={styles.listCard}>
-              {project7d.editors.map((editor: any) => (
-                <View key={editor.name} style={styles.listItem}>
-                  <Typography weight="medium">{editor.name}</Typography>
-                  <Typography color={theme.colors.textSecondary}>
-                    {editor.text}
-                  </Typography>
-                </View>
-              ))}
-            </Card>
-          </View>
+          <SegmentedStatsCard
+            title="Editors"
+            segments={project7d.editors.slice(0, 5).map((e: any) => ({
+              label: e.name,
+              percent: e.percent,
+              color: getEditorColor(e.name),
+              valueText: e.text,
+            }))}
+          />
         )}
       </ScrollView>
     </View>
