@@ -5,8 +5,16 @@ import {
   Typography,
 } from '@/components';
 import { DailyStatsSkeleton } from '@/components/skeletons';
+import {
+  getCategoryColor,
+  getEditorColor,
+  getLanguageColor,
+  getOSColor,
+  getWorkstationColor,
+} from '@/constants';
 import { useDurations, useStats, useSummaries, useTheme } from '@/hooks';
 import { formatDisplayDuration, getDailyStatsTitle } from '@/utilities';
+import { getProjectColor } from '@/utilities/projectColors';
 import { endOfDay, parseISO, startOfDay } from 'date-fns';
 import { Stack, useLocalSearchParams } from 'expo-router';
 import React, { useMemo } from 'react';
@@ -84,13 +92,13 @@ export default function DailyScreen() {
 
   const projects = useMemo(() => {
     if (!dayData?.projects) return [];
-    return dayData.projects.slice(0, 5).map((p, idx) => ({
+    return dayData.projects.slice(0, 5).map((p) => ({
       name: p.name,
       time: p.text,
-      color: p.color || theme.colors.primary,
+      color: getProjectColor(p.name),
       icon: 'circle',
     }));
-  }, [dayData, theme.colors.primary]);
+  }, [dayData]);
 
   const clockSessions = useMemo(() => {
     if (!durationSessions || !Array.isArray(durationSessions)) return [];
@@ -178,7 +186,7 @@ export default function DailyScreen() {
             segments={dayData.languages.slice(0, 4).map((l) => ({
               label: l.name,
               percent: l.percent,
-              color: l.color || theme.colors.primary,
+              color: getLanguageColor(l.name),
               valueText: l.text,
             }))}
           />
@@ -190,7 +198,7 @@ export default function DailyScreen() {
             segments={dayData.categories.slice(0, 3).map((c) => ({
               label: c.name,
               percent: c.percent,
-              color: c.color || theme.colors.primary,
+              color: getCategoryColor(c.name),
               valueText: c.text,
             }))}
           />
@@ -202,7 +210,7 @@ export default function DailyScreen() {
             segments={dayData.editors.slice(0, 2).map((e) => ({
               label: e.name,
               percent: e.percent,
-              color: e.color || theme.colors.primary,
+              color: getEditorColor(e.name),
               valueText: e.text,
             }))}
           />
@@ -214,7 +222,7 @@ export default function DailyScreen() {
             segments={dayData.operating_systems.slice(0, 1).map((os) => ({
               label: os.name,
               percent: os.percent,
-              color: os.color || theme.colors.primary,
+              color: getOSColor(os.name),
               valueText: os.text,
             }))}
           />
@@ -226,7 +234,7 @@ export default function DailyScreen() {
             segments={dayData.machines.slice(0, 2).map((m) => ({
               label: m.name,
               percent: m.percent,
-              color: m.color || theme.colors.primary,
+              color: getWorkstationColor(m.name),
               valueText: m.text,
             }))}
           />

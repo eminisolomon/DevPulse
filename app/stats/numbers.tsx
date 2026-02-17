@@ -1,15 +1,18 @@
 import {
   ActivityRhythm,
+  Card,
   SegmentedStatsCard,
   TimeRange,
   TimeRangeSelector,
+  Typography,
 } from '@/components';
-import { Card } from '@/components/Card';
-import { Typography } from '@/components/Typography';
-import { getLanguageColor } from '@/constants/languages';
-import { useTheme } from '@/hooks';
-import { useDurations } from '@/hooks/useDurations';
-import { useStats } from '@/hooks/useStats';
+import {
+  getCategoryColor,
+  getEditorColor,
+  getLanguageColor,
+  getOSColor,
+} from '@/constants';
+import { useDurations, useStats, useTheme } from '@/hooks';
 import { Ionicons } from '@expo/vector-icons';
 import { subDays } from 'date-fns';
 import { useLocalSearchParams } from 'expo-router';
@@ -211,7 +214,7 @@ export default function NumbersScreen() {
             segments={stats.data.categories.slice(0, 5).map((c) => ({
               label: c.name,
               percent: c.percent,
-              color: theme.colors.secondary,
+              color: getCategoryColor(c.name),
               valueText: c.text,
             }))}
           />
@@ -223,7 +226,7 @@ export default function NumbersScreen() {
             segments={stats.data.editors.slice(0, 5).map((e) => ({
               label: e.name,
               percent: e.percent,
-              color: theme.colors.accent,
+              color: getEditorColor(e.name),
               valueText: e.text,
             }))}
           />
@@ -235,7 +238,7 @@ export default function NumbersScreen() {
             segments={stats.data.operating_systems.slice(0, 5).map((o) => ({
               label: o.name,
               percent: o.percent,
-              color: theme.colors.primary,
+              color: getOSColor(o.name),
               valueText: o.text,
             }))}
           />
