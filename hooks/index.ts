@@ -1,4 +1,5 @@
 export * from './useAllTime';
+export * from './useDebounce';
 export * from './useDurations';
 export * from './useGoalMutation';
 export * from './useGoals';

@@ -1,5 +1,6 @@
 import { Card } from '@/components/Card';
 import LanguageChart from '@/components/LanguageChart';
+import { ProjectDetailsSkeleton } from '@/components/skeletons';
 import { Typography } from '@/components/Typography';
 import { useProjectStats, useProjectSummaries, useTheme } from '@/hooks';
 import { formatDisplayDuration } from '@/utilities/formatters';
@@ -82,6 +83,17 @@ export default function ProjectDetailScreen() {
     totalSeconds7d,
   );
   const formattedAllTime = formatDisplayDuration(displayedAllTimeSeconds);
+
+  if (isLoading) {
+    return (
+      <View
+        style={[styles.container, { backgroundColor: theme.colors.background }]}
+      >
+        <Stack.Screen options={{ title: projectId }} />
+        <ProjectDetailsSkeleton />
+      </View>
+    );
+  }
 
   return (
     <View

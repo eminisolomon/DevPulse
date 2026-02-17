@@ -1,15 +1,11 @@
+import { GoalDetailsSkeleton } from '@/components/skeletons';
 import { GoalForm } from '@/features/goals/GoalForm';
 import { useGoalMutation, useGoals, useTheme } from '@/hooks';
 import { scheduleGoalReminders } from '@/utilities';
 import { Feather } from '@expo/vector-icons';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import React from 'react';
-import {
-  ActivityIndicator,
-  StyleSheet,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import { StyleSheet, TouchableOpacity, View } from 'react-native';
 
 export default function EditGoalScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -48,9 +44,10 @@ export default function EditGoalScreen() {
   if (goalsLoading) {
     return (
       <View
-        style={[styles.center, { backgroundColor: theme.colors.background }]}
+        style={[styles.container, { backgroundColor: theme.colors.background }]}
       >
-        <ActivityIndicator size="large" color={theme.colors.primary} />
+        <Stack.Screen options={{ headerTitle: '' }} />
+        <GoalDetailsSkeleton />
       </View>
     );
   }

@@ -1,6 +1,7 @@
 import {
   ActivityRhythm,
   Card,
+  NumbersSkeleton,
   SegmentedStatsCard,
   TimeRange,
   TimeRangeSelector,
@@ -17,13 +18,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { subDays } from 'date-fns';
 import { useLocalSearchParams } from 'expo-router';
 import React, { useEffect, useMemo, useState } from 'react';
-import {
-  ActivityIndicator,
-  RefreshControl,
-  ScrollView,
-  StyleSheet,
-  View,
-} from 'react-native';
+import { RefreshControl, ScrollView, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 const rangeApiMap: Record<TimeRange, any> = {
@@ -90,11 +85,12 @@ export default function NumbersScreen() {
 
   if (isLoading && !stats) {
     return (
-      <View
-        style={[styles.loading, { backgroundColor: theme.colors.background }]}
+      <SafeAreaView
+        style={[styles.container, { backgroundColor: theme.colors.background }]}
+        edges={['bottom', 'left', 'right']}
       >
-        <ActivityIndicator size="large" color={theme.colors.primary} />
-      </View>
+        <NumbersSkeleton />
+      </SafeAreaView>
     );
   }
 
