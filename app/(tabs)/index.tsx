@@ -157,7 +157,7 @@ export default function Dashboard() {
     return <Redirect href="/" />;
   }
 
-  if (isLoading && !stats) {
+  if (isLoading) {
     return (
       <SafeAreaView
         style={[styles.container, { backgroundColor: theme.colors.background }]}
