@@ -3,7 +3,7 @@ import { palette } from './colors';
 export const lightTheme = {
   colors: {
     background: '#FFFFFF',
-    surface: palette.neutral[50], // Slightly off-white for surface
+    surface: palette.neutral[50],
     surfaceHighlight: palette.neutral[100],
 
     text: palette.neutral[900],
@@ -11,7 +11,7 @@ export const lightTheme = {
     textTertiary: palette.neutral[400],
     textInverse: '#FFFFFF',
 
-    primary: palette.brand[600], // Darker blue for better contrast
+    primary: palette.brand[600],
     primaryForeground: '#FFFFFF',
     primaryContainer: palette.brand[50],
     primaryContainerForeground: palette.brand[700],

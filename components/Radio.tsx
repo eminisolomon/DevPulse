@@ -23,7 +23,7 @@ export const Radio = ({ label, checked, onChange, disabled }: RadioProps) => {
           styles.box,
           {
             borderColor: checked ? theme.colors.primary : theme.colors.border,
-            borderRadius: 99, // Circle
+            borderRadius: 99,
             width: 20,
             height: 20,
             alignItems: 'center',

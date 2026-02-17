@@ -78,7 +78,6 @@ export default function ProjectDetailScreen() {
   const project7d = getProjectSpecificData(stats7d?.data, projectId);
   const projectAllTime = getProjectSpecificData(statsAllTime?.data, projectId);
 
-  // Ensure All Time is never less than 7 Days (client-side fix for stale API data)
   const displayedAllTimeSeconds = Math.max(
     projectAllTime?.totalSeconds || 0,
     totalSeconds7d,

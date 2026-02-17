@@ -36,7 +36,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: 'rgba(0,0,0,0.03)',
     borderRadius: 12,
-    backgroundColor: 'rgba(0,0,0,0.02)', // Light background for contrast
+    backgroundColor: 'rgba(0,0,0,0.02)',
   },
   header: {
     flexDirection: 'row',

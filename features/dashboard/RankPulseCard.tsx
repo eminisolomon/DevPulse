@@ -22,17 +22,6 @@ export const RankPulseCard = () => {
   const router = useRouter();
   const { userRanks } = useLeaderboardStore();
 
-  const countryInfo = useMemo(() => {
-    if (!userRanks.country) return null;
-    // We don't have the country code directly here, but we can get it from the store's selectedCountry
-    // or just pass it to the component. Let's assume we want to show the current user's country.
-    // Actually, useLeaderboardStore.userRanks is populated in LeaderboardProvider which has access to userCountry.
-    return COUNTRIES.find((c) => c.value !== undefined && userRanks.country);
-  }, [userRanks.country]);
-
-  // A better way to get the flag is to find it by value in the store if we save it there,
-  // but for now let's just use a generic "Country" label or find the flag if available.
-
   const pulseStyle = useAnimatedStyle(() => {
     return {
       transform: [

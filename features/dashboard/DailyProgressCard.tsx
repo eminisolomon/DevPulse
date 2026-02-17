@@ -20,7 +20,7 @@ interface ProjectTime {
 interface DailyProgressCardProps {
   totalTime: string;
   projects: ProjectTime[];
-  percent: number; // 0-100
+  percent: number;
   goalDiffText?: string;
   avgDiff?: string;
 }

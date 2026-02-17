@@ -16,7 +16,6 @@ interface AuthState {
   logout: () => void;
 }
 
-// Custom storage for secure items
 const secureStorage = {
   getItem: async (name: string) => {
     return SecureStore.getItemAsync(name);

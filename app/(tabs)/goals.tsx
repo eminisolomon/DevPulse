@@ -153,8 +153,8 @@ export default function GoalsScreen() {
             refreshing={isRefetching}
             onRefresh={refetch}
             tintColor={theme.colors.primary}
-            colors={[theme.colors.primary]} // For Android
-            progressBackgroundColor={theme.colors.surface} // For Android
+            colors={[theme.colors.primary]}
+            progressBackgroundColor={theme.colors.surface}
           />
         }
         ListEmptyComponent={

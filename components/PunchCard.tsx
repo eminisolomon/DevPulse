@@ -5,8 +5,8 @@ import { ScrollView, StyleSheet, View } from 'react-native';
 
 interface PunchCardProps {
   data: {
-    day: number; // 0-6
-    hour: number; // 0-23
+    day: number;
+    hour: number;
     seconds: number;
   }[];
 }
@@ -16,7 +16,6 @@ const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 export const PunchCard = ({ data }: PunchCardProps) => {
   const { theme } = useTheme();
 
-  // Find max seconds for scaling
   const maxSeconds = Math.max(...data.map((d) => d.seconds), 1);
 
   const getBubbleSize = (seconds: number) => {
@@ -114,7 +113,7 @@ const styles = StyleSheet.create({
     marginRight: 8,
   },
   hourLabel: {
-    width: 60, // 4 * 15px bubble container width
+    width: 60,
     alignItems: 'center',
   },
   bubblesRow: {

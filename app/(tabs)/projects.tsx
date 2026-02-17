@@ -163,7 +163,6 @@ export default function ProjectsScreen() {
         contentContainerStyle={styles.listContent}
         onEndReached={() => {
           if (hasNextPage && !isFetchingNextPage && !searchQuery) {
-            // Disable pagination when searching for now
             fetchNextPage();
           }
         }}
@@ -182,8 +181,8 @@ export default function ProjectsScreen() {
             refreshing={isRefetching}
             onRefresh={refetch}
             tintColor={theme.colors.primary}
-            colors={[theme.colors.primary]} // For Android
-            progressBackgroundColor={theme.colors.surface} // For Android
+            colors={[theme.colors.primary]}
+            progressBackgroundColor={theme.colors.surface}
           />
         }
         ListEmptyComponent={

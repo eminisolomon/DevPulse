@@ -1,21 +1,13 @@
-import {
-  ActivityRhythm,
-  Card,
-  SegmentedStatsCard,
-  Typography,
-} from '@/components';
+import { ActivityRhythm } from '@/components';
 import { DailyStatsSkeleton } from '@/components/skeletons';
 import {
-  getCategoryColor,
-  getEditorColor,
-  getLanguageColor,
-  getOSColor,
-  getWorkstationColor,
-} from '@/constants';
+  DailyDistributionStats,
+  DailyProjectsCard,
+  DailyTotalCard,
+} from '@/features/stats';
 import { useDurations, useStats, useSummaries, useTheme } from '@/hooks';
 import { formatDisplayDuration, getDailyStatsTitle } from '@/utilities';
 import { getProjectColor } from '@/utilities/projectColors';
-import { Ionicons } from '@expo/vector-icons';
 import { endOfDay, parseISO, startOfDay } from 'date-fns';
 import { Stack, useLocalSearchParams } from 'expo-router';
 import React, { useMemo } from 'react';
@@ -144,172 +136,27 @@ export default function DailyScreen() {
             refreshing={isRefetching}
             onRefresh={onRefresh}
             tintColor={theme.colors.primary}
-            colors={[theme.colors.primary]} // For Android
-            progressBackgroundColor={theme.colors.surface} // For Android
+            colors={[theme.colors.primary]}
+            progressBackgroundColor={theme.colors.surface}
           />
         }
       >
         {/* Total Time Card */}
-        <Card
-          style={[
-            styles.card,
-            {
-              borderColor: theme.colors.border,
-              borderWidth: 1,
-              backgroundColor: theme.colors.surface,
-            },
-          ]}
-        >
-          {/* Content Section */}
-          <View style={styles.textContainer}>
-            <Typography
-              variant="micro"
-              weight="bold"
-              align="center"
-              style={[styles.label, { color: theme.colors.primary }]}
-            >
-              TOTAL WORKED
-            </Typography>
-            <Typography
-              variant="display"
-              weight="bold"
-              align="center"
-              style={{ fontSize: 32, lineHeight: 40, marginVertical: 4 }}
-            >
-              {totalTimeLabel}
-            </Typography>
-
-            {goalDiffText ? (
-              <View
-                style={[
-                  styles.badge,
-                  {
-                    backgroundColor: isDark
-                      ? isPositiveDiff
-                        ? 'rgba(34, 197, 94, 0.15)'
-                        : 'rgba(248, 113, 113, 0.15)'
-                      : isPositiveDiff
-                        ? 'rgba(34, 197, 94, 0.1)'
-                        : 'rgba(239, 68, 68, 0.1)',
-                    marginTop: 4,
-                    alignSelf: 'center',
-                  },
-                ]}
-              >
-                <Ionicons
-                  name={isPositiveDiff ? 'trending-up' : 'trending-down'}
-                  size={12}
-                  color={diffColor}
-                  style={{ marginRight: 4 }}
-                />
-                <Typography
-                  variant="caption"
-                  weight="bold"
-                  style={{ color: diffColor }}
-                >
-                  {goalDiffText}
-                </Typography>
-              </View>
-            ) : (
-              <Typography
-                variant="caption"
-                color={theme.colors.textSecondary}
-                align="center"
-                style={{ marginTop: 2 }}
-              >
-                No data vs average
-              </Typography>
-            )}
-          </View>
-        </Card>
+        <DailyTotalCard
+          totalTimeLabel={totalTimeLabel}
+          goalDiffText={goalDiffText}
+          isPositiveDiff={isPositiveDiff}
+          diffColor={diffColor}
+        />
 
         {/* Activity Rhythm */}
         <ActivityRhythm sessions={clockSessions} isLoading={durationsLoading} />
 
         {/* Projects List */}
-        {projects.length > 0 && (
-          <Card style={styles.projectsCard}>
-            {projects.map((project, index) => (
-              <View key={index} style={styles.projectItem}>
-                <View style={styles.projectLeft}>
-                  <View
-                    style={[
-                      styles.projectDot,
-                      { backgroundColor: project.color },
-                    ]}
-                  />
-                  <Typography variant="body" weight="medium">
-                    {project.name}
-                  </Typography>
-                </View>
-                <Typography variant="body" weight="bold">
-                  {project.time}
-                </Typography>
-              </View>
-            ))}
-          </Card>
-        )}
+        <DailyProjectsCard projects={projects} />
 
         {/* Segmented Stats */}
-        {dayData?.languages && dayData.languages.length > 0 && (
-          <SegmentedStatsCard
-            title="LANGUAGES"
-            segments={dayData.languages.slice(0, 4).map((l) => ({
-              label: l.name,
-              percent: l.percent,
-              color: getLanguageColor(l.name),
-              valueText: l.text,
-            }))}
-          />
-        )}
-
-        {dayData?.categories && dayData.categories.length > 0 && (
-          <SegmentedStatsCard
-            title="CATEGORIES"
-            segments={dayData.categories.slice(0, 3).map((c) => ({
-              label: c.name,
-              percent: c.percent,
-              color: getCategoryColor(c.name),
-              valueText: c.text,
-            }))}
-          />
-        )}
-
-        {dayData?.editors && dayData.editors.length > 0 && (
-          <SegmentedStatsCard
-            title="EDITORS"
-            segments={dayData.editors.slice(0, 2).map((e) => ({
-              label: e.name,
-              percent: e.percent,
-              color: getEditorColor(e.name),
-              valueText: e.text,
-            }))}
-          />
-        )}
-
-        {dayData?.operating_systems && dayData.operating_systems.length > 0 && (
-          <SegmentedStatsCard
-            title="OPERATING SYSTEMS"
-            segments={dayData.operating_systems.slice(0, 1).map((os) => ({
-              label: os.name,
-              percent: os.percent,
-              color: getOSColor(os.name),
-              valueText: os.text,
-            }))}
-          />
-        )}
-
-        {dayData?.machines && dayData.machines.length > 0 && (
-          <SegmentedStatsCard
-            title="WORKSTATIONS"
-            segments={dayData.machines.slice(0, 2).map((m) => ({
-              label: m.name,
-              percent: m.percent,
-              color: getWorkstationColor(m.name),
-              valueText: m.text,
-            }))}
-          />
-        )}
+        <DailyDistributionStats data={dayData} />
       </ScrollView>
     </View>
   );
@@ -327,53 +174,5 @@ const styles = StyleSheet.create({
   scrollContent: {
     padding: 16,
     paddingBottom: 100,
-  },
-  card: {
-    marginBottom: 16,
-    padding: 16,
-    overflow: 'hidden',
-  },
-  content: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingVertical: 8,
-  },
-  textContainer: {
-    flex: 1,
-  },
-  label: {
-    textTransform: 'uppercase',
-    letterSpacing: 0.5,
-    marginBottom: 2,
-  },
-  badge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 12,
-  },
-  chartCard: {
-    marginBottom: 16,
-    alignItems: 'center',
-  },
-  projectsCard: {
-    marginBottom: 16,
-    gap: 12,
-  },
-  projectItem: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  projectLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 10,
-  },
-  projectDot: {
-    width: 10,
-    height: 10,
-    borderRadius: 5,
   },
 });

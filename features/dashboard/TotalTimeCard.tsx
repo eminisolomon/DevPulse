@@ -116,7 +116,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   projectsContainer: {
-    borderRadius: 12, // Slightly smaller radius for inner container
+    borderRadius: 12,
     padding: 16,
   },
   projectsTitle: {

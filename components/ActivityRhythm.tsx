@@ -13,8 +13,8 @@ import { Card } from './Card';
 import { Typography } from './Typography';
 
 export interface ClockSession {
-  start: number; // seconds from 00:00:00
-  duration: number; // seconds
+  start: number;
+  duration: number;
   color?: string;
 }
 
@@ -55,7 +55,6 @@ export const ActivityRhythm = ({
   const arcs = useMemo(() => {
     if (isLoading || !sessions.length) return [];
     return sessions.map((session) => {
-      // Normalize start and duration to 24-hour circle
       const startAngle =
         (session.start / (24 * 3600)) * 2 * Math.PI - Math.PI / 2;
       const sweepAngle = (session.duration / (24 * 3600)) * 2 * Math.PI;

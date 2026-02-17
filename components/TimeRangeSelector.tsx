@@ -28,7 +28,7 @@ export const TimeRangeSelector = ({
   const { theme } = useTheme();
   const { width } = useWindowDimensions();
   const containerPadding = 2;
-  const horizontalMargin = 32; // Matches scrollContent padding 16 * 2
+  const horizontalMargin = 32;
   const segmentWidth =
     (width - horizontalMargin - containerPadding * 2) / availableRanges.length;
 

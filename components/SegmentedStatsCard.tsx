@@ -24,7 +24,6 @@ export const SegmentedStatsCard = ({
 }: SegmentedStatsCardProps) => {
   const { theme } = useTheme();
 
-  // Normalize segments to ensure they fit in the bar
   const totalPercent = segments.reduce((sum, s) => sum + s.percent, 0);
 
   return (

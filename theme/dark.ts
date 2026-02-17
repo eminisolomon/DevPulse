@@ -3,8 +3,8 @@ import { Theme } from './light';
 
 export const darkTheme: Theme = {
   colors: {
-    background: palette.neutral[950], // Very dark background
-    surface: palette.neutral[900], // Slightly lighter surface
+    background: palette.neutral[950],
+    surface: palette.neutral[900],
     surfaceHighlight: palette.neutral[800],
 
     text: '#FFFFFF',
@@ -12,7 +12,7 @@ export const darkTheme: Theme = {
     textTertiary: palette.neutral[600],
     textInverse: palette.neutral[900],
 
-    primary: palette.brand[400], // Lighter blue for dark mode
+    primary: palette.brand[400],
     primaryForeground: palette.brand[950],
     primaryContainer: palette.brand[900],
     primaryContainerForeground: palette.brand[300],

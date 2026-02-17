@@ -43,7 +43,6 @@ export const MonthlyCalendarCard = ({
 
   const isCurrentMonth = isSameMonth(monthDate, new Date());
 
-  // Generate calendar days for the specific monthDate
   const start = startOfMonth(monthDate);
   const end = endOfMonth(monthDate);
   const currentMonthName = format(monthDate, 'MMMM');
@@ -81,7 +80,7 @@ export const MonthlyCalendarCard = ({
   const getHeatmapColor = (level: number) => {
     if (level === 0) return 'transparent';
     const opacityMap: Record<number, string> = {
-      1: '20', // 12% is too small, let's use hex alpha
+      1: '20',
       2: '40',
       3: '70',
       4: 'FF',
