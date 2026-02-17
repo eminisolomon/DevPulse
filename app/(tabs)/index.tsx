@@ -1,5 +1,6 @@
 import { DashboardSkeleton } from '@/components/skeletons';
 import {
+  BestDayCard,
   DailyProgressCard,
   DashboardHeader,
   MonthlyCalendarCard,
@@ -204,6 +205,13 @@ export default function Dashboard() {
           percent={todayPercent}
           goalDiffText={todayGoalDiffText}
           avgDiff={todayGoalDiffText}
+        />
+        <BestDayCard
+          date={stats?.data?.best_day?.date}
+          totalTime={stats?.data?.best_day?.text}
+          totalSeconds={stats?.data?.best_day?.total_seconds}
+          dailyAverage={dailyAverage}
+          topProject={stats?.data?.projects?.[0]}
         />
         <MonthlyCalendarCard
           monthDate={viewingMonth}

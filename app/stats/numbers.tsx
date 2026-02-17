@@ -13,6 +13,7 @@ import {
   getLanguageColor,
   getOSColor,
 } from '@/constants';
+import { BestDayCard } from '@/features';
 import { useDurations, useStats, useTheme } from '@/hooks';
 import { Ionicons } from '@expo/vector-icons';
 import { subDays } from 'date-fns';
@@ -155,6 +156,14 @@ export default function NumbersScreen() {
         }
       >
         <TimeRangeSelector value={range} onChange={setRange} />
+
+        <BestDayCard
+          date={stats?.data?.best_day?.date}
+          totalTime={stats?.data?.best_day?.text}
+          totalSeconds={stats?.data?.best_day?.total_seconds}
+          dailyAverage={stats?.data?.daily_average}
+          topProject={stats?.data?.projects?.[0]}
+        />
 
         <View style={styles.grid}>
           {statItems.map((item, index) => (

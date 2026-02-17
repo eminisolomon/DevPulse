@@ -1,3 +1,4 @@
+export * from './BestDayCard';
 export * from './DailyProgressCard';
 export * from './DashboardBanner';
 export * from './DashboardHeader';
