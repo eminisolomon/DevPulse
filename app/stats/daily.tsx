@@ -15,13 +15,14 @@ import {
 import { useDurations, useStats, useSummaries, useTheme } from '@/hooks';
 import { formatDisplayDuration, getDailyStatsTitle } from '@/utilities';
 import { getProjectColor } from '@/utilities/projectColors';
+import { Ionicons } from '@expo/vector-icons';
 import { endOfDay, parseISO, startOfDay } from 'date-fns';
 import { Stack, useLocalSearchParams } from 'expo-router';
 import React, { useMemo } from 'react';
 import { RefreshControl, ScrollView, StyleSheet, View } from 'react-native';
 
 export default function DailyScreen() {
-  const { theme } = useTheme();
+  const { theme, isDark } = useTheme();
   const params = useLocalSearchParams<{ date?: string }>();
 
   const selectedDate = useMemo(() => {
@@ -66,16 +67,19 @@ export default function DailyScreen() {
     await Promise.all([refetch(), refetchDurations(), refetchStats()]);
   };
 
-  const { goalDiffText, totalTimeLabel } = useMemo(() => {
+  const { goalDiffText, totalTimeLabel, isPositiveDiff } = useMemo(() => {
     const seconds = dayData?.grand_total?.total_seconds || 0;
     const label = dayData?.grand_total
       ? formatDisplayDuration(seconds)
       : '0 HRS 0 MINS';
 
     let diffText = '';
+    let isPositive = true;
+
     if (dailyAverage > 0 && seconds > 0) {
       const diff = seconds - dailyAverage;
-      const sign = diff >= 0 ? '+' : '-';
+      isPositive = diff >= 0;
+      const sign = isPositive ? '+' : '-';
       const absDiff = Math.abs(diff);
       const h = Math.floor(absDiff / 3600);
       const m = Math.floor((absDiff % 3600) / 60);
@@ -87,7 +91,11 @@ export default function DailyScreen() {
       }
     }
 
-    return { totalTimeLabel: label, goalDiffText: diffText };
+    return {
+      totalTimeLabel: label,
+      goalDiffText: diffText,
+      isPositiveDiff: isPositive,
+    };
   }, [dayData, dailyAverage]);
 
   const projects = useMemo(() => {
@@ -116,6 +124,14 @@ export default function DailyScreen() {
     );
   }
 
+  const diffColor = isPositiveDiff
+    ? isDark
+      ? '#4ADE80'
+      : '#22C55E'
+    : isDark
+      ? '#F87171'
+      : '#EF4444';
+
   return (
     <View
       style={[styles.container, { backgroundColor: theme.colors.background }]}
@@ -134,22 +150,77 @@ export default function DailyScreen() {
         }
       >
         {/* Total Time Card */}
-        <Card style={styles.totalCard}>
-          <Typography
-            variant="display"
-            weight="bold"
-            align="center"
-            style={styles.totalTime}
-          >
-            {totalTimeLabel}
-          </Typography>
-          <Typography
-            variant="caption"
-            color={theme.colors.textSecondary}
-            align="center"
-          >
-            worked {goalDiffText && `• ${goalDiffText}`}
-          </Typography>
+        <Card
+          style={[
+            styles.card,
+            {
+              borderColor: theme.colors.border,
+              borderWidth: 1,
+              backgroundColor: theme.colors.surface,
+            },
+          ]}
+        >
+          {/* Content Section */}
+          <View style={styles.textContainer}>
+            <Typography
+              variant="micro"
+              weight="bold"
+              align="center"
+              style={[styles.label, { color: theme.colors.primary }]}
+            >
+              TOTAL WORKED
+            </Typography>
+            <Typography
+              variant="display"
+              weight="bold"
+              align="center"
+              style={{ fontSize: 32, lineHeight: 40, marginVertical: 4 }}
+            >
+              {totalTimeLabel}
+            </Typography>
+
+            {goalDiffText ? (
+              <View
+                style={[
+                  styles.badge,
+                  {
+                    backgroundColor: isDark
+                      ? isPositiveDiff
+                        ? 'rgba(34, 197, 94, 0.15)'
+                        : 'rgba(248, 113, 113, 0.15)'
+                      : isPositiveDiff
+                        ? 'rgba(34, 197, 94, 0.1)'
+                        : 'rgba(239, 68, 68, 0.1)',
+                    marginTop: 4,
+                    alignSelf: 'center',
+                  },
+                ]}
+              >
+                <Ionicons
+                  name={isPositiveDiff ? 'trending-up' : 'trending-down'}
+                  size={12}
+                  color={diffColor}
+                  style={{ marginRight: 4 }}
+                />
+                <Typography
+                  variant="caption"
+                  weight="bold"
+                  style={{ color: diffColor }}
+                >
+                  {goalDiffText}
+                </Typography>
+              </View>
+            ) : (
+              <Typography
+                variant="caption"
+                color={theme.colors.textSecondary}
+                align="center"
+                style={{ marginTop: 2 }}
+              >
+                No data vs average
+              </Typography>
+            )}
+          </View>
         </Card>
 
         {/* Activity Rhythm */}
@@ -257,13 +328,30 @@ const styles = StyleSheet.create({
     padding: 16,
     paddingBottom: 100,
   },
-  totalCard: {
-    paddingVertical: 24,
+  card: {
     marginBottom: 16,
-    alignItems: 'center',
+    padding: 16,
+    overflow: 'hidden',
   },
-  totalTime: {
-    marginBottom: 4,
+  content: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: 8,
+  },
+  textContainer: {
+    flex: 1,
+  },
+  label: {
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+    marginBottom: 2,
+  },
+  badge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 12,
   },
   chartCard: {
     marginBottom: 16,
