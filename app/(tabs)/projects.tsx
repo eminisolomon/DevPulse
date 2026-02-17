@@ -34,21 +34,26 @@ export default function ProjectsScreen() {
   const [sortBy, setSortBy] = React.useState<'recent' | 'name'>('recent');
   const sortSheetRef = React.useRef<BottomSheetModal>(null);
 
-  const projectsData = React.useMemo(
-    () => data?.pages.flatMap((page) => page.data) || [],
-    [data],
-  );
+  const projectsData = React.useMemo(() => {
+    if (!data?.pages) return [];
+    const allProjects = data.pages.flatMap((page) => page.data);
+
+    const seen = new Set();
+    return allProjects.filter((p) => {
+      if (seen.has(p.id)) return false;
+      seen.add(p.id);
+      return true;
+    });
+  }, [data]);
 
   const filteredProjects = React.useMemo(() => {
     let result = [...projectsData];
 
-    // Filter by search query
     if (searchQuery) {
       const query = searchQuery.toLowerCase();
       result = result.filter((p) => p.name.toLowerCase().includes(query));
     }
 
-    // Sort
     result.sort((a, b) => {
       if (sortBy === 'name') {
         return a.name.localeCompare(b.name);
