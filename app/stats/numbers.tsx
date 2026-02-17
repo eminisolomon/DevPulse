@@ -6,9 +6,10 @@ import {
 } from '@/components';
 import { Card } from '@/components/Card';
 import { Typography } from '@/components/Typography';
+import { getLanguageColor } from '@/constants/languages';
+import { useTheme } from '@/hooks';
 import { useDurations } from '@/hooks/useDurations';
 import { useStats } from '@/hooks/useStats';
-import { useTheme } from '@/hooks/useTheme';
 import { Ionicons } from '@expo/vector-icons';
 import { subDays } from 'date-fns';
 import { useLocalSearchParams } from 'expo-router';
@@ -198,7 +199,7 @@ export default function NumbersScreen() {
             segments={stats.data.languages.slice(0, 5).map((l) => ({
               label: l.name,
               percent: l.percent,
-              color: l.color || theme.colors.primary,
+              color: getLanguageColor(l.name),
               valueText: l.text,
             }))}
           />

@@ -2,16 +2,10 @@ import { Button } from '@/components/Button';
 import { Card } from '@/components/Card';
 import { Typography } from '@/components/Typography';
 import { useTheme } from '@/hooks/useTheme';
-import {
-  Canvas,
-  Circle,
-  Path,
-  Skia,
-  matchFont,
-} from '@shopify/react-native-skia';
+import { Canvas, Circle, Path, Skia } from '@shopify/react-native-skia';
 import { useRouter } from 'expo-router';
-import React, { useMemo } from 'react';
-import { Platform, StyleSheet, View } from 'react-native';
+import React from 'react';
+import { StyleSheet, View } from 'react-native';
 
 const SIZE = 240;
 const RADIUS = SIZE / 2 - 20;
@@ -28,6 +22,7 @@ interface DailyProgressCardProps {
   projects: ProjectTime[];
   percent: number; // 0-100
   goalDiffText?: string;
+  avgDiff?: string;
 }
 
 export const DailyProgressCard = ({
@@ -35,34 +30,53 @@ export const DailyProgressCard = ({
   projects,
   percent = 0,
   goalDiffText,
+  avgDiff,
 }: DailyProgressCardProps) => {
   const { theme, isDark } = useTheme();
   const router = useRouter();
 
-  const strokeWidth = 20;
   const center = SIZE / 2;
+  const strokeWidth = 20;
+  const GAP_ANGLE = 0.05;
 
-  const fontFamily =
-    Platform.select({ ios: 'Helvetica', android: 'sans-serif' }) ||
-    'sans-serif';
-  const font = useMemo(
-    () => matchFont({ fontFamily, fontSize: 32, fontWeight: 'bold' }),
-    [fontFamily],
-  );
+  const activeProjects = projects.filter((p) => (p.percent || 0) > 0);
 
-  const startAngle = -Math.PI / 2;
-  const endAngle = startAngle + (percent / 100) * 2 * Math.PI;
+  let currentAngle = -Math.PI / 2;
 
-  const path = Skia.Path.Make();
-  path.addArc(
+  const segments = activeProjects.map((project) => {
+    const sweepAngle = ((project.percent || 0) / 100) * 2 * Math.PI;
+    const drawAngle = Math.max(0, sweepAngle - GAP_ANGLE);
+
+    const path = Skia.Path.Make();
+    path.addArc(
+      {
+        x: center - RADIUS,
+        y: center - RADIUS,
+        width: RADIUS * 2,
+        height: RADIUS * 2,
+      },
+      (currentAngle * 180) / Math.PI,
+      (drawAngle * 180) / Math.PI,
+    );
+
+    currentAngle += sweepAngle;
+
+    return {
+      path,
+      color: project.color,
+    };
+  });
+
+  const emptyPath = Skia.Path.Make();
+  emptyPath.addArc(
     {
       x: center - RADIUS,
       y: center - RADIUS,
       width: RADIUS * 2,
       height: RADIUS * 2,
     },
-    (startAngle * 180) / Math.PI,
-    ((endAngle - startAngle) * 180) / Math.PI,
+    0,
+    360,
   );
 
   return (
@@ -92,7 +106,6 @@ export const DailyProgressCard = ({
 
       <View style={styles.chartContainer}>
         <Canvas style={{ width: SIZE, height: SIZE }}>
-          {/* Background Circle */}
           <Circle
             cx={center}
             cy={center}
@@ -101,21 +114,33 @@ export const DailyProgressCard = ({
             style="stroke"
             strokeWidth={strokeWidth}
           />
-          {/* Progress Arc */}
-          <Path
-            path={path}
-            color={theme.colors.primary}
-            style="stroke"
-            strokeWidth={strokeWidth}
-            strokeCap="round"
-          />
+          {segments.length > 0 ? (
+            segments.map((segment, index) => (
+              <Path
+                key={index}
+                path={segment.path}
+                color={segment.color}
+                style="stroke"
+                strokeWidth={strokeWidth}
+                strokeCap="round"
+              />
+            ))
+          ) : (
+            <Path
+              path={emptyPath}
+              color={isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)'}
+              style="stroke"
+              strokeWidth={strokeWidth}
+              strokeCap="round"
+            />
+          )}
         </Canvas>
         <View style={styles.centerText}>
           <Typography variant="headline" weight="bold">
-            {percent}%
+            {avgDiff || `${percent}%`}
           </Typography>
           <Typography variant="micro" color={theme.colors.textSecondary}>
-            of average
+            {avgDiff ? 'past week avg' : 'of average'}
           </Typography>
         </View>
       </View>

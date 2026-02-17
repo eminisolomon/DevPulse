@@ -9,6 +9,7 @@ import {
 import { useAllTime, useStats, useSummaries, useTheme, useUser } from '@/hooks';
 import { useAuthStore } from '@/stores';
 import { formatDuration } from '@/utilities';
+import { getProjectColor } from '@/utilities/projectColors';
 import { endOfMonth, startOfMonth } from 'date-fns';
 import { Redirect, useRouter } from 'expo-router';
 import React, { useMemo, useState } from 'react';
@@ -73,6 +74,7 @@ export default function Dashboard() {
     .map((p) => ({
       name: p.name,
       text: p.text || formatDuration(p.total_seconds),
+      color: getProjectColor(p.name),
     }));
 
   // Calculate Today's Progress
@@ -107,11 +109,12 @@ export default function Dashboard() {
   }, [todaySummaries, dailyAverage]);
 
   const todayProjects = (todaySummaries?.data?.[0]?.projects || [])
-    .slice(0, 3)
+    .slice(0, 5)
     .map((p) => ({
       name: p.name,
       text: p.text,
-      color: theme.colors.primary,
+      color: getProjectColor(p.name),
+      percent: p.percent || 0,
     }));
 
   const monthTotal = monthSummaries?.cumulative_total?.text || '0 hrs 0 mins';
@@ -200,6 +203,7 @@ export default function Dashboard() {
           projects={todayProjects}
           percent={todayPercent}
           goalDiffText={todayGoalDiffText}
+          avgDiff={todayGoalDiffText}
         />
         <MonthlyCalendarCard
           monthDate={viewingMonth}

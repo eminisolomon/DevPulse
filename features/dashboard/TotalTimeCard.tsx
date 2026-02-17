@@ -9,6 +9,7 @@ import { StyleSheet, View } from 'react-native';
 interface ProjectTime {
   name: string;
   text: string;
+  color?: string;
 }
 
 interface TotalTimeCardProps {
@@ -73,7 +74,10 @@ export const TotalTimeCard = ({
           <View key={index} style={styles.projectRow}>
             <View style={styles.projectInfo}>
               <View
-                style={[styles.dot, { backgroundColor: theme.colors.primary }]}
+                style={[
+                  styles.dot,
+                  { backgroundColor: project.color || theme.colors.primary },
+                ]}
               />
               <Typography variant="body" weight="medium">
                 {project.name}
