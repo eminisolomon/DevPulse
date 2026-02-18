@@ -28,7 +28,7 @@ export const DailyStatsShareCard = forwardRef<View, DailyStatsShareCardProps>(
     const negativeColor = isDark ? '#F87171' : '#EF4444';
 
     return (
-      <ShareCardWrapper ref={ref}>
+      <ShareCardWrapper ref={ref} outerPadding={24}>
         {/* Date label */}
         <View style={styles.dateRow}>
           <Feather name="calendar" size={12} color={mutedColor} />

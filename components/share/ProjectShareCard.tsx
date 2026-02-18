@@ -22,7 +22,7 @@ export const ProjectShareCard = forwardRef<View, ProjectShareCardProps>(
     const accent = theme.colors.primary;
 
     return (
-      <ShareCardWrapper ref={ref}>
+      <ShareCardWrapper ref={ref} outerPadding={24}>
         {/* Project name */}
         <View style={styles.nameRow}>
           <View

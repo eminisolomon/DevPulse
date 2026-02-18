@@ -46,7 +46,7 @@ export const LeaderboardShareCard = forwardRef<View, LeaderboardShareCardProps>(
     const rankBadgeBg = getRankBadgeBg();
 
     return (
-      <ShareCardWrapper ref={ref}>
+      <ShareCardWrapper ref={ref} outerPadding={24}>
         {/* Scope header */}
         <Text style={[styles.scopeStart, { color: mutedColor }]}>
           {scope || 'GLOBAL TOP DEVELOPERS'}
