@@ -1,4 +1,5 @@
 import { useTheme } from '@/hooks/useTheme';
+import { formatDuration } from '@/utilities/formatters';
 import {
   Canvas,
   Circle,
@@ -16,6 +17,7 @@ export interface ClockSession {
   start: number;
   duration: number;
   color?: string;
+  project?: string;
 }
 
 interface ActivityRhythmProps {
@@ -32,16 +34,16 @@ const MARGIN = 40;
 export const ActivityRhythm = ({
   sessions = [],
   isLoading = false,
-  size = 280,
+  size = 240,
   title = 'Activity Rhythm',
   subtitle = 'Showing 24-hour coding density',
 }: ActivityRhythmProps) => {
-  const { theme } = useTheme();
+  const { theme, isDark } = useTheme();
 
   const center = size / 2;
   const outerRadius = size / 2 - MARGIN;
-  const innerRadius = outerRadius - 40;
-  const strokeWidth = outerRadius - innerRadius;
+  const strokeWidth = 12;
+  const innerRadius = outerRadius - strokeWidth;
   const midRadius = (outerRadius + innerRadius) / 2;
 
   const fontFamily =
@@ -54,6 +56,7 @@ export const ActivityRhythm = ({
 
   const arcs = useMemo(() => {
     if (isLoading || !sessions.length) return [];
+
     return sessions.map((session) => {
       const startAngle =
         (session.start / (24 * 3600)) * 2 * Math.PI - Math.PI / 2;
@@ -74,12 +77,60 @@ export const ActivityRhythm = ({
       return {
         path,
         color: session.color || theme.colors.primary,
+        project: session.project,
       };
     });
   }, [sessions, center, midRadius, theme.colors.primary, isLoading]);
 
+  const projectLegend = useMemo(() => {
+    if (!sessions.length) return [];
+
+    const projectMap = new Map<string, { color: string; duration: number }>();
+
+    sessions.forEach((s) => {
+      if (s.project) {
+        const existing = projectMap.get(s.project) || {
+          color: s.color || theme.colors.primary,
+          duration: 0,
+        };
+        existing.duration += s.duration;
+        projectMap.set(s.project, existing);
+      }
+    });
+
+    return Array.from(projectMap.entries())
+      .sort((a, b) => b[1].duration - a[1].duration)
+      .slice(0, 4) // Top 4 projects
+      .map(([name, data]) => ({
+        name,
+        color: data.color,
+        formattedTime: formatDuration(data.duration),
+      }));
+  }, [sessions, theme.colors.primary]);
+
+  // Calculate total duration for the center
+  const totalDuration = useMemo(() => {
+    return sessions.reduce((acc, curr) => acc + curr.duration, 0);
+  }, [sessions]);
+
+  const formattedTotal = useMemo(() => {
+    const hours = Math.floor(totalDuration / 3600);
+    const minutes = Math.floor((totalDuration % 3600) / 60);
+    if (hours > 0) return `${hours}h ${minutes}m`;
+    return `${minutes}m`;
+  }, [totalDuration]);
+
   return (
-    <Card style={styles.card}>
+    <Card
+      style={[
+        styles.card,
+        {
+          borderColor: theme.colors.border,
+          borderWidth: 1,
+          backgroundColor: theme.colors.surface,
+        },
+      ]}
+    >
       <View style={styles.header}>
         <Typography variant="title" weight="bold">
           {title}
@@ -91,7 +142,6 @@ export const ActivityRhythm = ({
 
       <View style={[styles.canvasContainer, { height: size }]}>
         <Canvas style={{ width: size, height: size }}>
-          {/* Background Track */}
           <Circle
             cx={center}
             cy={center}
@@ -99,13 +149,13 @@ export const ActivityRhythm = ({
             color={theme.colors.surfaceHighlight}
             style="stroke"
             strokeWidth={strokeWidth}
+            opacity={0.3}
           />
 
-          {/* Hour Markers */}
           {HOURS.map((hour) => {
             const angle = (hour / 24) * 2 * Math.PI - Math.PI / 2;
-            const x = center + (outerRadius + 15) * Math.cos(angle);
-            const y = center + (outerRadius + 15) * Math.sin(angle);
+            const x = center + (outerRadius + 20) * Math.cos(angle);
+            const y = center + (outerRadius + 20) * Math.sin(angle);
             const label =
               hour === 0
                 ? '12AM'
@@ -126,7 +176,6 @@ export const ActivityRhythm = ({
             );
           })}
 
-          {/* Activity Arcs */}
           {!isLoading &&
             arcs.map((arc, index) => (
               <Path
@@ -139,7 +188,6 @@ export const ActivityRhythm = ({
               />
             ))}
 
-          {/* Empty State Indicator */}
           {!isLoading && sessions.length === 0 && (
             <SkiaText
               x={center - 35}
@@ -150,28 +198,72 @@ export const ActivityRhythm = ({
               opacity={0.5}
             />
           )}
-
-          {/* Center Indicator */}
-          <Circle
-            cx={center}
-            cy={center}
-            r={innerRadius - 20}
-            color={theme.colors.surfaceHighlight}
-            style="fill"
-            opacity={0.3}
-          />
         </Canvas>
+
+        <View
+          style={[
+            StyleSheet.absoluteFill,
+            { justifyContent: 'center', alignItems: 'center' },
+          ]}
+        >
+          <Typography variant="headline" weight="bold">
+            {formattedTotal}
+          </Typography>
+          <Typography variant="micro" color={theme.colors.textSecondary}>
+            total time
+          </Typography>
+        </View>
       </View>
 
-      <View style={styles.legend}>
-        <Typography
-          variant="caption"
-          align="center"
-          color={theme.colors.textSecondary}
+      {!isLoading && projectLegend.length > 0 && (
+        <View
+          style={[
+            styles.legendContainer,
+            {
+              backgroundColor: isDark
+                ? 'rgba(255,255,255,0.05)'
+                : 'rgba(0,0,0,0.02)',
+            },
+          ]}
         >
-          {subtitle}
-        </Typography>
-      </View>
+          {projectLegend.map((p, i) => (
+            <View key={i} style={styles.legendItem}>
+              <View style={styles.legendLeft}>
+                <View
+                  style={[styles.legendDot, { backgroundColor: p.color }]}
+                />
+                <Typography
+                  variant="body"
+                  weight="medium"
+                  color={theme.colors.text}
+                  numberOfLines={1}
+                >
+                  {p.name}
+                </Typography>
+              </View>
+              <Typography
+                variant="body"
+                weight="bold"
+                color={theme.colors.text}
+              >
+                {p.formattedTime}
+              </Typography>
+            </View>
+          ))}
+        </View>
+      )}
+
+      {(!projectLegend.length || isLoading) && (
+        <View style={styles.legend}>
+          <Typography
+            variant="caption"
+            align="center"
+            color={theme.colors.textSecondary}
+          >
+            {subtitle}
+          </Typography>
+        </View>
+      )}
     </Card>
   );
 };
@@ -185,14 +277,35 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 10,
+    marginBottom: 20,
   },
   canvasContainer: {
     width: '100%',
     alignItems: 'center',
     justifyContent: 'center',
+    marginBottom: 20,
   },
   legend: {
-    marginTop: 10,
+    marginTop: 0,
+  },
+  legendContainer: {
+    borderRadius: 12,
+    padding: 16,
+    gap: 12,
+  },
+  legendItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  legendLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+  },
+  legendDot: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
   },
 });

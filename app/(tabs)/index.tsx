@@ -13,7 +13,7 @@ import { dashboardStyles as styles } from '@/theme/styles/dashboard';
 import { formatDuration } from '@/utilities';
 import { getProjectColor } from '@/utilities/projectColors';
 import { endOfMonth, startOfMonth } from 'date-fns';
-import { Redirect, useRouter } from 'expo-router';
+import { Redirect } from 'expo-router';
 import React, { useMemo, useState } from 'react';
 import { RefreshControl, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -21,7 +21,6 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 export default function Dashboard() {
   const { theme } = useTheme();
   const { isAuthenticated } = useAuthStore();
-  const router = useRouter();
 
   const { isLoading: userLoading } = useUser();
   const {

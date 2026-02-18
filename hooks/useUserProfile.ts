@@ -1,6 +1,8 @@
-import { useLeaderboard, useStats, useUser } from '@/hooks';
 import { useLeaderboardStore } from '@/stores';
 import { useCallback, useMemo, useState } from 'react';
+import { useLeaderboard } from './useLeaderboard';
+import { useStats } from './useStats';
+import { useUser } from './useUser';
 
 export function useUserProfile(id: string) {
   const {

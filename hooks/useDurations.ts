@@ -1,4 +1,5 @@
 import { wakaService } from '@/services';
+import { getProjectColor } from '@/utilities';
 import { useQuery } from '@tanstack/react-query';
 import { format, startOfDay } from 'date-fns';
 
@@ -22,7 +23,8 @@ export function useDurations(date: Date = new Date()) {
         return {
           start: Math.max(0, startTime - dayStart),
           duration: d.duration,
-          color: d.color,
+          project: d.project,
+          color: d.project ? getProjectColor(d.project) : d.color,
         };
       });
     },

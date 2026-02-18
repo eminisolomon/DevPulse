@@ -1,13 +1,8 @@
 import { ActivityRhythm } from '@/components';
 import { DailyStatsSkeleton } from '@/components/skeletons';
-import {
-  DailyDistributionStats,
-  DailyProjectsCard,
-  DailyTotalCard,
-} from '@/features/stats';
+import { DailyDistributionStats, DailyTotalCard } from '@/features/stats';
 import { useDurations, useStats, useSummaries, useTheme } from '@/hooks';
 import { formatDisplayDuration, getDailyStatsTitle } from '@/utilities';
-import { getProjectColor } from '@/utilities/projectColors';
 import { endOfDay, parseISO, startOfDay } from 'date-fns';
 import { Stack, useLocalSearchParams } from 'expo-router';
 import React, { useMemo } from 'react';
@@ -90,16 +85,6 @@ export default function DailyScreen() {
     };
   }, [dayData, dailyAverage]);
 
-  const projects = useMemo(() => {
-    if (!dayData?.projects) return [];
-    return dayData.projects.slice(0, 5).map((p) => ({
-      name: p.name,
-      time: p.text,
-      color: getProjectColor(p.name),
-      icon: 'circle',
-    }));
-  }, [dayData]);
-
   const clockSessions = useMemo(() => {
     if (!durationSessions || !Array.isArray(durationSessions)) return [];
     return durationSessions;
@@ -151,9 +136,6 @@ export default function DailyScreen() {
 
         {/* Activity Rhythm */}
         <ActivityRhythm sessions={clockSessions} isLoading={durationsLoading} />
-
-        {/* Projects List */}
-        <DailyProjectsCard projects={projects} />
 
         {/* Segmented Stats */}
         <DailyDistributionStats data={dayData} />
