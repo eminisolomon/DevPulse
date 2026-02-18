@@ -15,7 +15,10 @@
     "submit:android": "eas submit --platform android",
     "preview:android": "eas build --profile preview --platform android",
     "preview:ios": "eas build --profile preview --platform ios",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "lint": "tsc --noEmit",
+    "test": "jest"
   },
   "dependencies": {
     "@dicebear/core": "^9.3.1",
