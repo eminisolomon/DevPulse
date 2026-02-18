@@ -30,7 +30,10 @@ export const DailyStatsShareCard = forwardRef<View, DailyStatsShareCardProps>(
     return (
       <ShareCardWrapper ref={ref}>
         {/* Date label */}
-        <Text style={[styles.dateLabel, { color: mutedColor }]}>{date}</Text>
+        <View style={styles.dateRow}>
+          <Feather name="calendar" size={12} color={mutedColor} />
+          <Text style={[styles.dateLabel, { color: mutedColor }]}>{date}</Text>
+        </View>
 
         {/* Hero total time */}
         <View style={styles.heroSection}>
@@ -125,6 +128,13 @@ export const DailyStatsShareCard = forwardRef<View, DailyStatsShareCardProps>(
 DailyStatsShareCard.displayName = 'DailyStatsShareCard';
 
 const styles = StyleSheet.create({
+  dateRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 6,
+    marginBottom: 4,
+  },
   dateLabel: {
     fontSize: 13,
     fontWeight: '600',
@@ -132,39 +142,42 @@ const styles = StyleSheet.create({
     letterSpacing: 1.2,
   },
   heroSection: {
-    alignItems: 'flex-start',
+    alignItems: 'center',
     gap: 8,
+    marginBottom: 8,
   },
   totalTime: {
-    fontSize: 34,
+    fontSize: 42,
     fontWeight: '800',
-    letterSpacing: -0.5,
+    letterSpacing: -1,
+    textAlign: 'center',
   },
   diffBadge: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 4,
-    paddingHorizontal: 10,
-    paddingVertical: 4,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
     borderRadius: 20,
   },
   diffText: {
-    fontSize: 12,
+    fontSize: 13,
     fontWeight: '600',
   },
   statsRow: {
-    gap: 10,
+    gap: 12,
   },
   statBox: {
-    borderRadius: 14,
-    padding: 14,
-    gap: 8,
+    borderRadius: 16,
+    padding: 16,
+    gap: 10,
   },
   statLabel: {
     fontSize: 10,
     fontWeight: '700',
     letterSpacing: 1,
-    marginBottom: 2,
+    marginBottom: 4,
+    opacity: 0.8,
   },
   langRow: {
     flexDirection: 'row',
@@ -177,12 +190,13 @@ const styles = StyleSheet.create({
     borderRadius: 4,
   },
   langName: {
-    fontSize: 13,
+    fontSize: 14,
     fontWeight: '600',
     flex: 1,
   },
   langPercent: {
-    fontSize: 12,
-    fontWeight: '500',
+    fontSize: 13,
+    fontWeight: '600',
+    fontVariant: ['tabular-nums'],
   },
 });

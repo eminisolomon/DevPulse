@@ -9,7 +9,13 @@ export const useShareScreenshot = () => {
 
   const handleShare = useCallback(async () => {
     try {
-      if (!shareCardRef.current) return;
+      if (!shareCardRef.current) {
+        console.warn(
+          '[Share] shareCardRef is null. Card component might not be rendered.',
+        );
+        toast.error('Share card not ready. Are you ranked on the leaderboard?');
+        return;
+      }
 
       const uri = await captureRef(shareCardRef, {
         format: 'png',

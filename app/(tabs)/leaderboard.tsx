@@ -3,7 +3,7 @@ import { LeaderboardShareCard } from '@/components/share';
 import { LeaderboardSkeleton } from '@/components/skeletons';
 import { useLeaderboardContext } from '@/contexts';
 import { CurrentUserRank, LeaderboardItem, TopThreePodium } from '@/features';
-import { useShareScreenshot, useTheme } from '@/hooks';
+import { useAllTime, useShareScreenshot, useTheme, useUser } from '@/hooks';
 import { useOrganizationStore } from '@/stores';
 import { leaderboardStyles as styles } from '@/theme';
 import { Feather } from '@expo/vector-icons';
@@ -19,8 +19,10 @@ import {
 
 export default function LeaderboardScreen() {
   const { theme } = useTheme();
+  const { data: user } = useUser();
   const bottomSheetRef = React.useRef<BottomSheetModal>(null);
   const { selectedOrganization } = useOrganizationStore();
+  const { data: allTime } = useAllTime();
   const { shareCardRef, handleShare } = useShareScreenshot();
 
   const {
@@ -67,6 +69,10 @@ export default function LeaderboardScreen() {
 
   const showCountrySelector = !selectedOrganization;
 
+  const onRefresh = React.useCallback(() => {
+    refetch();
+  }, [refetch]);
+
   if (isLoading && !leaderboardData.length) {
     return (
       <View
@@ -77,7 +83,7 @@ export default function LeaderboardScreen() {
           subtitle={getSubtitle()}
           onShare={handleShare}
           rightElement={
-            showCountrySelector ? (
+            !selectedOrganization ? (
               <TouchableOpacity
                 activeOpacity={0.7}
                 style={{
@@ -138,21 +144,25 @@ export default function LeaderboardScreen() {
         }
       />
 
-      {/* Hidden share card for capture */}
-      {currentUserRank && (
-        <LeaderboardShareCard
-          ref={shareCardRef}
-          rank={currentUserRank.rank}
-          displayName={
-            currentUserRank.user.display_name ||
-            currentUserRank.user.username ||
-            'Developer'
-          }
-          totalTime={currentUserRank.running_total.human_readable_total}
-          country={currentUserRank.user.city?.title}
-          scope={getSubtitle()}
-        />
-      )}
+      {/* Hidden share card for capture - Always render with fallback */}
+      <LeaderboardShareCard
+        ref={shareCardRef}
+        rank={currentUserRank?.rank}
+        displayName={
+          currentUserRank?.user.display_name ||
+          currentUserRank?.user.username ||
+          user?.data.display_name ||
+          user?.data.username ||
+          'Developer'
+        }
+        totalTime={
+          currentUserRank?.running_total?.human_readable_total ||
+          allTime?.data.text
+        }
+        country={currentUserRank?.user.city?.title || user?.data.city?.title}
+        scope={getSubtitle()}
+        top3Users={topThree}
+      />
 
       <FlatList
         data={remainingUsers}
