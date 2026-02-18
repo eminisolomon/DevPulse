@@ -8,6 +8,7 @@ export * from './useProjects';
 export * from './useProjectStats';
 export * from './useProjectSummaries';
 export * from './usePunchCardData';
+export * from './useShareScreenshot';
 export * from './useStats';
 export * from './useSummaries';
 export * from './useTheme';

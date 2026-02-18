@@ -1,7 +1,14 @@
 import { ActivityRhythm } from '@/components';
+import { StatsHeader } from '@/components/nav/StatsHeader';
 import { DailyStatsSkeleton } from '@/components/skeletons';
 import { DailyDistributionStats, DailyTotalCard } from '@/features/stats';
-import { useDurations, useStats, useSummaries, useTheme } from '@/hooks';
+import {
+  useDurations,
+  useShareScreenshot,
+  useStats,
+  useSummaries,
+  useTheme,
+} from '@/hooks';
 import { formatDisplayDuration, getDailyStatsTitle } from '@/utilities';
 import { endOfDay, parseISO, startOfDay } from 'date-fns';
 import { Stack, useLocalSearchParams } from 'expo-router';
@@ -11,6 +18,7 @@ import { RefreshControl, ScrollView, StyleSheet, View } from 'react-native';
 export default function DailyScreen() {
   const { theme, isDark } = useTheme();
   const params = useLocalSearchParams<{ date?: string }>();
+  const { viewRef, handleShare } = useShareScreenshot();
 
   const selectedDate = useMemo(() => {
     if (params.date) {
@@ -95,7 +103,8 @@ export default function DailyScreen() {
       <View
         style={[styles.container, { backgroundColor: theme.colors.background }]}
       >
-        <Stack.Screen options={{ title }} />
+        <Stack.Screen options={{ headerShown: false }} />
+        <StatsHeader title={title} onShare={handleShare} />
         <DailyStatsSkeleton />
       </View>
     );
@@ -113,33 +122,38 @@ export default function DailyScreen() {
     <View
       style={[styles.container, { backgroundColor: theme.colors.background }]}
     >
-      <Stack.Screen options={{ title }} />
-      <ScrollView
-        contentContainerStyle={styles.scrollContent}
-        refreshControl={
-          <RefreshControl
-            refreshing={isRefetching}
-            onRefresh={onRefresh}
-            tintColor={theme.colors.primary}
-            colors={[theme.colors.primary]}
-            progressBackgroundColor={theme.colors.surface}
+      <StatsHeader title={title} onShare={handleShare} />
+      <View ref={viewRef} style={{ flex: 1 }}>
+        <ScrollView
+          contentContainerStyle={styles.scrollContent}
+          refreshControl={
+            <RefreshControl
+              refreshing={isRefetching}
+              onRefresh={onRefresh}
+              tintColor={theme.colors.primary}
+              colors={[theme.colors.primary]}
+              progressBackgroundColor={theme.colors.surface}
+            />
+          }
+        >
+          {/* Total Time Card */}
+          <DailyTotalCard
+            totalTimeLabel={totalTimeLabel}
+            goalDiffText={goalDiffText}
+            isPositiveDiff={isPositiveDiff}
+            diffColor={diffColor}
           />
-        }
-      >
-        {/* Total Time Card */}
-        <DailyTotalCard
-          totalTimeLabel={totalTimeLabel}
-          goalDiffText={goalDiffText}
-          isPositiveDiff={isPositiveDiff}
-          diffColor={diffColor}
-        />
 
-        {/* Activity Rhythm */}
-        <ActivityRhythm sessions={clockSessions} isLoading={durationsLoading} />
+          {/* Activity Rhythm */}
+          <ActivityRhythm
+            sessions={clockSessions}
+            isLoading={durationsLoading}
+          />
 
-        {/* Segmented Stats */}
-        <DailyDistributionStats data={dayData} />
-      </ScrollView>
+          {/* Segmented Stats */}
+          <DailyDistributionStats data={dayData} />
+        </ScrollView>
+      </View>
     </View>
   );
 }

@@ -1,6 +1,6 @@
 import { Typography } from '@/components/Typography';
 import { useTheme } from '@/hooks/useTheme';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { Feather, MaterialCommunityIcons } from '@expo/vector-icons';
 import React from 'react';
 import { StyleSheet, TouchableOpacity, View, ViewStyle } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -16,6 +16,7 @@ interface ScreenHeaderProps {
   subtitle?: string;
   actions?: ScreenHeaderAction[];
   rightElement?: React.ReactNode;
+  onShare?: () => void;
   style?: ViewStyle;
 }
 
@@ -24,6 +25,7 @@ export const ScreenHeader = ({
   subtitle,
   actions,
   rightElement,
+  onShare,
   style,
 }: ScreenHeaderProps) => {
   const { theme } = useTheme();
@@ -56,6 +58,21 @@ export const ScreenHeader = ({
           </View>
 
           <View style={styles.rightSection}>
+            {onShare && (
+              <TouchableOpacity
+                activeOpacity={0.7}
+                style={[
+                  styles.iconButton,
+                  {
+                    backgroundColor: theme.colors.surface,
+                    borderColor: theme.colors.border,
+                  },
+                ]}
+                onPress={onShare}
+              >
+                <Feather name="share" size={18} color={theme.colors.text} />
+              </TouchableOpacity>
+            )}
             {rightElement}
             {actions?.map((action, index) => (
               <TouchableOpacity
@@ -63,7 +80,10 @@ export const ScreenHeader = ({
                 activeOpacity={0.7}
                 style={[
                   styles.iconButton,
-                  { backgroundColor: theme.colors.surfaceHighlight },
+                  {
+                    backgroundColor: theme.colors.surface,
+                    borderColor: theme.colors.border,
+                  },
                 ]}
                 onPress={action.onPress}
               >
@@ -98,16 +118,17 @@ const styles = StyleSheet.create({
   rightSection: {
     flexDirection: 'row',
     alignItems: 'center',
+    gap: 12,
   },
   greeting: {
     marginBottom: 2,
   },
   iconButton: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
+    width: 40,
+    height: 40,
+    borderRadius: 12,
+    borderWidth: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    marginLeft: 10,
   },
 });

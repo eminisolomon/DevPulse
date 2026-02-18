@@ -2,7 +2,7 @@ import { BottomSheet, ListItem, ScreenHeader, Typography } from '@/components';
 import { LeaderboardSkeleton } from '@/components/skeletons';
 import { useLeaderboardContext } from '@/contexts';
 import { CurrentUserRank, LeaderboardItem, TopThreePodium } from '@/features';
-import { useTheme } from '@/hooks';
+import { useShareScreenshot, useTheme } from '@/hooks';
 import { useOrganizationStore } from '@/stores';
 import { leaderboardStyles as styles } from '@/theme';
 import { Feather } from '@expo/vector-icons';
@@ -20,6 +20,7 @@ export default function LeaderboardScreen() {
   const { theme } = useTheme();
   const bottomSheetRef = React.useRef<BottomSheetModal>(null);
   const { selectedOrganization } = useOrganizationStore();
+  const { viewRef, handleShare } = useShareScreenshot();
 
   const {
     selectedCountry,
@@ -73,14 +74,20 @@ export default function LeaderboardScreen() {
         <ScreenHeader
           title="Leaderboard"
           subtitle={getSubtitle()}
+          onShare={handleShare}
           rightElement={
             showCountrySelector ? (
               <TouchableOpacity
                 activeOpacity={0.7}
                 style={{
-                  padding: 8,
-                  backgroundColor: theme.colors.surfaceHighlight,
-                  borderRadius: 8,
+                  width: 40,
+                  height: 40,
+                  borderRadius: 12,
+                  borderWidth: 1,
+                  borderColor: theme.colors.border,
+                  backgroundColor: theme.colors.surface,
+                  alignItems: 'center',
+                  justifyContent: 'center',
                 }}
                 onPress={handlePresentModalPress}
               >
@@ -104,14 +111,20 @@ export default function LeaderboardScreen() {
       <ScreenHeader
         title="Leaderboard"
         subtitle={getSubtitle()}
+        onShare={handleShare}
         rightElement={
           showCountrySelector ? (
             <TouchableOpacity
               activeOpacity={0.7}
               style={{
-                padding: 8,
-                backgroundColor: theme.colors.surfaceHighlight,
-                borderRadius: 8,
+                width: 40,
+                height: 40,
+                borderRadius: 12,
+                borderWidth: 1,
+                borderColor: theme.colors.border,
+                backgroundColor: theme.colors.surface,
+                alignItems: 'center',
+                justifyContent: 'center',
               }}
               onPress={handlePresentModalPress}
             >
@@ -124,67 +137,69 @@ export default function LeaderboardScreen() {
         }
       />
 
-      <FlatList
-        data={remainingUsers}
-        renderItem={({ item }) => <LeaderboardItem item={item} />}
-        keyExtractor={(item) => item.user.id}
-        contentContainerStyle={[
-          styles.listContent,
-          currentUserRank &&
-            !selectedOrganization &&
-            styles.listContentWithFooter,
-        ]}
-        ListHeaderComponent={<TopThreePodium users={topThree} />}
-        ListFooterComponent={
-          isFetchingNextPage ? (
-            <View style={styles.footerLoader}>
-              <ActivityIndicator color={theme.colors.primary} />
-            </View>
-          ) : null
-        }
-        onEndReached={() => {
-          if (hasNextPage && !isFetchingNextPage) {
-            fetchNextPage();
+      <View ref={viewRef} style={{ flex: 1 }}>
+        <FlatList
+          data={remainingUsers}
+          renderItem={({ item }) => <LeaderboardItem item={item} />}
+          keyExtractor={(item) => item.user.id}
+          contentContainerStyle={[
+            styles.listContent,
+            currentUserRank &&
+              !selectedOrganization &&
+              styles.listContentWithFooter,
+          ]}
+          ListHeaderComponent={<TopThreePodium users={topThree} />}
+          ListFooterComponent={
+            isFetchingNextPage ? (
+              <View style={styles.footerLoader}>
+                <ActivityIndicator color={theme.colors.primary} />
+              </View>
+            ) : null
           }
-        }}
-        onEndReachedThreshold={0.5}
-        showsVerticalScrollIndicator={false}
-        refreshControl={
-          <RefreshControl
-            refreshing={isRefetching}
-            onRefresh={refetch}
-            tintColor={theme.colors.primary}
-            colors={[theme.colors.primary]}
-            progressBackgroundColor={theme.colors.surface}
-          />
-        }
-        ListEmptyComponent={
-          remainingUsers.length === 0 && leaderboardData.length === 0 ? (
-            <View style={styles.emptyState}>
-              <Feather name="users" size={48} color={theme.colors.border} />
-              <Typography
-                variant="title"
-                weight="semibold"
-                style={styles.emptyTitle}
-              >
-                {selectedOrganization
-                  ? 'No Organization Data'
-                  : 'Leaderboard Unavailable'}
-              </Typography>
-              <Typography
-                color={theme.colors.textSecondary}
-                style={styles.emptySubtitle}
-              >
-                {selectedOrganization
-                  ? `Leaderboard for ${selectedOrganization.name} is not available yet.`
-                  : 'Unable to fetch leaderboard data at this time.'}
-              </Typography>
-            </View>
-          ) : null
-        }
-      />
+          onEndReached={() => {
+            if (hasNextPage && !isFetchingNextPage) {
+              fetchNextPage();
+            }
+          }}
+          onEndReachedThreshold={0.5}
+          showsVerticalScrollIndicator={false}
+          refreshControl={
+            <RefreshControl
+              refreshing={isRefetching}
+              onRefresh={refetch}
+              tintColor={theme.colors.primary}
+              colors={[theme.colors.primary]}
+              progressBackgroundColor={theme.colors.surface}
+            />
+          }
+          ListEmptyComponent={
+            remainingUsers.length === 0 && leaderboardData.length === 0 ? (
+              <View style={styles.emptyState}>
+                <Feather name="users" size={48} color={theme.colors.border} />
+                <Typography
+                  variant="title"
+                  weight="semibold"
+                  style={styles.emptyTitle}
+                >
+                  {selectedOrganization
+                    ? 'No Organization Data'
+                    : 'Leaderboard Unavailable'}
+                </Typography>
+                <Typography
+                  color={theme.colors.textSecondary}
+                  style={styles.emptySubtitle}
+                >
+                  {selectedOrganization
+                    ? `Leaderboard for ${selectedOrganization.name} is not available yet.`
+                    : 'Unable to fetch leaderboard data at this time.'}
+                </Typography>
+              </View>
+            ) : null
+          }
+        />
 
-      {!selectedOrganization && <CurrentUserRank />}
+        {!selectedOrganization && <CurrentUserRank />}
+      </View>
 
       <BottomSheet
         ref={bottomSheetRef}

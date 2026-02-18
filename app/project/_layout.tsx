@@ -4,7 +4,7 @@ import { Stack } from 'expo-router';
 export default function ProjectLayout() {
   return (
     <DefaultStackLayout>
-      <Stack.Screen name="[id]" options={{ title: '' }} />
+      <Stack.Screen name="[id]" options={{ headerShown: false }} />
     </DefaultStackLayout>
   );
 }
