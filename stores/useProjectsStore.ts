@@ -1,6 +1,6 @@
 import { WakaTimeProject as Project } from '@/interfaces/project';
 import { wakaService } from '@/services/waka.service';
-import { asyncStorage } from '@/utilities/storage';
+import { drizzleStorage } from '@/utilities/storage';
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 
@@ -63,7 +63,7 @@ export const useProjectsStore = create<ProjectsState>()(
     }),
     {
       name: 'projects-storage',
-      storage: createJSONStorage(() => asyncStorage),
+      storage: createJSONStorage(() => drizzleStorage),
     },
   ),
 );

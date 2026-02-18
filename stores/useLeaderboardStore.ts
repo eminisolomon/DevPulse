@@ -1,6 +1,6 @@
 import { WakaTimeLeaderboard } from '@/interfaces/leaderboard';
 import { wakaService } from '@/services/waka.service';
-import { asyncStorage } from '@/utilities/storage';
+import { drizzleStorage } from '@/utilities/storage';
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 
@@ -147,7 +147,7 @@ export const useLeaderboardStore = create<LeaderboardState>()(
     }),
     {
       name: 'leaderboard-storage',
-      storage: createJSONStorage(() => asyncStorage),
+      storage: createJSONStorage(() => drizzleStorage),
     },
   ),
 );

@@ -56,3 +56,9 @@ export const settings = sqliteTable('settings', {
   ),
   lastUpdatedAt: integer('last_updated_at', { mode: 'timestamp' }),
 });
+
+export const kvCache = sqliteTable('kv_cache', {
+  key: text('key').primaryKey(),
+  value: text('value').notNull(),
+  updatedAt: integer('updated_at', { mode: 'timestamp' }).default(new Date()),
+});

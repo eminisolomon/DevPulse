@@ -1,6 +1,6 @@
 import { WakaTimeSummaries } from '@/interfaces/summary';
 import { wakaService } from '@/services/waka.service';
-import { asyncStorage } from '@/utilities/storage';
+import { drizzleStorage } from '@/utilities/storage';
 import { format } from 'date-fns';
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
@@ -65,7 +65,7 @@ export const useSummariesStore = create<SummariesState>()(
     }),
     {
       name: 'summaries-storage',
-      storage: createJSONStorage(() => asyncStorage),
+      storage: createJSONStorage(() => drizzleStorage),
     },
   ),
 );

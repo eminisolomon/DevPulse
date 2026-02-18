@@ -1,7 +1,7 @@
 import { StatsRange } from '@/constants/wakatime';
 import { WakaTimeStats } from '@/interfaces/stats';
 import { wakaService } from '@/services/waka.service';
-import { asyncStorage } from '@/utilities/storage';
+import { drizzleStorage } from '@/utilities/storage';
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 
@@ -50,7 +50,7 @@ export const useStatsStore = create<StatsState>()(
     }),
     {
       name: 'stats-storage',
-      storage: createJSONStorage(() => asyncStorage),
+      storage: createJSONStorage(() => drizzleStorage),
     },
   ),
 );
