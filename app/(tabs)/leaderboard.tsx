@@ -1,4 +1,5 @@
 import { BottomSheet, ListItem, ScreenHeader, Typography } from '@/components';
+import { LeaderboardShareCard } from '@/components/share';
 import { LeaderboardSkeleton } from '@/components/skeletons';
 import { useLeaderboardContext } from '@/contexts';
 import { CurrentUserRank, LeaderboardItem, TopThreePodium } from '@/features';
@@ -20,7 +21,7 @@ export default function LeaderboardScreen() {
   const { theme } = useTheme();
   const bottomSheetRef = React.useRef<BottomSheetModal>(null);
   const { selectedOrganization } = useOrganizationStore();
-  const { viewRef, handleShare } = useShareScreenshot();
+  const { shareCardRef, handleShare } = useShareScreenshot();
 
   const {
     selectedCountry,
@@ -137,69 +138,83 @@ export default function LeaderboardScreen() {
         }
       />
 
-      <View ref={viewRef} style={{ flex: 1 }}>
-        <FlatList
-          data={remainingUsers}
-          renderItem={({ item }) => <LeaderboardItem item={item} />}
-          keyExtractor={(item) => item.user.id}
-          contentContainerStyle={[
-            styles.listContent,
-            currentUserRank &&
-              !selectedOrganization &&
-              styles.listContentWithFooter,
-          ]}
-          ListHeaderComponent={<TopThreePodium users={topThree} />}
-          ListFooterComponent={
-            isFetchingNextPage ? (
-              <View style={styles.footerLoader}>
-                <ActivityIndicator color={theme.colors.primary} />
-              </View>
-            ) : null
+      {/* Hidden share card for capture */}
+      {currentUserRank && (
+        <LeaderboardShareCard
+          ref={shareCardRef}
+          rank={currentUserRank.rank}
+          displayName={
+            currentUserRank.user.display_name ||
+            currentUserRank.user.username ||
+            'Developer'
           }
-          onEndReached={() => {
-            if (hasNextPage && !isFetchingNextPage) {
-              fetchNextPage();
-            }
-          }}
-          onEndReachedThreshold={0.5}
-          showsVerticalScrollIndicator={false}
-          refreshControl={
-            <RefreshControl
-              refreshing={isRefetching}
-              onRefresh={refetch}
-              tintColor={theme.colors.primary}
-              colors={[theme.colors.primary]}
-              progressBackgroundColor={theme.colors.surface}
-            />
-          }
-          ListEmptyComponent={
-            remainingUsers.length === 0 && leaderboardData.length === 0 ? (
-              <View style={styles.emptyState}>
-                <Feather name="users" size={48} color={theme.colors.border} />
-                <Typography
-                  variant="title"
-                  weight="semibold"
-                  style={styles.emptyTitle}
-                >
-                  {selectedOrganization
-                    ? 'No Organization Data'
-                    : 'Leaderboard Unavailable'}
-                </Typography>
-                <Typography
-                  color={theme.colors.textSecondary}
-                  style={styles.emptySubtitle}
-                >
-                  {selectedOrganization
-                    ? `Leaderboard for ${selectedOrganization.name} is not available yet.`
-                    : 'Unable to fetch leaderboard data at this time.'}
-                </Typography>
-              </View>
-            ) : null
-          }
+          totalTime={currentUserRank.running_total.human_readable_total}
+          country={currentUserRank.user.city?.title}
+          scope={getSubtitle()}
         />
+      )}
 
-        {!selectedOrganization && <CurrentUserRank />}
-      </View>
+      <FlatList
+        data={remainingUsers}
+        renderItem={({ item }) => <LeaderboardItem item={item} />}
+        keyExtractor={(item) => item.user.id}
+        contentContainerStyle={[
+          styles.listContent,
+          currentUserRank &&
+            !selectedOrganization &&
+            styles.listContentWithFooter,
+        ]}
+        ListHeaderComponent={<TopThreePodium users={topThree} />}
+        ListFooterComponent={
+          isFetchingNextPage ? (
+            <View style={styles.footerLoader}>
+              <ActivityIndicator color={theme.colors.primary} />
+            </View>
+          ) : null
+        }
+        onEndReached={() => {
+          if (hasNextPage && !isFetchingNextPage) {
+            fetchNextPage();
+          }
+        }}
+        onEndReachedThreshold={0.5}
+        showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl
+            refreshing={isRefetching}
+            onRefresh={refetch}
+            tintColor={theme.colors.primary}
+            colors={[theme.colors.primary]}
+            progressBackgroundColor={theme.colors.surface}
+          />
+        }
+        ListEmptyComponent={
+          remainingUsers.length === 0 && leaderboardData.length === 0 ? (
+            <View style={styles.emptyState}>
+              <Feather name="users" size={48} color={theme.colors.border} />
+              <Typography
+                variant="title"
+                weight="semibold"
+                style={styles.emptyTitle}
+              >
+                {selectedOrganization
+                  ? 'No Organization Data'
+                  : 'Leaderboard Unavailable'}
+              </Typography>
+              <Typography
+                color={theme.colors.textSecondary}
+                style={styles.emptySubtitle}
+              >
+                {selectedOrganization
+                  ? `Leaderboard for ${selectedOrganization.name} is not available yet.`
+                  : 'Unable to fetch leaderboard data at this time.'}
+              </Typography>
+            </View>
+          ) : null
+        }
+      />
+
+      {!selectedOrganization && <CurrentUserRank />}
 
       <BottomSheet
         ref={bottomSheetRef}

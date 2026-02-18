@@ -1,11 +1,7 @@
-import { makeRedirectUri } from 'expo-auth-session';
-
 export const AuthConfig = {
   clientId: process.env.EXPO_PUBLIC_WAKATIME_APP_ID!,
   clientSecret: process.env.EXPO_PUBLIC_WAKATIME_APP_SECRET!,
-  redirectUri: makeRedirectUri({
-    scheme: 'devpulse',
-  }),
+  redirectUri: 'devpulse://redirect',
   scopes: [
     'email',
     'read_stats',

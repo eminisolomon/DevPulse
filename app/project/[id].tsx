@@ -1,6 +1,7 @@
 import { Card, SegmentedStatsCard, Typography } from '@/components';
 import LanguageChart from '@/components/LanguageChart';
 import { ProjectDetailsHeader } from '@/components/nav/ProjectDetailsHeader';
+import { ProjectShareCard } from '@/components/share';
 import { ProjectDetailsSkeleton } from '@/components/skeletons';
 import { getEditorColor } from '@/constants';
 import {
@@ -19,7 +20,7 @@ import { RefreshControl, ScrollView, View } from 'react-native';
 export default function ProjectDetailScreen() {
   const { id } = useLocalSearchParams();
   const { theme } = useTheme();
-  const { viewRef, handleShare } = useShareScreenshot();
+  const { shareCardRef, handleShare } = useShareScreenshot();
 
   const projectId = id as string;
   const today = new Date();
@@ -102,99 +103,113 @@ export default function ProjectDetailScreen() {
     );
   }
 
+  const shareLanguages = useMemo(() => {
+    return (
+      project7d?.languages?.slice(0, 5).map((l: any) => ({
+        name: l.name,
+        percent: l.percent,
+      })) || []
+    );
+  }, [project7d]);
+
   return (
     <View
       style={[styles.container, { backgroundColor: theme.colors.background }]}
     >
       <ProjectDetailsHeader title={projectId} onShare={handleShare} />
-      <View ref={viewRef} style={{ flex: 1 }}>
-        <ScrollView
-          contentContainerStyle={styles.scrollContent}
-          refreshControl={
-            <RefreshControl
-              refreshing={isLoading}
-              onRefresh={() => {
-                refetchSummaries();
-                refetch7d();
-                refetchAllTime();
-              }}
-              tintColor={theme.colors.primary}
-              colors={[theme.colors.primary]}
-              progressBackgroundColor={theme.colors.surface}
-            />
-          }
-        >
-          <Card style={styles.allTimeCard}>
+
+      {/* Hidden share card for capture */}
+      <ProjectShareCard
+        ref={shareCardRef}
+        projectName={projectId}
+        allTimeTotal={formattedAllTime}
+        total7d={formattedTotal7d}
+        dailyAvg={formattedAverage7d}
+        topLanguages={shareLanguages}
+      />
+
+      <ScrollView
+        contentContainerStyle={styles.scrollContent}
+        refreshControl={
+          <RefreshControl
+            refreshing={isLoading}
+            onRefresh={() => {
+              refetchSummaries();
+              refetch7d();
+              refetchAllTime();
+            }}
+            tintColor={theme.colors.primary}
+            colors={[theme.colors.primary]}
+            progressBackgroundColor={theme.colors.surface}
+          />
+        }
+      >
+        <Card style={styles.allTimeCard}>
+          <Typography variant="micro" color={theme.colors.textSecondary}>
+            ALL TIME TOTAL
+          </Typography>
+          <Typography
+            variant="headline"
+            weight="bold"
+            color={theme.colors.primary}
+          >
+            {formattedAllTime}
+          </Typography>
+        </Card>
+
+        <View style={styles.statsGrid}>
+          <Card style={styles.statCard}>
             <Typography variant="micro" color={theme.colors.textSecondary}>
-              ALL TIME TOTAL
+              TOTAL (7D)
             </Typography>
-            <Typography
-              variant="headline"
-              weight="bold"
-              color={theme.colors.primary}
-            >
-              {formattedAllTime}
-            </Typography>
-          </Card>
-
-          <View style={styles.statsGrid}>
-            <Card style={styles.statCard}>
-              <Typography variant="micro" color={theme.colors.textSecondary}>
-                TOTAL (7D)
-              </Typography>
-              <Typography
-                variant="title"
-                weight="bold"
-                color={theme.colors.primary}
-              >
-                {formattedTotal7d}
-              </Typography>
-            </Card>
-            <Card style={styles.statCard}>
-              <Typography variant="micro" color={theme.colors.textSecondary}>
-                DAILY AVG
-              </Typography>
-              <Typography variant="title" weight="bold">
-                {formattedAverage7d}
-              </Typography>
-            </Card>
-          </View>
-
-          <View style={styles.section}>
             <Typography
               variant="title"
               weight="bold"
-              style={styles.sectionTitle}
+              color={theme.colors.primary}
             >
-              Languages
+              {formattedTotal7d}
             </Typography>
-            <Card style={styles.chartCard}>
-              {project7d?.languages && project7d.languages.length > 0 ? (
-                <LanguageChart data={project7d.languages} />
-              ) : (
-                <Typography
-                  color={theme.colors.textSecondary}
-                  style={styles.noData}
-                >
-                  No language data for this project
-                </Typography>
-              )}
-            </Card>
-          </View>
+          </Card>
+          <Card style={styles.statCard}>
+            <Typography variant="micro" color={theme.colors.textSecondary}>
+              DAILY AVG
+            </Typography>
+            <Typography variant="title" weight="bold">
+              {formattedAverage7d}
+            </Typography>
+          </Card>
+        </View>
 
-          {project7d?.editors && project7d.editors.length > 0 && (
-            <SegmentedStatsCard
-              title="Editors"
-              segments={project7d.editors.slice(0, 5).map((e: any) => ({
-                label: e.name,
-                percent: e.percent,
-                color: getEditorColor(e.name),
-                valueText: e.text,
-              }))}
-            />
-          )}
-        </ScrollView>
-      </View>
+        <View style={styles.section}>
+          <Typography variant="title" weight="bold" style={styles.sectionTitle}>
+            Languages
+          </Typography>
+          <Card style={styles.chartCard}>
+            {project7d?.languages && project7d.languages.length > 0 ? (
+              <LanguageChart data={project7d.languages} />
+            ) : (
+              <Typography
+                color={theme.colors.textSecondary}
+                style={styles.noData}
+              >
+                No language data for this project
+              </Typography>
+            )}
+          </Card>
+        </View>
+
+        {project7d?.editors && project7d.editors.length > 0 && (
+          <SegmentedStatsCard
+            title="Editors"
+            segments={project7d.editors.slice(0, 5).map((e: any) => ({
+              label: e.name,
+              percent: e.percent,
+              color: getEditorColor(e.name),
+              valueText: e.text,
+            }))}
+          />
+        )}
+      </ScrollView>
     </View>
   );
 }

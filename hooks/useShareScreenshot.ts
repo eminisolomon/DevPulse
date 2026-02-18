@@ -5,13 +5,13 @@ import { View } from 'react-native';
 import { captureRef } from 'react-native-view-shot';
 
 export const useShareScreenshot = () => {
-  const viewRef = useRef<View>(null);
+  const shareCardRef = useRef<View>(null);
 
   const handleShare = useCallback(async () => {
     try {
-      if (!viewRef.current) return;
+      if (!shareCardRef.current) return;
 
-      const uri = await captureRef(viewRef, {
+      const uri = await captureRef(shareCardRef, {
         format: 'png',
         quality: 1,
       });
@@ -21,9 +21,10 @@ export const useShareScreenshot = () => {
         dialogTitle: 'Share your DevPulse stats',
       });
     } catch (error) {
+      console.error('[Share] Screenshot capture failed:', error);
       toast.error('Unable to capture screenshot. Please try again.');
     }
   }, []);
 
-  return { viewRef, handleShare };
+  return { shareCardRef, handleShare };
 };
