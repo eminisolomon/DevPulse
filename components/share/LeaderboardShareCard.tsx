@@ -12,11 +12,12 @@ interface LeaderboardShareCardProps {
   totalTime?: string | null;
   country?: string;
   scope?: string;
+  photo?: string | null;
   top3Users?: LeaderboardUser[];
 }
 
 export const LeaderboardShareCard = forwardRef<View, LeaderboardShareCardProps>(
-  ({ rank, displayName, totalTime, country, scope, top3Users }, ref) => {
+  ({ rank, displayName, totalTime, country, scope, photo, top3Users }, ref) => {
     const { isDark, theme } = useTheme();
 
     const textColor = isDark ? '#FFFFFF' : '#111111';
@@ -34,16 +35,7 @@ export const LeaderboardShareCard = forwardRef<View, LeaderboardShareCardProps>(
       return theme.colors.primary;
     };
 
-    const getRankBadgeBg = () => {
-      if (!rank) return isDark ? '#333' : '#E5E7EB';
-      if (rank === 1) return 'rgba(245, 158, 11, 0.2)';
-      if (rank === 2) return 'rgba(156, 163, 175, 0.2)';
-      if (rank === 3) return 'rgba(180, 83, 9, 0.2)';
-      return theme.colors.primary + '20';
-    };
-
     const rankColor = getRankColor();
-    const rankBadgeBg = getRankBadgeBg();
 
     return (
       <ShareCardWrapper ref={ref} outerPadding={24}>
@@ -54,13 +46,11 @@ export const LeaderboardShareCard = forwardRef<View, LeaderboardShareCardProps>(
 
         {/* Hero Rank + User */}
         <View style={styles.heroSection}>
-          <View
-            style={[styles.rankHeroBadge, { backgroundColor: rankBadgeBg }]}
-          >
-            <Text style={styles.rankHeroEmoji}>
-              {rank === 1 ? '🥇' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : '👤'}
-            </Text>
-          </View>
+          <Avatar
+            source={photo ? { uri: photo } : undefined}
+            initials={displayName}
+            size={56}
+          />
           <View>
             <Text style={[styles.displayName, { color: textColor }]}>
               {displayName}
@@ -196,16 +186,7 @@ const styles = StyleSheet.create({
     gap: 16,
     marginBottom: 8,
   },
-  rankHeroBadge: {
-    width: 64,
-    height: 64,
-    borderRadius: 20,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  rankHeroEmoji: {
-    fontSize: 32,
-  },
+
   displayName: {
     fontSize: 22,
     fontWeight: '800',

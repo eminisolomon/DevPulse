@@ -96,8 +96,14 @@ export const ProjectShareCard = forwardRef<View, ProjectShareCardProps>(
                       { backgroundColor: accent, opacity: 1 - i * 0.15 },
                     ]}
                   />
-                  <Text style={[styles.langLabelText, { color: mutedColor }]}>
-                    {lang.name} ({Math.round(lang.percent)}%)
+                  <Text
+                    style={[styles.langName, { color: textColor }]}
+                    numberOfLines={1}
+                  >
+                    {lang.name}
+                  </Text>
+                  <Text style={[styles.langPercent, { color: mutedColor }]}>
+                    {Math.round(lang.percent)}%
                   </Text>
                 </View>
               ))}
@@ -118,25 +124,25 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   projectIcon: {
-    width: 36,
-    height: 36,
-    borderRadius: 10,
+    width: 44,
+    height: 44,
+    borderRadius: 12,
     alignItems: 'center',
     justifyContent: 'center',
   },
   projectName: {
-    fontSize: 20,
+    fontSize: 24,
     fontWeight: '700',
     flex: 1,
   },
   statLabel: {
-    fontSize: 10,
+    fontSize: 12,
     fontWeight: '700',
-    letterSpacing: 1,
-    marginBottom: 4,
+    letterSpacing: 1.2,
+    marginBottom: 6,
   },
   heroTime: {
-    fontSize: 32,
+    fontSize: 40,
     fontWeight: '800',
     letterSpacing: -0.5,
   },
@@ -146,28 +152,28 @@ const styles = StyleSheet.create({
   },
   gridCell: {
     flex: 1,
-    borderRadius: 14,
-    padding: 14,
+    borderRadius: 16,
+    padding: 16,
   },
   cellLabel: {
-    fontSize: 10,
+    fontSize: 12,
     fontWeight: '700',
-    letterSpacing: 1,
-    marginBottom: 4,
+    letterSpacing: 1.2,
+    marginBottom: 6,
   },
   cellValue: {
-    fontSize: 18,
+    fontSize: 22,
     fontWeight: '700',
   },
   langBox: {
-    borderRadius: 14,
-    padding: 14,
-    gap: 10,
+    borderRadius: 16,
+    padding: 16,
+    gap: 12,
   },
   langBarContainer: {
     flexDirection: 'row',
-    height: 8,
-    borderRadius: 4,
+    height: 10,
+    borderRadius: 5,
     overflow: 'hidden',
     gap: 2,
   },
@@ -175,9 +181,7 @@ const styles = StyleSheet.create({
     borderRadius: 4,
   },
   langLabels: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 10,
+    gap: 8,
   },
   langLabelRow: {
     flexDirection: 'row',
@@ -185,12 +189,18 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   langDot: {
-    width: 6,
-    height: 6,
-    borderRadius: 3,
+    width: 8,
+    height: 8,
+    borderRadius: 4,
   },
-  langLabelText: {
-    fontSize: 11,
-    fontWeight: '500',
+  langName: {
+    fontSize: 14,
+    fontWeight: '600',
+    flex: 1,
+  },
+  langPercent: {
+    fontSize: 13,
+    fontWeight: '600',
+    fontVariant: ['tabular-nums'],
   },
 });

@@ -155,6 +155,7 @@ export default function LeaderboardScreen() {
           user?.data.username ||
           'Developer'
         }
+        photo={currentUserRank?.user.photo || user?.data.photo}
         totalTime={
           currentUserRank?.running_total?.human_readable_total ||
           allTime?.data.text
