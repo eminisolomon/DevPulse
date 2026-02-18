@@ -61,7 +61,7 @@ export const DailyStatsSkeleton = () => {
 
 const styles = StyleSheet.create({
   container: {
-    padding: 16,
+    // Padding removed as it's handled by parent ScrollView in daily.tsx
   },
   card: {
     marginBottom: 16,

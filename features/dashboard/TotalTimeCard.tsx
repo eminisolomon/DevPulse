@@ -91,13 +91,14 @@ export const TotalTimeCard = ({
 
         <Button
           label="VIEW ALL PROJECTS"
-          onPress={() => router.push('/projects' as any)}
+          onPress={() => router.push('/projects')}
           variant="soft"
           fullWidth
           style={{ marginTop: 8 }}
           labelStyle={{
             fontSize: 10,
             letterSpacing: 0.5,
+            color: isDark ? theme.colors.text : theme.colors.textInverse,
           }}
           size="sm"
         />

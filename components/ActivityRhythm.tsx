@@ -9,7 +9,7 @@ import {
   matchFont,
 } from '@shopify/react-native-skia';
 import React, { useMemo } from 'react';
-import { ActivityIndicator, Platform, StyleSheet, View } from 'react-native';
+import { Platform, StyleSheet, View } from 'react-native';
 import { Card } from './Card';
 import { Typography } from './Typography';
 
@@ -135,9 +135,6 @@ export const ActivityRhythm = ({
         <Typography variant="title" weight="bold">
           {title}
         </Typography>
-        {isLoading && (
-          <ActivityIndicator size="small" color={theme.colors.primary} />
-        )}
       </View>
 
       <View style={[styles.canvasContainer, { height: size }]}>

@@ -117,17 +117,11 @@ export default function DailyScreen() {
     );
   }, [dayData]);
 
-  if ((isLoading || durationsLoading) && !dayData) {
-    return (
-      <View
-        style={[styles.container, { backgroundColor: theme.colors.background }]}
-      >
-        <Stack.Screen options={{ headerShown: false }} />
-        <StatsHeader title={title} onShare={handleShare} />
-        <DailyStatsSkeleton />
-      </View>
-    );
-  }
+  const isRefreshingOrLoading = isLoading || durationsLoading || isRefetching;
+
+  const hasData = useMemo(() => {
+    return !!dayData && clockSessions.length > 0;
+  }, [dayData, clockSessions]);
 
   const diffColor = isPositiveDiff
     ? isDark
@@ -145,15 +139,17 @@ export default function DailyScreen() {
       <StatsHeader title={title} onShare={handleShare} />
 
       {/* Hidden share card for capture */}
-      <DailyStatsShareCard
-        ref={shareCardRef}
-        date={title}
-        totalTime={totalTimeLabel}
-        diffText={goalDiffText}
-        isPositiveDiff={isPositiveDiff}
-        topLanguages={topLanguages}
-        topProjects={topProjects}
-      />
+      {hasData && (
+        <DailyStatsShareCard
+          ref={shareCardRef}
+          date={title}
+          totalTime={totalTimeLabel}
+          diffText={goalDiffText}
+          isPositiveDiff={isPositiveDiff}
+          topLanguages={topLanguages}
+          topProjects={topProjects}
+        />
+      )}
 
       <ScrollView
         contentContainerStyle={styles.scrollContent}
@@ -167,19 +163,30 @@ export default function DailyScreen() {
           />
         }
       >
-        {/* Total Time Card */}
-        <DailyTotalCard
-          totalTimeLabel={totalTimeLabel}
-          goalDiffText={goalDiffText}
-          isPositiveDiff={isPositiveDiff}
-          diffColor={diffColor}
-        />
+        {isRefreshingOrLoading && !hasData ? (
+          <DailyStatsSkeleton />
+        ) : isRefetching ? (
+          <DailyStatsSkeleton />
+        ) : (
+          <>
+            {/* Total Time Card */}
+            <DailyTotalCard
+              totalTimeLabel={totalTimeLabel}
+              goalDiffText={goalDiffText}
+              isPositiveDiff={isPositiveDiff}
+              diffColor={diffColor}
+            />
 
-        {/* Activity Rhythm */}
-        <ActivityRhythm sessions={clockSessions} isLoading={durationsLoading} />
+            {/* Activity Rhythm */}
+            <ActivityRhythm
+              sessions={clockSessions}
+              isLoading={durationsLoading}
+            />
 
-        {/* Segmented Stats */}
-        <DailyDistributionStats data={dayData} />
+            {/* Segmented Stats */}
+            <DailyDistributionStats data={dayData} />
+          </>
+        )}
       </ScrollView>
     </View>
   );
