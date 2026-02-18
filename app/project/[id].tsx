@@ -1,15 +1,14 @@
-import { SegmentedStatsCard } from '@/components';
-import { Card } from '@/components/Card';
+import { Card, SegmentedStatsCard, Typography } from '@/components';
 import LanguageChart from '@/components/LanguageChart';
 import { ProjectDetailsSkeleton } from '@/components/skeletons';
-import { Typography } from '@/components/Typography';
 import { getEditorColor } from '@/constants';
 import { useProjectStats, useProjectSummaries, useTheme } from '@/hooks';
-import { formatDisplayDuration } from '@/utilities/formatters';
+import { projectDetailStyles as styles } from '@/theme';
+import { formatDisplayDuration } from '@/utilities';
 import { subDays } from 'date-fns';
 import { Stack, useLocalSearchParams } from 'expo-router';
 import React, { useMemo } from 'react';
-import { RefreshControl, ScrollView, StyleSheet, View } from 'react-native';
+import { RefreshControl, ScrollView, View } from 'react-native';
 
 export default function ProjectDetailScreen() {
   const { id } = useLocalSearchParams();
@@ -185,54 +184,3 @@ export default function ProjectDetailScreen() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  center: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  scrollContent: {
-    padding: 16,
-    paddingBottom: 40,
-  },
-  allTimeCard: {
-    marginBottom: 20,
-  },
-  statsGrid: {
-    flexDirection: 'row',
-    gap: 12,
-    marginBottom: 24,
-  },
-  statCard: {
-    flex: 1,
-  },
-  section: {
-    marginBottom: 24,
-  },
-  sectionTitle: {
-    marginBottom: 12,
-  },
-  chartCard: {
-    padding: 16,
-    minHeight: 280,
-    justifyContent: 'center',
-  },
-  listCard: {
-    padding: 8,
-  },
-  listItem: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    padding: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: 'rgba(0,0,0,0.05)',
-  },
-  noData: {
-    textAlign: 'center',
-    paddingVertical: 40,
-  },
-});

@@ -3,6 +3,7 @@ import { ProjectListSkeleton } from '@/components/skeletons';
 import { ProjectCard } from '@/features';
 import { useDebounce, useProjects, useTheme } from '@/hooks';
 import { WakaTimeProject } from '@/interfaces';
+import { projectsStyles as styles } from '@/theme';
 import { toastSuccess } from '@/utilities';
 import { Feather } from '@expo/vector-icons';
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
@@ -11,7 +12,6 @@ import {
   ActivityIndicator,
   FlatList,
   RefreshControl,
-  StyleSheet,
   TextInput,
   TouchableOpacity,
   View,
@@ -19,6 +19,7 @@ import {
 
 export default function ProjectsScreen() {
   const { theme } = useTheme();
+
   const {
     data,
     isLoading,
@@ -246,61 +247,3 @@ export default function ProjectsScreen() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  center: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  listContent: {
-    padding: 16,
-    paddingTop: 16,
-    paddingBottom: 40,
-  },
-  footerLoader: {
-    paddingVertical: 20,
-    alignItems: 'center',
-  },
-  emptyState: {
-    alignItems: 'center',
-    padding: 40,
-    marginTop: 40,
-  },
-  emptyIconContainer: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 20,
-  },
-  emptyTitle: {
-    marginBottom: 8,
-  },
-  emptySubtitle: {
-    textAlign: 'center',
-    maxWidth: 250,
-  },
-  searchContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    marginHorizontal: 16,
-    borderRadius: 8,
-    marginBottom: 8,
-  },
-  searchIcon: {
-    marginRight: 8,
-  },
-  searchInput: {
-    flex: 1,
-    fontSize: 16,
-    height: 24,
-    padding: 0,
-  },
-});

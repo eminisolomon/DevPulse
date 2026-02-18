@@ -8,11 +8,12 @@ import {
 import { useTheme, useUser } from '@/hooks';
 import { settingsService } from '@/services';
 import { useAuthStore } from '@/stores';
+import { settingsStyles as styles } from '@/theme';
 import { Feather, MaterialIcons } from '@expo/vector-icons';
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import { useRouter } from 'expo-router';
 import React, { useRef } from 'react';
-import { Linking, ScrollView, StyleSheet, View } from 'react-native';
+import { Linking, ScrollView, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function SettingsScreen() {
@@ -203,34 +204,3 @@ export default function SettingsScreen() {
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  scrollContent: {
-    padding: 16,
-    paddingBottom: 40,
-  },
-  profileCard: {
-    alignItems: 'center',
-    padding: 24,
-    marginBottom: 24,
-  },
-  profileInfo: {
-    alignItems: 'center',
-    marginBottom: 20,
-  },
-  userName: {
-    marginBottom: 4,
-  },
-  locationContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: 4,
-  },
-  sectionCard: {
-    padding: 4,
-    marginBottom: 12,
-  },
-});

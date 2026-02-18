@@ -2,9 +2,10 @@ import { Typography } from '@/components';
 import { UserProfileSkeleton } from '@/components/skeletons';
 import { ProfileHeader, ProfileStats, UserLanguages } from '@/features';
 import { useTheme, useUserProfile } from '@/hooks';
+import { userProfileStyles as styles } from '@/theme';
 import { useLocalSearchParams } from 'expo-router';
 import React from 'react';
-import { RefreshControl, ScrollView, StyleSheet } from 'react-native';
+import { RefreshControl, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function UserProfileScreen() {
@@ -73,13 +74,3 @@ export default function UserProfileScreen() {
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  scrollContent: {
-    padding: 16,
-    paddingBottom: 40,
-  },
-});

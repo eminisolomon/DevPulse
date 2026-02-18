@@ -9,12 +9,13 @@ import {
 } from '@/features';
 import { useAllTime, useStats, useSummaries, useTheme, useUser } from '@/hooks';
 import { useAuthStore } from '@/stores';
+import { dashboardStyles as styles } from '@/theme/styles/dashboard';
 import { formatDuration } from '@/utilities';
 import { getProjectColor } from '@/utilities/projectColors';
 import { endOfMonth, startOfMonth } from 'date-fns';
 import { Redirect, useRouter } from 'expo-router';
 import React, { useMemo, useState } from 'react';
-import { RefreshControl, ScrollView, StyleSheet } from 'react-native';
+import { RefreshControl, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function Dashboard() {
@@ -224,14 +225,3 @@ export default function Dashboard() {
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-});

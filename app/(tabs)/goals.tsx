@@ -2,16 +2,11 @@ import { Card, ScreenHeader, Typography } from '@/components';
 import { GoalsSkeleton } from '@/components/skeletons';
 import { useGoals, useTheme } from '@/hooks';
 import { WakaTimeGoal } from '@/interfaces';
+import { goalsStyles as styles } from '@/theme';
 import { Feather } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import React from 'react';
-import {
-  FlatList,
-  RefreshControl,
-  StyleSheet,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import { FlatList, RefreshControl, TouchableOpacity, View } from 'react-native';
 
 export default function GoalsScreen() {
   const { theme } = useTheme();
@@ -179,75 +174,3 @@ export default function GoalsScreen() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  center: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  listContent: {
-    padding: 16,
-    paddingTop: 16,
-    paddingBottom: 100,
-  },
-  goalCard: {
-    marginBottom: 16,
-    padding: 16,
-  },
-  goalHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
-    marginBottom: 16,
-  },
-  titleContainer: {
-    flex: 1,
-  },
-  statusBadge: {
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 8,
-    marginLeft: 12,
-  },
-  progressSection: {
-    marginBottom: 16,
-  },
-  progressInfo: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 8,
-  },
-  progressBarBg: {
-    height: 8,
-    borderRadius: 4,
-    overflow: 'hidden',
-  },
-  progressBarFill: {
-    height: '100%',
-    borderRadius: 4,
-  },
-  footer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingTop: 12,
-    borderTopWidth: 1,
-    borderTopColor: 'rgba(0,0,0,0.05)',
-  },
-  emptyState: {
-    alignItems: 'center',
-    padding: 40,
-    marginTop: 40,
-  },
-  emptyTitle: {
-    marginTop: 16,
-    marginBottom: 8,
-  },
-  emptySubtitle: {
-    textAlign: 'center',
-  },
-});

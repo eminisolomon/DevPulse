@@ -3,9 +3,10 @@ import { Typography } from '@/components/Typography';
 import { SessionRowSkeleton } from '@/components/skeletons';
 import { SessionTimeline } from '@/features/stats/SessionTimeline';
 import { useDurations, useTheme } from '@/hooks';
+import { sessionStyles as styles } from '@/theme';
 import { format, subDays } from 'date-fns';
 import React from 'react';
-import { FlatList, StyleSheet, View } from 'react-native';
+import { FlatList, View } from 'react-native';
 
 const DAYS_TO_SHOW = 7;
 
@@ -60,24 +61,3 @@ const DaySessionRow = ({ date }: { date: Date }) => {
     </Card>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  listContent: {
-    padding: 16,
-  },
-  dayCard: {
-    marginBottom: 16,
-    padding: 12,
-  },
-  dateLabel: {
-    marginBottom: 8,
-    marginLeft: 8,
-  },
-  emptyText: {
-    marginVertical: 12,
-    textAlign: 'center',
-  },
-});
