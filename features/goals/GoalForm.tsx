@@ -1,11 +1,5 @@
-import {
-  Button,
-  Card,
-  Select,
-  SelectOption,
-  TextInput,
-  Typography,
-} from '@/components';
+import { Button, Card, Select, TextInput, Typography } from '@/components';
+import { DELTA_OPTIONS, WEEKDAY_OPTIONS } from '@/constants/goals';
 import { useTheme } from '@/hooks';
 import { WakaTimeGoal } from '@/interfaces';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -21,21 +15,6 @@ interface GoalFormProps {
   isLoading?: boolean;
   isEdit?: boolean;
 }
-
-const DELTA_OPTIONS: SelectOption[] = [
-  { label: 'Day', value: 'day' },
-  { label: 'Week', value: 'week' },
-];
-
-const WEEKDAY_OPTIONS = [
-  'Monday',
-  'Tuesday',
-  'Wednesday',
-  'Thursday',
-  'Friday',
-  'Saturday',
-  'Sunday',
-];
 
 export const GoalForm = ({
   initialData,

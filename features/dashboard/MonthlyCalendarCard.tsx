@@ -1,7 +1,7 @@
-import { Button } from '@/components/Button';
-import { Card } from '@/components/Card';
-import { Typography } from '@/components/Typography';
-import { useTheme } from '@/hooks/useTheme';
+import { Button, Card, Typography } from '@/components';
+import { WEEK_DAYS } from '@/constants';
+import { useTheme } from '@/hooks';
+import { hexToRgba } from '@/utilities';
 import { Ionicons } from '@expo/vector-icons';
 import {
   eachDayOfInterval,
@@ -79,13 +79,13 @@ export const MonthlyCalendarCard = ({
 
   const getHeatmapColor = (level: number) => {
     if (level === 0) return 'transparent';
-    const opacityMap: Record<number, string> = {
-      1: '20',
-      2: '40',
-      3: '70',
-      4: 'FF',
+    const opacityMap: Record<number, number> = {
+      1: 0.12, // ~20 hex
+      2: 0.25, // ~40 hex
+      3: 0.44, // ~70 hex
+      4: 1.0, // FF hex
     };
-    return theme.colors.primary + (opacityMap[level] || '20');
+    return hexToRgba(theme.colors.primary, opacityMap[level] || 0.12);
   };
 
   const renderDay = (dayData: any | null, index: number) => {
@@ -183,7 +183,7 @@ export const MonthlyCalendarCard = ({
         ]}
       >
         <View style={styles.daysHeader}>
-          {['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'].map((day) => (
+          {WEEK_DAYS.map((day) => (
             <Typography
               key={day}
               variant="caption"

@@ -50,3 +50,11 @@ export const formatDate = (dateString: string): string => {
     day: 'numeric',
   });
 };
+
+/**
+ * Extract repository name from URL
+ */
+export const getRepoName = (url: string): string => {
+  if (!url) return '';
+  return url.split('/').pop() || '';
+};
