@@ -27,6 +27,14 @@
     }
   },
   "submit": {
-    "production": {}
+    "production": {
+      "android": {
+        "serviceAccountKeyPath": "./firebase/serviceAccountKey.json",
+        "track": "internal"
+      },
+      "ios": {
+        "ascAppId": "6748635694"
+      }
+    }
   }
 }
