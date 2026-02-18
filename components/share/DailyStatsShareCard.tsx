@@ -27,12 +27,32 @@ export const DailyStatsShareCard = forwardRef<View, DailyStatsShareCardProps>(
     const positiveColor = isDark ? '#4ADE80' : '#22C55E';
     const negativeColor = isDark ? '#F87171' : '#EF4444';
 
+    const isToday = date.toUpperCase().includes('TODAY');
+    const dateIcon = isToday ? 'zap' : 'calendar';
+
     return (
       <ShareCardWrapper ref={ref} outerPadding={24}>
         {/* Date label */}
         <View style={styles.dateRow}>
-          <Feather name="calendar" size={12} color={mutedColor} />
-          <Text style={[styles.dateLabel, { color: mutedColor }]}>{date}</Text>
+          <View
+            style={[
+              styles.dateIconContainer,
+              {
+                backgroundColor: accent + '15',
+                borderColor: accent + '20',
+              },
+            ]}
+          >
+            <Feather name={dateIcon} size={11} color={accent} />
+          </View>
+          <Text
+            style={[
+              styles.dateLabel,
+              { color: isToday ? textColor : mutedColor },
+            ]}
+          >
+            {date}
+          </Text>
         </View>
 
         {/* Hero total time */}
@@ -132,8 +152,15 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 6,
+    gap: 8,
     marginBottom: 4,
+  },
+  dateIconContainer: {
+    padding: 4,
+    borderRadius: 6,
+    borderWidth: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   dateLabel: {
     fontSize: 13,
