@@ -49,10 +49,11 @@ export default function Dashboard() {
     today,
   );
 
-  const { data: monthSummaries, refetch: refetchMonth } = useSummaries(
-    startMonth,
-    endMonth,
-  );
+  const {
+    data: monthSummaries,
+    refetch: refetchMonth,
+    isLoading: monthLoading,
+  } = useSummaries(startMonth, endMonth);
 
   const isLoading = userLoading || statsLoading || allTimeLoading;
 
@@ -66,7 +67,6 @@ export default function Dashboard() {
 
   const dailyAverage = stats?.data?.daily_average || 0;
 
-  // Derived Data
   const totalTimeDisplay = allTimeData?.data.text || '0 HRS 0 MINS';
   const totalProjects = stats?.data.projects?.length || 0;
 
@@ -78,7 +78,6 @@ export default function Dashboard() {
       color: getProjectColor(p.name),
     }));
 
-  // Calculate Today's Progress
   const { todayTotal, todayPercent, todayGoalDiffText } = useMemo(() => {
     const seconds = todaySummaries?.cumulative_total?.seconds || 0;
     const text = todaySummaries?.cumulative_total?.text || '0 mins';
@@ -219,6 +218,7 @@ export default function Dashboard() {
           days={calendarDays}
           onPrevMonth={handlePrevMonth}
           onNextMonth={handleNextMonth}
+          isLoading={monthLoading}
         />
       </ScrollView>
     </SafeAreaView>

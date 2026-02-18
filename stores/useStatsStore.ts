@@ -14,7 +14,10 @@ interface StatsState {
   isLoading: boolean;
   error: string | null;
   fetchStats: (range: StatsRange, orgId?: string) => Promise<void>;
+  clearCache: () => void;
 }
+
+const MAX_CACHE_SIZE = 10;
 
 export const useStatsStore = create<StatsState>()(
   persist(
@@ -30,14 +33,20 @@ export const useStatsStore = create<StatsState>()(
             ? await wakaService.getOrgStats(orgId, range)
             : await wakaService.getStats(range);
 
-          set((state) => ({
-            data: { ...state.data, [cacheKey]: stats },
-            isLoading: false,
-          }));
+          set((state) => {
+            const newData = { ...state.data, [cacheKey]: stats };
+            const keys = Object.keys(newData);
+            if (keys.length > MAX_CACHE_SIZE) {
+              const oldestKey = keys[0];
+              delete newData[oldestKey];
+            }
+            return { data: newData, isLoading: false };
+          });
         } catch (error: any) {
           set({ error: error.message, isLoading: false });
         }
       },
+      clearCache: () => set({ data: {} }),
     }),
     {
       name: 'stats-storage',

@@ -32,7 +32,6 @@ export const DailyStatsShareCard = forwardRef<View, DailyStatsShareCardProps>(
 
     return (
       <ShareCardWrapper ref={ref} outerPadding={24}>
-        {/* Date label */}
         <View style={styles.dateRow}>
           <View
             style={[
@@ -55,7 +54,6 @@ export const DailyStatsShareCard = forwardRef<View, DailyStatsShareCardProps>(
           </Text>
         </View>
 
-        {/* Hero total time */}
         <View style={styles.heroSection}>
           <Text style={[styles.totalTime, { color: textColor }]}>
             {totalTime}
@@ -87,9 +85,7 @@ export const DailyStatsShareCard = forwardRef<View, DailyStatsShareCardProps>(
           ) : null}
         </View>
 
-        {/* Stats grid */}
         <View style={styles.statsRow}>
-          {/* Languages */}
           {topLanguages && topLanguages.length > 0 && (
             <View style={[styles.statBox, { backgroundColor: surfaceColor }]}>
               <Text style={[styles.statLabel, { color: mutedColor }]}>
@@ -117,7 +113,6 @@ export const DailyStatsShareCard = forwardRef<View, DailyStatsShareCardProps>(
             </View>
           )}
 
-          {/* Projects */}
           {topProjects && topProjects.length > 0 && (
             <View style={[styles.statBox, { backgroundColor: surfaceColor }]}>
               <Text style={[styles.statLabel, { color: mutedColor }]}>

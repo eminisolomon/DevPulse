@@ -16,6 +16,7 @@ export * from './Radio';
 export * from './ScreenHeader';
 export * from './SegmentedStatsCard';
 export * from './Select';
+export * from './Skeleton';
 export * from './skeletons';
 export * from './Switch';
 export * from './ThemedText';

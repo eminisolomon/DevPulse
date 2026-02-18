@@ -1,13 +1,15 @@
-import { Button, Card, Typography } from '@/components';
+import { Button, Card, Skeleton, Typography } from '@/components';
 import { WEEK_DAYS } from '@/constants';
 import { useTheme } from '@/hooks';
 import { hexToRgba } from '@/utilities';
 import { Ionicons } from '@expo/vector-icons';
 import {
   eachDayOfInterval,
+  endOfDay,
   endOfMonth,
   format,
   getDay,
+  isAfter,
   isSameDay,
   isSameMonth,
   startOfMonth,
@@ -29,6 +31,7 @@ interface MonthlyCalendarCardProps {
   days: DailySummary[];
   onPrevMonth: () => void;
   onNextMonth: () => void;
+  isLoading?: boolean;
 }
 
 export const MonthlyCalendarCard = ({
@@ -37,6 +40,7 @@ export const MonthlyCalendarCard = ({
   days,
   onPrevMonth,
   onNextMonth,
+  isLoading,
 }: MonthlyCalendarCardProps) => {
   const { theme, isDark } = useTheme();
   const router = useRouter();
@@ -50,11 +54,9 @@ export const MonthlyCalendarCard = ({
   const calendarDays = eachDayOfInterval({ start, end });
   const startDay = getDay(start);
 
-  // Determine weeks
   const weeks = [];
   let week = Array(7).fill(null);
 
-  // Fill initial empty days
   for (let i = 0; i < startDay; i++) {
     week[i] = null;
   }
@@ -66,7 +68,6 @@ export const MonthlyCalendarCard = ({
       week = Array(7).fill(null);
     }
 
-    // Find matching summary data
     const summary = days.find((d) => isSameDay(new Date(d.date), day));
 
     week[dayOfWeek] = {
@@ -80,10 +81,10 @@ export const MonthlyCalendarCard = ({
   const getHeatmapColor = (level: number) => {
     if (level === 0) return 'transparent';
     const opacityMap: Record<number, number> = {
-      1: 0.12, // ~20 hex
-      2: 0.25, // ~40 hex
-      3: 0.44, // ~70 hex
-      4: 1.0, // FF hex
+      1: 0.12,
+      2: 0.25,
+      3: 0.44,
+      4: 1.0,
     };
     return hexToRgba(theme.colors.primary, opacityMap[level] || 0.12);
   };
@@ -91,35 +92,59 @@ export const MonthlyCalendarCard = ({
   const renderDay = (dayData: any | null, index: number) => {
     if (!dayData) return <View key={index} style={styles.dayCell} />;
 
-    const { summary, day } = dayData;
+    const { summary, day, date } = dayData;
+    const isFuture = isAfter(date, endOfDay(new Date()));
     const hasActivity = summary?.hasActivity;
     const activityLevel = summary?.activityLevel || 0;
     const bgColor = getHeatmapColor(activityLevel);
+
+    if (isLoading) {
+      return (
+        <View key={index} style={styles.dayCell}>
+          <Skeleton variant="circle" width={32} height={32} />
+        </View>
+      );
+    }
 
     return (
       <TouchableOpacity
         key={index}
         style={styles.dayCell}
         onPress={() => {
+          if (isFuture) return;
           const dateStr = format(dayData.date, 'yyyy-MM-dd');
           router.push(`/stats/daily?date=${dateStr}`);
         }}
-        activeOpacity={0.7}
+        activeOpacity={isFuture ? 1 : 0.7}
+        disabled={isFuture}
       >
         <View
           style={[
             styles.dayCircle,
-            hasActivity && { backgroundColor: bgColor },
+            {
+              backgroundColor: hasActivity
+                ? bgColor
+                : isDark
+                  ? 'rgba(255,255,255,0.03)'
+                  : 'rgba(0,0,0,0.02)',
+            },
             activityLevel === 4 && {
               borderColor: theme.colors.primary,
               borderWidth: 1,
             },
+            isFuture && { opacity: 0.3 },
           ]}
         >
           <Typography
             variant="body"
             weight={hasActivity ? 'bold' : 'medium'}
-            color={activityLevel >= 3 ? '#fff' : theme.colors.text}
+            color={
+              activityLevel >= 3
+                ? '#fff'
+                : isFuture
+                  ? theme.colors.textSecondary
+                  : theme.colors.text
+            }
             align="center"
           >
             {day}
