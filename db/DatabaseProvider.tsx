@@ -1,6 +1,6 @@
 import { useMigrations } from 'drizzle-orm/expo-sqlite/migrator';
 import React, { createContext, ReactNode, useContext } from 'react';
-import { ActivityIndicator, View } from 'react-native';
+import { InitialLoader } from '../components/InitialLoader';
 import migrations from '../drizzle/migrations';
 import { db } from './index';
 
@@ -17,15 +17,10 @@ export function DatabaseProvider({ children }: { children: ReactNode }) {
 
   if (error) {
     console.error('Migration error:', error);
-    // You might want to show a more user-friendly error screen here
   }
 
   if (!success) {
-    return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <ActivityIndicator size="large" color="#007AFF" />
-      </View>
-    );
+    return <InitialLoader />;
   }
 
   return (

@@ -29,19 +29,19 @@ interface AppProvidersProps {
 export function AppProviders({ children }: AppProvidersProps) {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <DatabaseProvider>
-        <KeyboardProvider>
-          <SafeAreaProvider>
-            <QueryClientProvider client={queryClient}>
-              <ThemeProvider>
+      <KeyboardProvider>
+        <SafeAreaProvider>
+          <QueryClientProvider client={queryClient}>
+            <ThemeProvider>
+              <DatabaseProvider>
                 <BottomSheetModalProvider>
                   <LeaderboardProvider>{children}</LeaderboardProvider>
                 </BottomSheetModalProvider>
-              </ThemeProvider>
-            </QueryClientProvider>
-          </SafeAreaProvider>
-        </KeyboardProvider>
-      </DatabaseProvider>
+              </DatabaseProvider>
+            </ThemeProvider>
+          </QueryClientProvider>
+        </SafeAreaProvider>
+      </KeyboardProvider>
     </GestureHandlerRootView>
   );
 }
