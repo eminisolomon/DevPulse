@@ -54,17 +54,7 @@
           "defaultChannel": "default"
         }
       ],
-      "expo-sqlite",
-      [
-        "expo-build-properties",
-        {
-          "android": {
-            "asyncStorage": {
-              "maxSize": 50
-            }
-          }
-        }
-      ]
+      "expo-sqlite"
     ],
     "experiments": {
       "typedRoutes": true,

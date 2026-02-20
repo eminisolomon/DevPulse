@@ -1,25 +1,30 @@
+import * as Haptics from 'expo-haptics';
 import React from 'react';
 import { toast as sonnerToast } from 'sonner-native';
 
 export function toastSuccess(message: string, description?: string) {
+  Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
   sonnerToast.success(message, {
     description,
   });
 }
 
 export function toastError(message: string, description?: string) {
+  Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
   sonnerToast.error(message, {
     description,
   });
 }
 
 export function toastWarning(message: string, description?: string) {
+  Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
   sonnerToast.warning(message, {
     description,
   });
 }
 
 export function toastInfo(message: string, description?: string) {
+  Haptics.selectionAsync();
   sonnerToast.info(message, {
     description,
   });

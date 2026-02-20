@@ -1,8 +1,9 @@
 import Icon from '@/assets/images/icon.png';
 import { useTheme } from '@/hooks';
 import { useUserStore } from '@/stores';
+import { Image } from 'expo-image';
 import React, { useEffect, useRef } from 'react';
-import { Animated, Image, StyleSheet, View } from 'react-native';
+import { Animated, StyleSheet, View } from 'react-native';
 
 export const InitialLoader = () => {
   const { theme } = useTheme();
@@ -42,7 +43,12 @@ export const InitialLoader = () => {
           },
         ]}
       >
-        <Image source={iconSource} style={styles.image} resizeMode="cover" />
+        <Image
+          source={iconSource}
+          style={styles.image}
+          contentFit="cover"
+          transition={200}
+        />
       </Animated.View>
     </View>
   );

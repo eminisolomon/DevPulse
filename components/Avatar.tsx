@@ -1,8 +1,9 @@
 import { useTheme } from '@/hooks/useTheme';
 import { createAvatar } from '@dicebear/core';
 import * as personas from '@dicebear/personas';
+import { Image } from 'expo-image';
 import React, { useMemo } from 'react';
-import { Image, ImageSourcePropType, View } from 'react-native';
+import { ImageSourcePropType, View } from 'react-native';
 
 interface AvatarProps {
   source?: ImageSourcePropType;
@@ -49,7 +50,8 @@ export const Avatar = ({
         <Image
           source={source}
           style={{ width: '100%', height: '100%' }}
-          resizeMode="cover"
+          contentFit="cover"
+          transition={200}
         />
       ) : null}
     </View>

@@ -1,4 +1,5 @@
 import { useTheme } from '@/hooks/useTheme';
+import * as Haptics from 'expo-haptics';
 import React from 'react';
 import {
   ActivityIndicator,
@@ -41,9 +42,15 @@ export const Button = ({
   fullWidth = false,
   style,
   labelStyle,
+  onPress,
   ...props
 }: ButtonProps) => {
   const { theme } = useTheme();
+
+  const handlePress = (e: any) => {
+    Haptics.selectionAsync();
+    onPress?.(e);
+  };
 
   const getVariantStyles = (pressed: boolean) => {
     const opacity = pressed ? 0.9 : 1;
@@ -154,6 +161,7 @@ export const Button = ({
   return (
     <Pressable
       disabled={disabled || loading}
+      onPress={handlePress}
       style={({ pressed }) => [
         {
           height: getHeight(),
