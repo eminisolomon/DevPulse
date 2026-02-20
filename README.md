@@ -20,7 +20,7 @@ DevPulse is a comprehensive mobile application built with React Native and Expo 
 1. **Clone the repository:**
 
    ```bash
-   git clone https://github.com/yourusername/DevPulse.git
+   git clone https://github.com/eminisolomon/DevPulse.git
    cd DevPulse
    ```
 
