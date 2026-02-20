@@ -1,9 +1,10 @@
-import { useTheme } from '@/hooks';
+import { useShareTheme } from '@/hooks/useShareTheme';
 import { LeaderboardUser } from '@/interfaces/leaderboard';
-import { AntDesign, Feather } from '@expo/vector-icons';
 import React, { forwardRef } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { Avatar } from '../Avatar';
+import { StatBox } from '../StatBox';
+import { Typography } from '../Typography';
 import { ShareCardWrapper } from './ShareCardWrapper';
 
 interface LeaderboardShareCardProps {
@@ -18,11 +19,9 @@ interface LeaderboardShareCardProps {
 
 export const LeaderboardShareCard = forwardRef<View, LeaderboardShareCardProps>(
   ({ rank, displayName, totalTime, country, scope, photo, top3Users }, ref) => {
-    const { isDark, theme } = useTheme();
+    const { textColor, mutedColor, surfaceColor, theme, isDark } =
+      useShareTheme();
 
-    const textColor = isDark ? '#FFFFFF' : '#111111';
-    const mutedColor = isDark ? '#888888' : '#666666';
-    const surfaceColor = isDark ? '#1A1A1A' : '#F3F4F6';
     const goldColor = '#F59E0B';
     const silverColor = '#9CA3AF';
     const bronzeColor = '#B45309';
@@ -36,13 +35,21 @@ export const LeaderboardShareCard = forwardRef<View, LeaderboardShareCardProps>(
     };
 
     const rankColor = getRankColor();
+    const rankSuffix =
+      rank === 1 ? 'st' : rank === 2 ? 'nd' : rank === 3 ? 'rd' : 'th';
+    const rankDisplay = rank ? `${rank}${rankSuffix}` : '-';
 
     return (
       <ShareCardWrapper ref={ref} outerPadding={24}>
         {/* Scope header */}
-        <Text style={[styles.scopeStart, { color: mutedColor }]}>
+        <Typography
+          variant="micro"
+          weight="bold"
+          color={mutedColor}
+          style={styles.scopeStart}
+        >
           {scope || 'GLOBAL TOP DEVELOPERS'}
-        </Text>
+        </Typography>
 
         {/* Hero Rank + User */}
         <View style={styles.heroSection}>
@@ -52,88 +59,63 @@ export const LeaderboardShareCard = forwardRef<View, LeaderboardShareCardProps>(
             size={56}
           />
           <View>
-            <Text style={[styles.displayName, { color: textColor }]}>
+            <Typography
+              variant="headline"
+              weight="bold"
+              color={textColor}
+              style={styles.displayName}
+            >
               {displayName}
-            </Text>
+            </Typography>
             {country && (
-              <Text style={[styles.countryText, { color: mutedColor }]}>
+              <Typography
+                variant="body"
+                weight="medium"
+                color={mutedColor}
+                style={styles.countryText}
+              >
                 {country}
-              </Text>
+              </Typography>
             )}
           </View>
         </View>
 
         {/* Stats grid */}
         <View style={styles.statsRow}>
-          {/* Rank Box */}
-          <View style={[styles.statBox, { backgroundColor: surfaceColor }]}>
-            <AntDesign name="trophy" size={24} color={rankColor} />
-            <Text style={[styles.statValue, { color: textColor }]}>
-              {rank ? (
-                <>
-                  {rank}
-                  <Text style={{ fontSize: 14, fontWeight: '400' }}>
-                    {rank === 1
-                      ? 'st'
-                      : rank === 2
-                        ? 'nd'
-                        : rank === 3
-                          ? 'rd'
-                          : 'th'}
-                  </Text>
-                </>
-              ) : (
-                '-'
-              )}
-            </Text>
-            <Text style={[styles.statLabel, { color: mutedColor }]}>RANK</Text>
-          </View>
-
-          {/* Time Box */}
-          <View style={[styles.statBox, { backgroundColor: surfaceColor }]}>
-            <Feather name="clock" size={24} color={theme.colors.primary} />
-            <Text style={[styles.statValue, { color: textColor }]}>
-              {totalTime || '--'}
-            </Text>
-            <Text style={[styles.statLabel, { color: mutedColor }]}>
-              TOTAL TIME
-            </Text>
-          </View>
+          <StatBox
+            label="RANK"
+            value={rankDisplay}
+            valueColor={rankColor}
+            style={{ backgroundColor: surfaceColor }}
+          />
+          <StatBox
+            label="TOTAL TIME"
+            value={totalTime || '--'}
+            style={{ backgroundColor: surfaceColor }}
+          />
         </View>
 
         {/* Top 3 Podium Section */}
         {top3Users && top3Users.length > 0 && (
           <View
-            style={{
-              marginTop: 24,
-              paddingTop: 16,
-              borderTopWidth: 1,
-              borderTopColor: isDark ? '#333' : '#eee',
-            }}
+            style={[
+              styles.podiumContainer,
+              { borderTopColor: isDark ? '#333' : '#eee' },
+            ]}
           >
-            <Text
-              style={{
-                fontSize: 12,
-                fontWeight: 'bold',
-                color: mutedColor,
-                marginBottom: 12,
-                textTransform: 'uppercase',
-              }}
+            <Typography
+              variant="micro"
+              weight="bold"
+              color={mutedColor}
+              style={styles.podiumTitle}
             >
               Leading the charts
-            </Text>
+            </Typography>
             {top3Users.map((user, index) => (
-              <View
-                key={user.user.id}
-                style={{
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  marginBottom: 8,
-                }}
-              >
-                <Text style={{ width: 24, fontSize: 16 }}>
+              <View key={user.user.id} style={styles.podiumRow}>
+                <Typography style={styles.podiumEmoji}>
                   {index === 0 ? '🥇' : index === 1 ? '🥈' : '🥉'}
-                </Text>
+                </Typography>
                 <Avatar
                   source={
                     user.user.photo ? { uri: user.user.photo } : undefined
@@ -141,27 +123,22 @@ export const LeaderboardShareCard = forwardRef<View, LeaderboardShareCardProps>(
                   initials={user.user.display_name || user.user.username}
                   size={24}
                 />
-                <Text
-                  style={{
-                    marginLeft: 8,
-                    fontSize: 14,
-                    fontWeight: '600',
-                    color: textColor,
-                    flex: 1,
-                  }}
+                <Typography
+                  variant="body"
+                  weight="semibold"
+                  color={textColor}
+                  style={styles.podiumName}
                   numberOfLines={1}
                 >
                   {user.user.display_name || user.user.username}
-                </Text>
-                <Text
-                  style={{
-                    fontSize: 12,
-                    fontWeight: '500',
-                    color: theme.colors.primary,
-                  }}
+                </Typography>
+                <Typography
+                  variant="caption"
+                  weight="bold"
+                  color={theme.colors.primary}
                 >
                   {user.running_total.human_readable_total}
-                </Text>
+                </Typography>
               </View>
             ))}
           </View>
@@ -173,9 +150,6 @@ export const LeaderboardShareCard = forwardRef<View, LeaderboardShareCardProps>(
 
 const styles = StyleSheet.create({
   scopeStart: {
-    fontSize: 12,
-    fontWeight: '600',
-    textTransform: 'uppercase',
     letterSpacing: 1.2,
     alignSelf: 'flex-start',
     marginBottom: 4,
@@ -186,37 +160,33 @@ const styles = StyleSheet.create({
     gap: 16,
     marginBottom: 8,
   },
-
   displayName: {
-    fontSize: 22,
-    fontWeight: '800',
     marginBottom: 2,
   },
-  countryText: {
-    fontSize: 14,
-    fontWeight: '500',
-  },
+  countryText: {},
   statsRow: {
     flexDirection: 'row',
     gap: 12,
   },
-  statBox: {
-    flex: 1,
-    borderRadius: 16,
-    padding: 16,
+  podiumContainer: {
+    marginTop: 24,
+    paddingTop: 16,
+    borderTopWidth: 1,
+  },
+  podiumTitle: {
+    marginBottom: 12,
+  },
+  podiumRow: {
+    flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
+    marginBottom: 8,
   },
-  statValue: {
-    fontSize: 20,
-    fontWeight: '800',
-    textAlign: 'center',
+  podiumEmoji: {
+    width: 24,
+    fontSize: 16,
   },
-  statLabel: {
-    fontSize: 10,
-    fontWeight: '700',
-    letterSpacing: 1,
-    textAlign: 'center',
-    opacity: 0.8,
+  podiumName: {
+    marginLeft: 8,
+    flex: 1,
   },
 });

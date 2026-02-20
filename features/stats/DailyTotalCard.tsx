@@ -54,13 +54,9 @@ export const DailyTotalCard = ({
             style={[
               styles.badge,
               {
-                backgroundColor: isDark
-                  ? isPositiveDiff
-                    ? 'rgba(34, 197, 94, 0.15)'
-                    : 'rgba(248, 113, 113, 0.15)'
-                  : isPositiveDiff
-                    ? 'rgba(34, 197, 94, 0.1)'
-                    : 'rgba(239, 68, 68, 0.1)',
+                backgroundColor: isPositiveDiff
+                  ? theme.colors.successContainer
+                  : theme.colors.errorContainer,
                 marginTop: 4,
                 alignSelf: 'center',
               },

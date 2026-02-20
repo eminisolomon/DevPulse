@@ -6,11 +6,14 @@ export const darkTheme: Theme = {
     background: palette.neutral[950],
     surface: palette.neutral[900],
     surfaceHighlight: palette.neutral[800],
+    surfaceCard: palette.neutral[900],
+    surfaceSubtle: 'rgba(255, 255, 255, 0.05)',
 
     text: '#FFFFFF',
     textSecondary: palette.neutral[400],
     textTertiary: palette.neutral[600],
     textInverse: palette.neutral[900],
+    textMuted: palette.neutral[500],
 
     primary: palette.brand[400],
     primaryForeground: palette.brand[950],

@@ -1,8 +1,10 @@
-import { useTheme } from '@/hooks/useTheme';
+import { useShareTheme } from '@/hooks/useShareTheme';
 import { Feather } from '@expo/vector-icons';
 import React, { forwardRef } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { ShareCardWrapper } from './ShareCardWrapper';
+import { Typography } from '../Typography';
+import { StatBox } from '../StatBox';
 
 interface ProjectShareCardProps {
   projectName: string;
@@ -14,12 +16,7 @@ interface ProjectShareCardProps {
 
 export const ProjectShareCard = forwardRef<View, ProjectShareCardProps>(
   ({ projectName, allTimeTotal, total7d, dailyAvg, topLanguages }, ref) => {
-    const { isDark, theme } = useTheme();
-
-    const textColor = isDark ? '#FFFFFF' : '#111111';
-    const mutedColor = isDark ? '#888888' : '#666666';
-    const surfaceColor = isDark ? '#1A1A1A' : '#F3F4F6';
-    const accent = theme.colors.primary;
+    const { textColor, mutedColor, surfaceColor, accent } = useShareTheme();
 
     return (
       <ShareCardWrapper ref={ref} outerPadding={24}>
@@ -30,48 +27,64 @@ export const ProjectShareCard = forwardRef<View, ProjectShareCardProps>(
           >
             <Feather name="folder" size={16} color={accent} />
           </View>
-          <Text
-            style={[styles.projectName, { color: textColor }]}
+          <Typography
+            variant="title"
+            weight="bold"
+            color={textColor}
+            style={styles.projectName}
             numberOfLines={1}
           >
             {projectName}
-          </Text>
+          </Typography>
         </View>
 
         {/* Hero stat */}
         <View>
-          <Text style={[styles.statLabel, { color: mutedColor }]}>
+          <Typography
+            variant="micro"
+            weight="bold"
+            color={mutedColor}
+            style={styles.statLabel}
+          >
             ALL TIME
-          </Text>
-          <Text style={[styles.heroTime, { color: textColor }]}>
+          </Typography>
+          <Typography
+            variant="display"
+            weight="bold"
+            color={textColor}
+            style={styles.heroTime}
+          >
             {allTimeTotal}
-          </Text>
+          </Typography>
         </View>
 
         {/* Two-col stats */}
         <View style={styles.statsGrid}>
-          <View style={[styles.gridCell, { backgroundColor: surfaceColor }]}>
-            <Text style={[styles.cellLabel, { color: mutedColor }]}>
-              LAST 7 DAYS
-            </Text>
-            <Text style={[styles.cellValue, { color: accent }]}>{total7d}</Text>
-          </View>
-          <View style={[styles.gridCell, { backgroundColor: surfaceColor }]}>
-            <Text style={[styles.cellLabel, { color: mutedColor }]}>
-              DAILY AVG
-            </Text>
-            <Text style={[styles.cellValue, { color: textColor }]}>
-              {dailyAvg}
-            </Text>
-          </View>
+          <StatBox
+            label="LAST 7 DAYS"
+            value={total7d}
+            valueColor={accent}
+            style={{ backgroundColor: surfaceColor }}
+          />
+          <StatBox
+            label="DAILY AVG"
+            value={dailyAvg}
+            valueColor={textColor}
+            style={{ backgroundColor: surfaceColor }}
+          />
         </View>
 
         {/* Languages */}
         {topLanguages && topLanguages.length > 0 && (
           <View style={[styles.langBox, { backgroundColor: surfaceColor }]}>
-            <Text style={[styles.statLabel, { color: mutedColor }]}>
+            <Typography
+              variant="micro"
+              weight="bold"
+              color={mutedColor}
+              style={styles.statLabel}
+            >
               LANGUAGES
-            </Text>
+            </Typography>
             <View style={styles.langBarContainer}>
               {topLanguages.slice(0, 5).map((lang, i) => (
                 <View
@@ -96,15 +109,23 @@ export const ProjectShareCard = forwardRef<View, ProjectShareCardProps>(
                       { backgroundColor: accent, opacity: 1 - i * 0.15 },
                     ]}
                   />
-                  <Text
-                    style={[styles.langName, { color: textColor }]}
+                  <Typography
+                    variant="body"
+                    weight="semibold"
+                    color={textColor}
+                    style={styles.langName}
                     numberOfLines={1}
                   >
                     {lang.name}
-                  </Text>
-                  <Text style={[styles.langPercent, { color: mutedColor }]}>
+                  </Typography>
+                  <Typography
+                    variant="caption"
+                    weight="semibold"
+                    color={mutedColor}
+                    style={styles.langPercent}
+                  >
                     {Math.round(lang.percent)}%
-                  </Text>
+                  </Typography>
                 </View>
               ))}
             </View>
@@ -131,39 +152,18 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   projectName: {
-    fontSize: 24,
-    fontWeight: '700',
     flex: 1,
   },
   statLabel: {
-    fontSize: 12,
-    fontWeight: '700',
-    letterSpacing: 1.2,
     marginBottom: 6,
   },
   heroTime: {
     fontSize: 40,
-    fontWeight: '800',
     letterSpacing: -0.5,
   },
   statsGrid: {
     flexDirection: 'row',
-    gap: 10,
-  },
-  gridCell: {
-    flex: 1,
-    borderRadius: 16,
-    padding: 16,
-  },
-  cellLabel: {
-    fontSize: 12,
-    fontWeight: '700',
-    letterSpacing: 1.2,
-    marginBottom: 6,
-  },
-  cellValue: {
-    fontSize: 22,
-    fontWeight: '700',
+    gap: 12,
   },
   langBox: {
     borderRadius: 16,
@@ -194,13 +194,9 @@ const styles = StyleSheet.create({
     borderRadius: 4,
   },
   langName: {
-    fontSize: 14,
-    fontWeight: '600',
     flex: 1,
   },
   langPercent: {
-    fontSize: 13,
-    fontWeight: '600',
     fontVariant: ['tabular-nums'],
   },
 });

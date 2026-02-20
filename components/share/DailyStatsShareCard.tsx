@@ -1,7 +1,8 @@
-import { useTheme } from '@/hooks/useTheme';
+import { useShareTheme } from '@/hooks/useShareTheme';
 import { Feather } from '@expo/vector-icons';
 import React, { forwardRef } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
+import { Typography } from '../Typography';
 import { ShareCardWrapper } from './ShareCardWrapper';
 
 interface DailyStatsShareCardProps {
@@ -18,12 +19,9 @@ export const DailyStatsShareCard = forwardRef<View, DailyStatsShareCardProps>(
     { date, totalTime, diffText, isPositiveDiff, topLanguages, topProjects },
     ref,
   ) => {
-    const { isDark, theme } = useTheme();
+    const { textColor, mutedColor, surfaceColor, accent } = useShareTheme();
+    const { isDark } = useShareTheme();
 
-    const textColor = isDark ? '#FFFFFF' : '#111111';
-    const mutedColor = isDark ? '#888888' : '#666666';
-    const surfaceColor = isDark ? '#1A1A1A' : '#F3F4F6';
-    const accent = theme.colors.primary;
     const positiveColor = isDark ? '#4ADE80' : '#22C55E';
     const negativeColor = isDark ? '#F87171' : '#EF4444';
 
@@ -44,20 +42,25 @@ export const DailyStatsShareCard = forwardRef<View, DailyStatsShareCardProps>(
           >
             <Feather name={dateIcon} size={11} color={accent} />
           </View>
-          <Text
-            style={[
-              styles.dateLabel,
-              { color: isToday ? textColor : mutedColor },
-            ]}
+          <Typography
+            variant="micro"
+            weight="bold"
+            color={isToday ? textColor : mutedColor}
+            style={styles.dateLabel}
           >
             {date}
-          </Text>
+          </Typography>
         </View>
 
         <View style={styles.heroSection}>
-          <Text style={[styles.totalTime, { color: textColor }]}>
+          <Typography
+            variant="display"
+            weight="bold"
+            color={textColor}
+            style={styles.totalTime}
+          >
             {totalTime}
-          </Text>
+          </Typography>
           {diffText ? (
             <View
               style={[
@@ -73,14 +76,14 @@ export const DailyStatsShareCard = forwardRef<View, DailyStatsShareCardProps>(
                 size={13}
                 color={isPositiveDiff ? positiveColor : negativeColor}
               />
-              <Text
-                style={[
-                  styles.diffText,
-                  { color: isPositiveDiff ? positiveColor : negativeColor },
-                ]}
+              <Typography
+                variant="caption"
+                weight="bold"
+                color={isPositiveDiff ? positiveColor : negativeColor}
+                style={styles.diffText}
               >
                 {diffText}
-              </Text>
+              </Typography>
             </View>
           ) : null}
         </View>
@@ -88,9 +91,14 @@ export const DailyStatsShareCard = forwardRef<View, DailyStatsShareCardProps>(
         <View style={styles.statsRow}>
           {topLanguages && topLanguages.length > 0 && (
             <View style={[styles.statBox, { backgroundColor: surfaceColor }]}>
-              <Text style={[styles.statLabel, { color: mutedColor }]}>
+              <Typography
+                variant="micro"
+                weight="bold"
+                color={mutedColor}
+                style={styles.statLabel}
+              >
                 TOP LANGUAGES
-              </Text>
+              </Typography>
               {topLanguages.slice(0, 3).map((lang, i) => (
                 <View key={lang.name} style={styles.langRow}>
                   <View
@@ -99,15 +107,23 @@ export const DailyStatsShareCard = forwardRef<View, DailyStatsShareCardProps>(
                       { backgroundColor: accent, opacity: 1 - i * 0.25 },
                     ]}
                   />
-                  <Text
-                    style={[styles.langName, { color: textColor }]}
+                  <Typography
+                    variant="body"
+                    weight="semibold"
+                    color={textColor}
+                    style={styles.langName}
                     numberOfLines={1}
                   >
                     {lang.name}
-                  </Text>
-                  <Text style={[styles.langPercent, { color: mutedColor }]}>
+                  </Typography>
+                  <Typography
+                    variant="caption"
+                    weight="semibold"
+                    color={mutedColor}
+                    style={styles.langPercent}
+                  >
                     {Math.round(lang.percent)}%
-                  </Text>
+                  </Typography>
                 </View>
               ))}
             </View>
@@ -115,21 +131,34 @@ export const DailyStatsShareCard = forwardRef<View, DailyStatsShareCardProps>(
 
           {topProjects && topProjects.length > 0 && (
             <View style={[styles.statBox, { backgroundColor: surfaceColor }]}>
-              <Text style={[styles.statLabel, { color: mutedColor }]}>
+              <Typography
+                variant="micro"
+                weight="bold"
+                color={mutedColor}
+                style={styles.statLabel}
+              >
                 TOP PROJECTS
-              </Text>
+              </Typography>
               {topProjects.slice(0, 3).map((proj) => (
                 <View key={proj.name} style={styles.langRow}>
                   <Feather name="folder" size={12} color={accent} />
-                  <Text
-                    style={[styles.langName, { color: textColor }]}
+                  <Typography
+                    variant="body"
+                    weight="semibold"
+                    color={textColor}
+                    style={styles.langName}
                     numberOfLines={1}
                   >
                     {proj.name}
-                  </Text>
-                  <Text style={[styles.langPercent, { color: mutedColor }]}>
+                  </Typography>
+                  <Typography
+                    variant="caption"
+                    weight="semibold"
+                    color={mutedColor}
+                    style={styles.langPercent}
+                  >
                     {proj.text}
-                  </Text>
+                  </Typography>
                 </View>
               ))}
             </View>
@@ -158,9 +187,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   dateLabel: {
-    fontSize: 13,
-    fontWeight: '600',
-    textTransform: 'uppercase',
     letterSpacing: 1.2,
   },
   heroSection: {
@@ -169,9 +195,6 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   totalTime: {
-    fontSize: 42,
-    fontWeight: '800',
-    letterSpacing: -1,
     textAlign: 'center',
   },
   diffBadge: {
@@ -182,10 +205,7 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
     borderRadius: 20,
   },
-  diffText: {
-    fontSize: 13,
-    fontWeight: '600',
-  },
+  diffText: {},
   statsRow: {
     gap: 12,
   },
@@ -195,11 +215,7 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   statLabel: {
-    fontSize: 10,
-    fontWeight: '700',
-    letterSpacing: 1,
     marginBottom: 4,
-    opacity: 0.8,
   },
   langRow: {
     flexDirection: 'row',
@@ -212,13 +228,9 @@ const styles = StyleSheet.create({
     borderRadius: 4,
   },
   langName: {
-    fontSize: 14,
-    fontWeight: '600',
     flex: 1,
   },
   langPercent: {
-    fontSize: 13,
-    fontWeight: '600',
     fontVariant: ['tabular-nums'],
   },
 });

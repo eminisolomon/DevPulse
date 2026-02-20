@@ -5,11 +5,14 @@ export const lightTheme = {
     background: '#FFFFFF',
     surface: palette.neutral[50],
     surfaceHighlight: palette.neutral[100],
+    surfaceCard: '#FFFFFF',
+    surfaceSubtle: palette.neutral[100],
 
     text: palette.neutral[900],
     textSecondary: palette.neutral[600],
     textTertiary: palette.neutral[400],
     textInverse: '#FFFFFF',
+    textMuted: palette.neutral[500],
 
     primary: palette.brand[600],
     primaryForeground: '#FFFFFF',

@@ -149,9 +149,7 @@ export const DailyProgressCard = ({
         style={[
           styles.projectsContainer,
           {
-            backgroundColor: isDark
-              ? 'rgba(255,255,255,0.05)'
-              : 'rgba(0,0,0,0.02)',
+            backgroundColor: theme.colors.surfaceSubtle,
           },
         ]}
       >
