@@ -1,6 +1,6 @@
-import { config } from '@/config';
 import { AuthConfig } from '@/features/auth/AuthConfig';
 import { useAuthStore } from '@/stores/useAuthStore';
+import { config } from './config';
 import { WakaTimeApiError } from './errors';
 
 export const getAuthToken = () => {

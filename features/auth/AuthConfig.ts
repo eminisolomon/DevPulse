@@ -1,4 +1,4 @@
-import { config } from '@/config';
+import { config } from '@/utilities/config';
 import { makeRedirectUri } from 'expo-auth-session';
 
 export const AuthConfig = {

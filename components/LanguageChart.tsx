@@ -1,6 +1,6 @@
-import { useTheme } from '@/hooks/useTheme';
-import { WakaTimeLanguage } from '@/interfaces/stats';
-import { getLanguageColor } from '@/utilities';
+import { getLanguageColor } from '@/constants';
+import { useTheme } from '@/hooks';
+import { WakaTimeLanguage } from '@/interfaces';
 import { Canvas, Path, Skia } from '@shopify/react-native-skia';
 import React, { useMemo } from 'react';
 import { StyleSheet, View } from 'react-native';
