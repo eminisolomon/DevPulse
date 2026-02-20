@@ -1,3 +1,4 @@
+export * from './common';
 export * from './dashboard';
 export * from './goals';
 export * from './leaderboard';

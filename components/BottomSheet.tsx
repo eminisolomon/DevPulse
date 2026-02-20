@@ -3,7 +3,7 @@ import { BottomSheetBackdrop, BottomSheetModal } from '@gorhom/bottom-sheet';
 import React, { forwardRef, useCallback, useMemo } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { ThemedText } from './ThemedText';
+import { Typography } from './Typography';
 
 export interface BottomSheetProps {
   title?: string;
@@ -84,9 +84,13 @@ export const BottomSheet = forwardRef<BottomSheetModal, BottomSheetProps>(
               },
             ]}
           >
-            <ThemedText type="subtitle" style={{ textAlign: 'center' }}>
+            <Typography
+              variant="subtitle"
+              weight="bold"
+              style={{ textAlign: 'center' }}
+            >
               {title}
-            </ThemedText>
+            </Typography>
           </View>
         )}
         {children}

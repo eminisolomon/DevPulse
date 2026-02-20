@@ -17,7 +17,6 @@ export * from './Skeleton';
 export * from './skeletons';
 export * from './StatBox';
 export * from './Switch';
-export * from './ThemedText';
 export * from './ThemedToaster';
 export * from './TimeRangeSelector';
 export * from './Typography';

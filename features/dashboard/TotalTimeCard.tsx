@@ -2,6 +2,7 @@ import { Button } from '@/components/Button';
 import { Card } from '@/components/Card';
 import { Typography } from '@/components/Typography';
 import { useTheme } from '@/hooks/useTheme';
+import { commonStyles } from '@/theme';
 import { useRouter } from 'expo-router';
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
@@ -25,6 +26,41 @@ export const TotalTimeCard = ({
 }: TotalTimeCardProps) => {
   const { theme, isDark } = useTheme();
   const router = useRouter();
+
+  const styles = StyleSheet.create({
+    card: {
+      marginBottom: theme.spacing[4],
+      padding: theme.spacing[4],
+    },
+    header: {
+      marginBottom: theme.spacing[5],
+      ...commonStyles.center,
+    },
+    projectsContainer: {
+      borderRadius: theme.tokens.borderRadius.md,
+      padding: theme.spacing[4],
+    },
+    projectsTitle: {
+      textTransform: 'uppercase',
+      letterSpacing: 0.5,
+      marginBottom: theme.spacing[3],
+    },
+    projectRow: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginBottom: theme.spacing[3],
+    },
+    projectInfo: {
+      ...commonStyles.row,
+      gap: theme.spacing[2],
+    },
+    dot: {
+      width: 8,
+      height: 8,
+      borderRadius: 4,
+    },
+  });
 
   return (
     <Card
@@ -104,39 +140,3 @@ export const TotalTimeCard = ({
     </Card>
   );
 };
-
-const styles = StyleSheet.create({
-  card: {
-    marginBottom: 16,
-    padding: 16,
-  },
-  header: {
-    marginBottom: 20,
-    alignItems: 'center',
-  },
-  projectsContainer: {
-    borderRadius: 12,
-    padding: 16,
-  },
-  projectsTitle: {
-    textTransform: 'uppercase',
-    letterSpacing: 0.5,
-    marginBottom: 12,
-  },
-  projectRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 12,
-  },
-  projectInfo: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  dot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-  },
-});

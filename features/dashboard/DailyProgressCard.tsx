@@ -2,6 +2,7 @@ import { Button } from '@/components/Button';
 import { Card } from '@/components/Card';
 import { Typography } from '@/components/Typography';
 import { useTheme } from '@/hooks/useTheme';
+import { commonStyles } from '@/theme';
 import { Canvas, Circle, Path, Skia } from '@shopify/react-native-skia';
 import { useRouter } from 'expo-router';
 import React from 'react';
@@ -38,6 +39,46 @@ export const DailyProgressCard = ({
   const center = SIZE / 2;
   const strokeWidth = 20;
   const GAP_ANGLE = 0.05;
+
+  const styles = StyleSheet.create({
+    card: {
+      marginBottom: theme.spacing[4],
+      padding: theme.spacing[4],
+    },
+    header: {
+      marginBottom: theme.spacing[5],
+      ...commonStyles.center,
+    },
+    chartContainer: {
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginBottom: theme.spacing[5],
+      position: 'relative',
+    },
+    centerText: {
+      position: 'absolute',
+      ...commonStyles.center,
+    },
+    projectsContainer: {
+      borderRadius: theme.tokens.borderRadius.md,
+      padding: theme.spacing[4],
+    },
+    projectRow: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginBottom: theme.spacing[3],
+    },
+    projectInfo: {
+      ...commonStyles.row,
+      gap: theme.spacing[2],
+    },
+    dot: {
+      width: 8,
+      height: 8,
+      borderRadius: 4,
+    },
+  });
 
   const activeProjects = projects.filter((p) => (p.percent || 0) > 0);
 
@@ -189,44 +230,3 @@ export const DailyProgressCard = ({
     </Card>
   );
 };
-
-const styles = StyleSheet.create({
-  card: {
-    marginBottom: 16,
-    padding: 16,
-  },
-  header: {
-    marginBottom: 20,
-    alignItems: 'center',
-  },
-  chartContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 20,
-    position: 'relative',
-  },
-  centerText: {
-    position: 'absolute',
-    alignItems: 'center',
-  },
-  projectsContainer: {
-    borderRadius: 12,
-    padding: 16,
-  },
-  projectRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 12,
-  },
-  projectInfo: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  dot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-  },
-});

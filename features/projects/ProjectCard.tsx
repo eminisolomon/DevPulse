@@ -2,6 +2,7 @@ import { Card } from '@/components/Card';
 import { Typography } from '@/components/Typography';
 import { useTheme } from '@/hooks/useTheme';
 import { WakaTimeProject } from '@/interfaces/project';
+import { commonStyles } from '@/theme';
 import { Feather } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import React from 'react';
@@ -14,6 +15,57 @@ interface ProjectCardProps {
 export const ProjectCard = ({ item }: ProjectCardProps) => {
   const { theme } = useTheme();
   const router = useRouter();
+
+  const styles = StyleSheet.create({
+    projectCard: {
+      marginBottom: theme.spacing[3],
+      padding: theme.spacing[3],
+      borderWidth: 1,
+      borderColor: theme.colors.border + '40',
+      borderRadius: theme.tokens.borderRadius.lg,
+    },
+    projectHeader: {
+      ...commonStyles.row,
+    },
+    iconContainer: {
+      width: 40,
+      height: 40,
+      borderRadius: theme.tokens.borderRadius.md,
+      ...commonStyles.center,
+      marginRight: theme.spacing[3],
+    },
+    projectMainInfo: {
+      flex: 1,
+      justifyContent: 'center',
+    },
+    nameRow: {
+      ...commonStyles.row,
+      marginBottom: 2,
+    },
+    colorIndicator: {
+      width: 6,
+      height: 6,
+      borderRadius: 3,
+      marginLeft: theme.spacing[2],
+    },
+    repoInfo: {
+      ...commonStyles.row,
+    },
+    repoText: {
+      marginLeft: theme.spacing[1],
+      opacity: 0.7,
+    },
+    projectStats: {
+      alignItems: 'flex-end',
+      paddingLeft: 8,
+    },
+    lastActiveText: {
+      marginTop: -2,
+      marginBottom: theme.spacing[2],
+      opacity: 0.8,
+    },
+  });
+
   const projectColor = item.color || theme.colors.primary;
 
   return (
@@ -84,56 +136,3 @@ export const ProjectCard = ({ item }: ProjectCardProps) => {
     </TouchableOpacity>
   );
 };
-
-const styles = StyleSheet.create({
-  projectCard: {
-    marginBottom: 10,
-    padding: 10,
-    borderWidth: 1,
-    borderColor: 'rgba(0,0,0,0.03)',
-  },
-  projectHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  iconContainer: {
-    width: 40,
-    height: 40,
-    borderRadius: 12,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 12,
-  },
-  projectMainInfo: {
-    flex: 1,
-    justifyContent: 'center',
-  },
-  nameRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 2,
-  },
-  colorIndicator: {
-    width: 6,
-    height: 6,
-    borderRadius: 3,
-    marginLeft: 8,
-  },
-  repoInfo: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  repoText: {
-    marginLeft: 4,
-    opacity: 0.7,
-  },
-  projectStats: {
-    alignItems: 'flex-end',
-    paddingLeft: 8,
-  },
-  lastActiveText: {
-    marginTop: -2,
-    marginBottom: 6,
-    opacity: 0.8,
-  },
-});
