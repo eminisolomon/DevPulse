@@ -1,71 +1,70 @@
 import { StyleSheet } from 'react-native';
+import { spacing } from '../spacing';
+import { tokens } from '../tokens';
+import { commonStyles } from './common';
 
 export const goalsStyles = StyleSheet.create({
   container: {
-    flex: 1,
+    ...commonStyles.flex1,
   },
   center: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    ...commonStyles.center,
   },
   listContent: {
-    padding: 16,
-    paddingTop: 16,
+    padding: spacing[4],
+    paddingTop: spacing[4],
     paddingBottom: 100,
   },
   goalCard: {
-    marginBottom: 16,
-    padding: 16,
+    marginBottom: spacing[4],
+    padding: spacing[4],
   },
   goalHeader: {
-    flexDirection: 'row',
+    ...commonStyles.row,
     justifyContent: 'space-between',
     alignItems: 'flex-start',
-    marginBottom: 16,
+    marginBottom: spacing[4],
   },
   titleContainer: {
-    flex: 1,
+    ...commonStyles.flex1,
   },
   statusBadge: {
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 8,
-    marginLeft: 12,
+    paddingHorizontal: spacing[2],
+    paddingVertical: spacing[1],
+    borderRadius: tokens.borderRadius.sm,
+    marginLeft: spacing[3],
   },
   progressSection: {
-    marginBottom: 16,
+    marginBottom: spacing[4],
   },
   progressInfo: {
-    flexDirection: 'row',
+    ...commonStyles.row,
     justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 8,
+    marginBottom: spacing[2],
   },
   progressBarBg: {
     height: 8,
-    borderRadius: 4,
+    borderRadius: tokens.borderRadius.full,
     overflow: 'hidden',
   },
   progressBarFill: {
     height: '100%',
-    borderRadius: 4,
+    borderRadius: tokens.borderRadius.full,
   },
   footer: {
-    flexDirection: 'row',
+    ...commonStyles.row,
     justifyContent: 'space-between',
-    paddingTop: 12,
+    paddingTop: spacing[3],
     borderTopWidth: 1,
-    borderTopColor: 'rgba(0,0,0,0.05)',
   },
   emptyState: {
-    alignItems: 'center',
-    padding: 40,
-    marginTop: 40,
+    ...commonStyles.center,
+    padding: spacing[10],
+    marginTop: spacing[10],
   },
   emptyTitle: {
-    marginTop: 16,
-    marginBottom: 8,
+    marginTop: spacing[4],
+    marginBottom: spacing[2],
   },
   emptySubtitle: {
     textAlign: 'center',

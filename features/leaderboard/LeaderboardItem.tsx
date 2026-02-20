@@ -1,6 +1,7 @@
 import { Avatar, Card, Typography } from '@/components';
 import { useTheme } from '@/hooks';
 import { LeaderboardUser } from '@/interfaces/leaderboard';
+import { commonStyles } from '@/theme';
 import { useRouter } from 'expo-router';
 import React from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
@@ -12,6 +13,23 @@ interface LeaderboardItemProps {
 export const LeaderboardItem = ({ item }: LeaderboardItemProps) => {
   const { theme } = useTheme();
   const router = useRouter();
+
+  const styles = StyleSheet.create({
+    userCard: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      padding: theme.spacing[3],
+      marginBottom: theme.spacing[2],
+      borderRadius: theme.tokens.borderRadius.md,
+    },
+    rankContainer: {
+      width: 40,
+      ...commonStyles.center,
+    },
+    userInfo: {
+      flex: 1,
+    },
+  });
 
   return (
     <TouchableOpacity
@@ -28,7 +46,7 @@ export const LeaderboardItem = ({ item }: LeaderboardItemProps) => {
             #{item.rank}
           </Typography>
         </View>
-        <View style={{ marginHorizontal: 12 }}>
+        <View style={{ marginHorizontal: theme.spacing[3] }}>
           <Avatar
             source={item.user.photo ? { uri: item.user.photo } : undefined}
             initials={item.user.display_name || item.user.username}
@@ -47,19 +65,3 @@ export const LeaderboardItem = ({ item }: LeaderboardItemProps) => {
     </TouchableOpacity>
   );
 };
-
-const styles = StyleSheet.create({
-  userCard: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 12,
-    marginBottom: 8,
-  },
-  rankContainer: {
-    width: 40,
-    alignItems: 'center',
-  },
-  userInfo: {
-    flex: 1,
-  },
-});

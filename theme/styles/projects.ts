@@ -1,57 +1,56 @@
 import { StyleSheet } from 'react-native';
+import { spacing } from '../spacing';
+import { tokens } from '../tokens';
+import { commonStyles } from './common';
 
 export const projectsStyles = StyleSheet.create({
   container: {
-    flex: 1,
+    ...commonStyles.flex1,
   },
   center: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    ...commonStyles.center,
   },
   listContent: {
-    padding: 16,
-    paddingTop: 16,
+    padding: spacing[4],
+    paddingTop: spacing[4],
     paddingBottom: 40,
   },
   footerLoader: {
-    paddingVertical: 20,
-    alignItems: 'center',
+    paddingVertical: spacing[5],
+    ...commonStyles.center,
   },
   emptyState: {
-    alignItems: 'center',
-    padding: 40,
-    marginTop: 40,
+    ...commonStyles.center,
+    padding: spacing[10],
+    marginTop: spacing[10],
   },
   emptyIconContainer: {
     width: 100,
     height: 100,
-    borderRadius: 50,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 20,
+    borderRadius: tokens.borderRadius.full,
+    ...commonStyles.center,
+    marginBottom: spacing[5],
   },
   emptyTitle: {
-    marginBottom: 8,
+    marginBottom: spacing[2],
   },
   emptySubtitle: {
     textAlign: 'center',
     maxWidth: 250,
   },
   searchContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    marginHorizontal: 16,
-    borderRadius: 8,
-    marginBottom: 8,
+    ...commonStyles.row,
+    paddingHorizontal: spacing[4],
+    paddingVertical: spacing[3],
+    marginHorizontal: spacing[4],
+    borderRadius: tokens.borderRadius.sm,
+    marginBottom: spacing[2],
   },
   searchIcon: {
-    marginRight: 8,
+    marginRight: spacing[2],
   },
   searchInput: {
-    flex: 1,
+    ...commonStyles.flex1,
     fontSize: 16,
     height: 24,
     padding: 0,
@@ -60,51 +59,48 @@ export const projectsStyles = StyleSheet.create({
 
 export const projectDetailStyles = StyleSheet.create({
   container: {
-    flex: 1,
+    ...commonStyles.flex1,
   },
   center: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    ...commonStyles.center,
   },
   scrollContent: {
-    padding: 16,
+    padding: spacing[4],
     paddingBottom: 40,
   },
   allTimeCard: {
-    marginBottom: 20,
+    marginBottom: spacing[5],
   },
   statsGrid: {
-    flexDirection: 'row',
-    gap: 12,
-    marginBottom: 24,
+    ...commonStyles.row,
+    gap: spacing[3],
+    marginBottom: spacing[6],
   },
   statCard: {
-    flex: 1,
+    ...commonStyles.flex1,
   },
   section: {
-    marginBottom: 24,
+    marginBottom: spacing[6],
   },
   sectionTitle: {
-    marginBottom: 12,
+    marginBottom: spacing[3],
   },
   chartCard: {
-    padding: 16,
+    padding: spacing[4],
     minHeight: 280,
-    justifyContent: 'center',
+    ...commonStyles.center,
   },
   listCard: {
-    padding: 8,
+    padding: spacing[2],
   },
   listItem: {
-    flexDirection: 'row',
+    ...commonStyles.row,
     justifyContent: 'space-between',
-    padding: 12,
+    padding: spacing[3],
     borderBottomWidth: 1,
-    borderBottomColor: 'rgba(0,0,0,0.05)',
   },
   noData: {
     textAlign: 'center',
-    paddingVertical: 40,
+    paddingVertical: spacing[10],
   },
 });

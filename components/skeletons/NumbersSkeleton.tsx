@@ -1,15 +1,70 @@
+import { useTheme } from '@/hooks';
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Skeleton } from '../Skeleton';
 
 export const NumbersSkeleton = () => {
+  const { theme } = useTheme();
+
+  const styles = StyleSheet.create({
+    container: {
+      padding: theme.spacing[4],
+    },
+    marginBottom: {
+      marginBottom: theme.spacing[6],
+    },
+    marginBottomSmall: {
+      marginBottom: theme.spacing[2],
+    },
+    marginRight: {
+      marginRight: theme.spacing[4],
+    },
+    grid: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: theme.spacing[3],
+      marginBottom: theme.spacing[6],
+    },
+    card: {
+      width: '48%',
+      flexDirection: 'row',
+      alignItems: 'center',
+      padding: theme.spacing[4],
+      borderRadius: theme.tokens.borderRadius.lg,
+      backgroundColor: theme.colors.surfaceSubtle,
+      borderWidth: 1,
+      borderColor: theme.colors.border + '20',
+    },
+    flex: {
+      flex: 1,
+    },
+    segmentedCard: {
+      padding: theme.spacing[4],
+      borderRadius: theme.tokens.borderRadius.lg,
+      backgroundColor: theme.colors.surfaceSubtle,
+      borderWidth: 1,
+      borderColor: theme.colors.border + '20',
+      marginBottom: theme.spacing[4],
+    },
+    segmentRow: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginTop: theme.spacing[3],
+    },
+    row: {
+      flexDirection: 'row',
+      alignItems: 'center',
+    },
+  });
+
   return (
     <View style={styles.container}>
       {/* Time Range Selector */}
       <Skeleton
         width="100%"
         height={40}
-        borderRadius={20}
+        borderRadius={theme.tokens.borderRadius.full}
         style={styles.marginBottom}
       />
 
@@ -20,7 +75,7 @@ export const NumbersSkeleton = () => {
             <Skeleton
               width={48}
               height={48}
-              borderRadius={12}
+              borderRadius={theme.tokens.borderRadius.md}
               style={styles.marginRight}
             />
             <View style={styles.flex}>
@@ -45,7 +100,7 @@ export const NumbersSkeleton = () => {
                 <Skeleton
                   width={20}
                   height={20}
-                  borderRadius={4}
+                  borderRadius={theme.tokens.borderRadius.xs}
                   style={styles.marginRight}
                 />
                 <Skeleton width={100} height={16} />
@@ -58,55 +113,3 @@ export const NumbersSkeleton = () => {
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    padding: 16,
-  },
-  marginBottom: {
-    marginBottom: 24,
-  },
-  marginBottomSmall: {
-    marginBottom: 8,
-  },
-  marginRight: {
-    marginRight: 16,
-  },
-  grid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 12,
-    marginBottom: 24,
-  },
-  card: {
-    width: '48%',
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 16,
-    borderRadius: 16,
-    backgroundColor: 'rgba(0,0,0,0.02)',
-    borderWidth: 1,
-    borderColor: 'rgba(0,0,0,0.03)',
-  },
-  flex: {
-    flex: 1,
-  },
-  segmentedCard: {
-    padding: 16,
-    borderRadius: 16,
-    backgroundColor: 'rgba(0,0,0,0.02)',
-    borderWidth: 1,
-    borderColor: 'rgba(0,0,0,0.03)',
-    marginBottom: 16,
-  },
-  segmentRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginTop: 12,
-  },
-  row: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-});
