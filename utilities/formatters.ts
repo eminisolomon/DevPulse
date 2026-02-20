@@ -1,4 +1,16 @@
-import { format, isToday, isYesterday } from 'date-fns';
+import { format, isToday, isYesterday, parseISO } from 'date-fns';
+
+/**
+ * Common date format patterns
+ */
+export const DATE_FORMATS = {
+  DISPLAY: 'MMM dd, yyyy', // Jan 01, 2024
+  SHORT: 'MMM dd', // Jan 01
+  FULL: 'EEEE, dd MMM', // Monday, 01 Jan
+  MONTH: 'MMMM', // January
+  YEAR: 'yyyy', // 2024
+  ISO: 'yyyy-MM-dd', // 2024-01-01
+};
 
 /**
  * Format total seconds into a readable string like "5h 23m" or "23m"
@@ -36,19 +48,18 @@ export const formatDisplayDuration = (totalSeconds: number): string => {
 export const getDailyStatsTitle = (date: Date): string => {
   if (isToday(date)) return 'TODAY';
   if (isYesterday(date)) return 'YESTERDAY';
-  return format(date, 'EEEE, dd MMM').toUpperCase();
+  return format(date, DATE_FORMATS.FULL).toUpperCase();
 };
 
 /**
  * Format a date string to a readable format
  */
-export const formatDate = (dateString: string): string => {
-  const date = new Date(dateString);
-  return date.toLocaleDateString('en-US', {
-    weekday: 'short',
-    month: 'short',
-    day: 'numeric',
-  });
+export const formatDate = (
+  date: string | Date,
+  pattern: string = DATE_FORMATS.DISPLAY,
+): string => {
+  const d = typeof date === 'string' ? parseISO(date) : date;
+  return format(d, pattern);
 };
 
 /**

@@ -1,7 +1,7 @@
 import { Button, Card, Skeleton, Typography } from '@/components';
 import { WEEK_DAYS } from '@/constants';
 import { useTheme } from '@/hooks';
-import { hexToRgba } from '@/utilities';
+import { DATE_FORMATS, formatDate, hexToRgba } from '@/utilities';
 import { Ionicons } from '@expo/vector-icons';
 import {
   eachDayOfInterval,
@@ -112,7 +112,7 @@ export const MonthlyCalendarCard = ({
         style={styles.dayCell}
         onPress={() => {
           if (isFuture) return;
-          const dateStr = format(dayData.date, 'yyyy-MM-dd');
+          const dateStr = formatDate(dayData.date, DATE_FORMATS.ISO);
           router.push(`/stats/daily?date=${dateStr}`);
         }}
         activeOpacity={isFuture ? 1 : 0.7}

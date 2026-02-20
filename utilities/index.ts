@@ -2,6 +2,7 @@ export * from '../constants/languages';
 export * from './api';
 export * from './colors';
 export * from './formatters';
+export * from './math';
 export * from './notifications';
 export * from './projectColors';
 export * from './storage';

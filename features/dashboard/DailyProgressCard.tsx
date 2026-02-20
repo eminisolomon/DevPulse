@@ -1,7 +1,5 @@
-import { Button } from '@/components/Button';
-import { Card } from '@/components/Card';
-import { Typography } from '@/components/Typography';
-import { useTheme } from '@/hooks/useTheme';
+import { Button, Card, Typography } from '@/components';
+import { useTheme } from '@/hooks';
 import { commonStyles } from '@/theme';
 import { Canvas, Circle, Path, Skia } from '@shopify/react-native-skia';
 import { useRouter } from 'expo-router';

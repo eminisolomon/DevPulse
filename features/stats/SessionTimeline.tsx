@@ -1,5 +1,6 @@
-import { Typography } from '@/components/Typography';
-import { useTheme } from '@/hooks/useTheme';
+import { Typography } from '@/components';
+import { SECONDS_IN_DAY, SECONDS_IN_HOUR } from '@/constants';
+import { useTheme } from '@/hooks';
 import { Canvas, Rect } from '@shopify/react-native-skia';
 import React from 'react';
 import { StyleSheet, View, useWindowDimensions } from 'react-native';
@@ -22,7 +23,6 @@ export const SessionTimeline = ({
   const { theme } = useTheme();
   const { width: windowWidth } = useWindowDimensions();
   const containerWidth = windowWidth - 40;
-  const SECONDS_IN_DAY = 86400;
 
   const scale = containerWidth / SECONDS_IN_DAY;
 
@@ -61,7 +61,7 @@ export const SessionTimeline = ({
           {hours.map((hour) => (
             <Rect
               key={`marker-${hour}`}
-              x={hour * 3600 * scale}
+              x={hour * SECONDS_IN_HOUR * scale}
               y={height / 4 - 5}
               width={1}
               height={height / 2 + 10}

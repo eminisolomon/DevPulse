@@ -1,8 +1,7 @@
-import { Card } from '@/components/Card';
-import { Typography } from '@/components/Typography';
-import { useTheme } from '@/hooks/useTheme';
+import { Card, Typography } from '@/components';
+import { useTheme } from '@/hooks';
+import { calculatePercentageChange, formatDate } from '@/utilities';
 import { Ionicons } from '@expo/vector-icons';
-import { format, parseISO } from 'date-fns';
 import { useRouter } from 'expo-router';
 import React from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
@@ -32,12 +31,12 @@ export const BestDayCard = ({
     return null;
   }
 
-  const formattedDate = format(parseISO(date), 'MMM dd, yyyy');
+  const formattedDate = formatDate(date);
 
-  const percentAboveAverage =
-    dailyAverage > 0
-      ? Math.round(((totalSeconds - dailyAverage) / dailyAverage) * 100)
-      : 0;
+  const percentAboveAverage = calculatePercentageChange(
+    totalSeconds,
+    dailyAverage,
+  );
 
   const handlePress = () => {
     router.push({ pathname: '/stats/daily', params: { date } });
