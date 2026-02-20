@@ -86,4 +86,23 @@ export const AuthService = {
 
     return data as TokenResponse;
   },
+
+  /**
+   * Validates an API key by making a simple request.
+   */
+  validateApiKey: async (key: string): Promise<boolean> => {
+    try {
+      const response = await fetch(
+        `${AuthConfig.discovery.authorizationEndpoint.replace('/oauth/authorize', '/api/v1/users/current')}`,
+        {
+          headers: {
+            Authorization: `Basic ${btoa(key)}`,
+          },
+        },
+      );
+      return response.ok;
+    } catch {
+      return false;
+    }
+  },
 };

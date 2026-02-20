@@ -7,11 +7,13 @@ interface AuthState {
   accessToken: string | null;
   refreshToken: string | null;
   expiresAt: number | null;
+  tokenType: 'bearer' | 'basic' | null;
   isAuthenticated: boolean;
   setTokens: (
     accessToken: string,
-    refreshToken: string,
-    expiresIn: number,
+    refreshToken: string | null,
+    expiresIn: number | null,
+    tokenType?: 'bearer' | 'basic',
   ) => void;
   logout: () => void;
 }
@@ -34,16 +36,29 @@ export const useAuthStore = create<AuthState>()(
       accessToken: null,
       refreshToken: null,
       expiresAt: null,
+      tokenType: null,
       isAuthenticated: false,
-      setTokens: (accessToken, refreshToken, expiresIn) => {
-        const expiresAt = Date.now() + expiresIn * 1000;
-        set({ accessToken, refreshToken, expiresAt, isAuthenticated: true });
+      setTokens: (
+        accessToken,
+        refreshToken,
+        expiresIn,
+        tokenType = 'bearer',
+      ) => {
+        const expiresAt = expiresIn ? Date.now() + expiresIn * 1000 : null;
+        set({
+          accessToken,
+          refreshToken,
+          expiresAt,
+          tokenType,
+          isAuthenticated: true,
+        });
       },
       logout: () => {
         set({
           accessToken: null,
           refreshToken: null,
           expiresAt: null,
+          tokenType: null,
           isAuthenticated: false,
         });
       },

@@ -11,9 +11,15 @@ export const getAuthToken = () => {
   return accessToken;
 };
 
-export const getHeaders = (token: string) => {
+export const getHeaders = (
+  token: string,
+  type: 'bearer' | 'basic' = 'bearer',
+) => {
+  const authHeader =
+    type === 'basic' ? `Basic ${btoa(token)}` : `Bearer ${token}`;
+
   return {
-    Authorization: `Bearer ${token}`,
+    Authorization: authHeader,
     'User-Agent': 'DevPulse/1.0 (React Native)',
   };
 };
@@ -22,11 +28,14 @@ export async function fetchWithAuth<T>(
   endpoint: string,
   options: RequestInit = {},
 ): Promise<T> {
-  let token = getAuthToken();
+  const { accessToken: token, tokenType } = useAuthStore.getState();
+  if (!token) {
+    throw new Error('No Access Token found');
+  }
   const url = `${config.WAKATIME_API_BASE_URL}${endpoint}`;
 
   const headers = {
-    ...getHeaders(token),
+    ...getHeaders(token, tokenType || 'bearer'),
     ...(options.headers || {}),
     'Content-Type': 'application/json',
     'Cache-Control': 'no-cache',
@@ -40,15 +49,19 @@ export async function fetchWithAuth<T>(
   });
 
   if (response.status === 401) {
-    const { refreshToken, setTokens, logout } = useAuthStore.getState();
+    const {
+      refreshToken: currentRefreshToken,
+      setTokens,
+      logout,
+    } = useAuthStore.getState();
 
-    if (!refreshToken) {
+    if (!currentRefreshToken) {
       logout();
       throw new Error('Unauthorized: No refresh token available');
     }
 
     try {
-      const refreshData = await AuthService.refreshToken(refreshToken);
+      const refreshData = await AuthService.refreshToken(currentRefreshToken);
 
       setTokens(
         refreshData.access_token,
@@ -56,9 +69,9 @@ export async function fetchWithAuth<T>(
         refreshData.expires_in,
       );
 
-      token = refreshData.access_token;
+      const newToken = refreshData.access_token;
       response = await fetch(url, {
-        headers: getHeaders(token),
+        headers: getHeaders(newToken, 'bearer'),
       });
 
       if (response.status === 401) {
