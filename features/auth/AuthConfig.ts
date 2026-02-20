@@ -1,8 +1,9 @@
+import { config } from '@/config';
 import { makeRedirectUri } from 'expo-auth-session';
 
 export const AuthConfig = {
-  clientId: process.env.EXPO_PUBLIC_WAKATIME_APP_ID!,
-  clientSecret: process.env.EXPO_PUBLIC_WAKATIME_APP_SECRET!,
+  clientId: config.WAKATIME_APP_ID,
+  clientSecret: config.WAKATIME_APP_SECRET,
   redirectUri: makeRedirectUri({
     scheme: 'devpulse',
     path: 'redirect',
@@ -15,8 +16,8 @@ export const AuthConfig = {
     'read_heartbeats',
   ],
   discovery: {
-    authorizationEndpoint: process.env.EXPO_PUBLIC_WAKATIME_AUTH_ENDPOINT!,
-    tokenEndpoint: process.env.EXPO_PUBLIC_WAKATIME_TOKEN_ENDPOINT!,
-    revocationEndpoint: process.env.EXPO_PUBLIC_WAKATIME_REVOCATION_ENDPOINT!,
+    authorizationEndpoint: config.WAKATIME_AUTH_ENDPOINT,
+    tokenEndpoint: config.WAKATIME_TOKEN_ENDPOINT,
+    revocationEndpoint: config.WAKATIME_REVOCATION_ENDPOINT,
   },
 };

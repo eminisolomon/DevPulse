@@ -67,10 +67,10 @@ export default function Dashboard() {
 
   const dailyAverage = stats?.data?.daily_average || 0;
 
-  const totalTimeDisplay = allTimeData?.data.text || '0 HRS 0 MINS';
-  const totalProjects = stats?.data.projects?.length || 0;
+  const totalTimeDisplay = allTimeData?.data?.text || '0 HRS 0 MINS';
+  const totalProjects = stats?.data?.projects?.length || 0;
 
-  const recentProjects = (recentStats?.data.projects || [])
+  const recentProjects = (recentStats?.data?.projects || [])
     .slice(0, 3)
     .map((p) => ({
       name: p.name,
@@ -110,7 +110,7 @@ export default function Dashboard() {
 
   const todayProjects = (todaySummaries?.data?.[0]?.projects || [])
     .slice(0, 5)
-    .map((p) => ({
+    .map((p: any) => ({
       name: p.name,
       text: p.text,
       color: getProjectColor(p.name),
@@ -131,7 +131,7 @@ export default function Dashboard() {
     );
   };
 
-  const calendarDays = (monthSummaries?.data || []).map((dayData) => {
+  const calendarDays = (monthSummaries?.data || []).map((dayData: any) => {
     const totalSeconds = dayData.grand_total.total_seconds;
     let activityLevel = 0;
 

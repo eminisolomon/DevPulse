@@ -6,7 +6,7 @@ import { format, startOfDay } from 'date-fns';
 export function useDurations(date: Date = new Date()) {
   const dateStr = format(date, 'yyyy-MM-dd');
 
-  return useQuery({
+  const query = useQuery({
     queryKey: ['durations', dateStr],
     queryFn: async () => {
       const response = await wakaService.getDurations(dateStr);
@@ -31,4 +31,17 @@ export function useDurations(date: Date = new Date()) {
     staleTime: 0,
     gcTime: 0,
   });
+
+  return {
+    // Data
+    data: query.data || [],
+
+    // State
+    isLoading: query.isLoading,
+    isRefetching: query.isRefetching,
+    error: query.error,
+
+    // Actions
+    refetch: query.refetch,
+  };
 }

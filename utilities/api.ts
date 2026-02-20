@@ -1,5 +1,7 @@
+import { config } from '@/config';
 import { AuthConfig } from '@/features/auth/AuthConfig';
 import { useAuthStore } from '@/stores/useAuthStore';
+import { WakaTimeApiError } from './errors';
 
 export const getAuthToken = () => {
   const { accessToken } = useAuthStore.getState();
@@ -21,8 +23,7 @@ export async function fetchWithAuth<T>(
   options: RequestInit = {},
 ): Promise<T> {
   let token = getAuthToken();
-  const baseUrl = process.env.EXPO_PUBLIC_WAKATIME_API_BASE_URL!;
-  const url = `${baseUrl}${endpoint}`;
+  const url = `${config.WAKATIME_API_BASE_URL}${endpoint}`;
 
   const headers = {
     ...getHeaders(token),
@@ -92,7 +93,7 @@ export async function fetchWithAuth<T>(
 
   if (!response.ok) {
     const errorText = await response.text();
-    throw new Error(`API Error ${response.status}: ${errorText}`);
+    throw new WakaTimeApiError(response.status, response.statusText, errorText);
   }
 
   return response.json();

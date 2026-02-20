@@ -32,5 +32,11 @@ export const useShareScreenshot = () => {
     }
   }, []);
 
-  return { shareCardRef, handleShare };
+  return {
+    // State & Refs
+    shareCardRef,
+
+    // Actions
+    handleShare,
+  };
 };

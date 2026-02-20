@@ -28,6 +28,7 @@ export function useGoalMutation() {
   });
 
   return {
+    // Actions
     createGoal,
     updateGoal,
     deleteGoal,

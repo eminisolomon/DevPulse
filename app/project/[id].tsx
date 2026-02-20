@@ -13,7 +13,7 @@ import {
 import { projectDetailStyles as styles } from '@/theme';
 import { formatDisplayDuration } from '@/utilities';
 import { subDays } from 'date-fns';
-import { Stack, useLocalSearchParams } from 'expo-router';
+import { useLocalSearchParams } from 'expo-router';
 import React, { useMemo } from 'react';
 import { RefreshControl, ScrollView, View } from 'react-native';
 
@@ -96,7 +96,6 @@ export default function ProjectDetailScreen() {
       <View
         style={[styles.container, { backgroundColor: theme.colors.background }]}
       >
-        <Stack.Screen options={{ headerShown: false }} />
         <ProjectDetailsHeader title={projectId} onShare={handleShare} />
         <ProjectDetailsSkeleton />
       </View>

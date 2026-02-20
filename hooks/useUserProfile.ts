@@ -1,4 +1,3 @@
-import { useLeaderboardStore } from '@/stores';
 import { useCallback, useMemo, useState } from 'react';
 import { useLeaderboard } from './useLeaderboard';
 import { useStats } from './useStats';
@@ -9,6 +8,7 @@ export function useUserProfile(id: string) {
     data: leaderboardData,
     isLoading: isLeaderboardLoading,
     refetch: refetchLeaderboard,
+    userRanks,
   } = useLeaderboard();
 
   const {
@@ -23,7 +23,6 @@ export function useUserProfile(id: string) {
     refetch: refetchStats,
   } = useStats('last_7_days');
 
-  const { userRanks } = useLeaderboardStore();
   const [refreshing, setRefreshing] = useState(false);
 
   const onRefresh = useCallback(async () => {
@@ -67,10 +66,15 @@ export function useUserProfile(id: string) {
     isLeaderboardLoading || (isSelf && (isUserLoading || isStatsLoading));
 
   return {
+    // Data
     profile,
+    isSelf,
+
+    // State
     isLoading,
     refreshing,
+
+    // Actions
     onRefresh,
-    isSelf,
   };
 }

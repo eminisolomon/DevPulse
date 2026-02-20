@@ -41,5 +41,11 @@ export function usePunchCardData(days: number = 7) {
     }
   });
 
-  return { data: aggregatedData, isLoading };
+  return {
+    // Data
+    aggregatedData,
+
+    // State
+    isLoading,
+  };
 }

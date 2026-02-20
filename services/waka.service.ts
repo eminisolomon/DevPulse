@@ -1,10 +1,15 @@
-import { WakaTimeGoal, WakaTimeGoalsResponse } from '@/interfaces/goal';
-import { WakaTimeLeaderboard } from '@/interfaces/leaderboard';
-import { WakaTimeOrganizationsResponse } from '@/interfaces/organization';
-import { WakaTimeProjectsResponse } from '@/interfaces/project';
-import { WakaTimeAllTime, WakaTimeStats } from '@/interfaces/stats';
-import { WakaTimeSummaries } from '@/interfaces/summary';
-import { User } from '@/interfaces/user';
+import {
+  User,
+  WakaTimeAllTime,
+  WakaTimeDurationsResponse,
+  WakaTimeGoal,
+  WakaTimeGoalsResponse,
+  WakaTimeLeaderboard,
+  WakaTimeOrganizationsResponse,
+  WakaTimeProjectsResponse,
+  WakaTimeStats,
+  WakaTimeSummaries,
+} from '@/interfaces';
 import { fetchWithAuth } from '@/utilities/api';
 
 export const wakaService = {
@@ -16,26 +21,38 @@ export const wakaService = {
     end: string,
     project?: string,
   ): Promise<WakaTimeSummaries> => {
-    let url = `/users/current/summaries?start=${start}&end=${end}`;
-    if (project) url += `&project=${encodeURIComponent(project)}`;
-    return fetchWithAuth<WakaTimeSummaries>(url);
+    const params = new URLSearchParams({ start, end });
+    if (project) params.append('project', project);
+
+    return fetchWithAuth<WakaTimeSummaries>(
+      `/users/current/summaries?${params.toString()}`,
+    );
   },
 
   getUser: (): Promise<User> => fetchWithAuth<User>('/users/current'),
 
   getProjects: (page?: number): Promise<WakaTimeProjectsResponse> => {
-    let url = '/users/current/projects';
-    if (page) url += `?page=${page}`;
-    return fetchWithAuth<WakaTimeProjectsResponse>(url);
+    const params = new URLSearchParams();
+    if (page) params.append('page', page.toString());
+
+    const queryString = params.toString() ? `?${params.toString()}` : '';
+    return fetchWithAuth<WakaTimeProjectsResponse>(
+      `/users/current/projects${queryString}`,
+    );
   },
 
   getProjectStats: (
     projectName: string,
     range: string = 'last_7_days',
-  ): Promise<WakaTimeStats> =>
-    fetchWithAuth<WakaTimeStats>(
-      `/users/current/stats/${range}?project=${encodeURIComponent(projectName)}`,
-    ),
+  ): Promise<WakaTimeStats> => {
+    const params = new URLSearchParams();
+    if (projectName) params.append('project', projectName);
+
+    const queryString = params.toString() ? `?${params.toString()}` : '';
+    return fetchWithAuth<WakaTimeStats>(
+      `/users/current/stats/${range}${queryString}`,
+    );
+  },
 
   getGoals: (): Promise<WakaTimeGoalsResponse> =>
     fetchWithAuth<WakaTimeGoalsResponse>('/users/current/goals'),
@@ -62,17 +79,19 @@ export const wakaService = {
     countryCode?: string,
     page?: number,
   ): Promise<WakaTimeLeaderboard> => {
-    let url = '/leaders';
     const params = new URLSearchParams();
     if (language) params.append('language', language);
     if (countryCode) params.append('country_code', countryCode);
     if (page) params.append('page', page.toString());
-    if (params.toString()) url += `?${params.toString()}`;
-    return fetchWithAuth<WakaTimeLeaderboard>(url);
+
+    const queryString = params.toString() ? `?${params.toString()}` : '';
+    return fetchWithAuth<WakaTimeLeaderboard>(`/leaders${queryString}`);
   },
 
-  getDurations: (date: string): Promise<any> =>
-    fetchWithAuth<any>(`/users/current/durations?date=${date}`),
+  getDurations: (date: string): Promise<WakaTimeDurationsResponse> =>
+    fetchWithAuth<WakaTimeDurationsResponse>(
+      `/users/current/durations?date=${date}`,
+    ),
 
   getProgramLanguages: (): Promise<any> =>
     fetchWithAuth<any>('/program_languages'),

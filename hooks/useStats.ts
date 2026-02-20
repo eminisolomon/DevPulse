@@ -1,23 +1,33 @@
 import { StatsRange } from '@/constants/wakatime';
+import { wakaService } from '@/services/waka.service';
 import { useOrganizationStore } from '@/stores';
-import { useStatsStore } from '@/stores';
-import { useEffect } from 'react';
+import { useQuery } from '@tanstack/react-query';
 
 export function useStats(range: StatsRange = 'last_7_days') {
-  const { data, isLoading, error, fetchStats } = useStatsStore();
   const { selectedOrganization } = useOrganizationStore();
   const orgId = selectedOrganization?.id;
-  const cacheKey = orgId ? `${range}_${orgId}` : range;
 
-  useEffect(() => {
-    fetchStats(range, orgId);
-  }, [range, orgId, fetchStats]);
+  const query = useQuery({
+    queryKey: ['stats', range, orgId],
+    queryFn: () => {
+      if (orgId) {
+        return wakaService.getOrgStats(orgId, range);
+      }
+      return wakaService.getStats(range);
+    },
+    staleTime: 5 * 60 * 1000, // 5 minutes
+  });
 
   return {
-    data: data[cacheKey] || null,
-    isLoading,
-    error,
-    refetch: () => fetchStats(range, orgId),
-    isRefetching: isLoading,
+    // Data
+    data: query.data || null,
+
+    // State
+    isLoading: query.isLoading,
+    isRefetching: query.isRefetching,
+    error: query.error,
+
+    // Actions
+    refetch: query.refetch,
   };
 }

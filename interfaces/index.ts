@@ -1,3 +1,4 @@
+export * from './duration';
 export * from './goal';
 export * from './leaderboard';
 export * from './organization';

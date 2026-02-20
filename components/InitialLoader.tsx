@@ -1,13 +1,12 @@
 import Icon from '@/assets/images/icon.png';
-import { useTheme } from '@/hooks';
-import { useUserStore } from '@/stores';
+import { useTheme, useUser } from '@/hooks';
 import { Image } from 'expo-image';
 import React, { useEffect, useRef } from 'react';
 import { Animated, StyleSheet, View } from 'react-native';
 
 export const InitialLoader = () => {
   const { theme } = useTheme();
-  const { data: user } = useUserStore();
+  const { data: user } = useUser();
   const pulseAnim = useRef(new Animated.Value(1)).current;
 
   useEffect(() => {

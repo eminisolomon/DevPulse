@@ -1,19 +1,23 @@
-import { useAllTimeStore } from '@/stores';
-import { useEffect } from 'react';
+import { wakaService } from '@/services/waka.service';
+import { useQuery } from '@tanstack/react-query';
 
 export function useAllTime() {
-  const { data, isLoading, error, fetchAllTime } = useAllTimeStore();
-
-  useEffect(() => {
-    if (!data) {
-      fetchAllTime();
-    }
-  }, [data, fetchAllTime]);
+  const query = useQuery({
+    queryKey: ['allTime'],
+    queryFn: () => wakaService.getAllTimeSinceToday(),
+    staleTime: 60 * 60 * 1000, // 1 hour
+  });
 
   return {
-    data,
-    isLoading,
-    error,
-    refetch: () => fetchAllTime(true),
+    // Data
+    data: query.data || null,
+
+    // State
+    isLoading: query.isLoading,
+    isRefetching: query.isRefetching,
+    error: query.error,
+
+    // Actions
+    refetch: query.refetch,
   };
 }

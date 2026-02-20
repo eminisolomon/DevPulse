@@ -33,7 +33,7 @@ export function LeaderboardProvider({
     useLeaderboardStore();
 
   const userCountry = useMemo(() => {
-    return userData?.data.city?.country_code;
+    return userData?.data?.city?.country_code;
   }, [userData]);
 
   useEffect(() => {
@@ -56,13 +56,13 @@ export function LeaderboardProvider({
   } = useLeaderboard();
 
   const leaderboardData = useMemo(
-    () => leaderboardDataObj.pages.flatMap((page) => page.data) || [],
-    [leaderboardDataObj.pages],
+    () => leaderboardDataObj?.pages?.flatMap((page) => page.data) || [],
+    [leaderboardDataObj?.pages],
   );
 
   const currentUserRank = useMemo(() => {
-    return leaderboardDataObj.pages[0]?.current_user;
-  }, [leaderboardDataObj.pages]);
+    return leaderboardDataObj?.pages?.[0]?.current_user;
+  }, [leaderboardDataObj?.pages]);
 
   const value = {
     selectedCountry,

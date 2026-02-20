@@ -9,10 +9,13 @@ export const useShareTheme = () => {
   const accent = theme.colors.primary;
 
   return {
+    // Colors
     textColor,
     mutedColor,
     surfaceColor,
     accent,
+
+    // State
     isDark,
     theme,
   };
