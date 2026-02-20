@@ -1,8 +1,8 @@
+import { db, signalMigrationComplete } from '@/db';
 import { useMigrations } from 'drizzle-orm/expo-sqlite/migrator';
 import React, { createContext, ReactNode, useContext } from 'react';
 import { InitialLoader } from '../components/InitialLoader';
 import migrations from '../drizzle/migrations';
-import { db } from './index';
 
 interface DatabaseContextType {
   isReady: boolean;
@@ -22,6 +22,8 @@ export function DatabaseProvider({ children }: { children: ReactNode }) {
   if (!success) {
     return <InitialLoader />;
   }
+
+  signalMigrationComplete();
 
   return (
     <DatabaseContext.Provider value={{ isReady: success }}>

@@ -30,8 +30,7 @@
     "production": {
       "android": {
         "serviceAccountKeyPath": "./firebase/serviceAccountKey.json",
-        "track": "internal",
-        "releaseStatus": "draft"
+        "track": "production"
       },
       "ios": {
         "ascAppId": "6759337025"

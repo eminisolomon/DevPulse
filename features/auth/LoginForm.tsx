@@ -24,6 +24,14 @@ export function LoginForm() {
   );
 
   useEffect(() => {
+    if (!request && !AuthConfig.clientId) {
+      console.warn(
+        'LoginForm: Auth request is null because clientId is missing',
+      );
+    }
+  }, [request]);
+
+  useEffect(() => {
     if (response?.type === 'success') {
       const { code } = response.params;
 
@@ -85,7 +93,7 @@ export function LoginForm() {
         : 0;
 
       setTokens(data.access_token, data.refresh_token, expiresIn);
-      toastSuccess('Success', 'Logged in successfully');
+      toastSuccess('Success', 'WakaTime account connected');
     } catch (error: any) {
       toastError('Login Error', error.message);
     }
@@ -117,8 +125,19 @@ export function LoginForm() {
           variant="primary"
           size="lg"
           label="Log in with WakaTime"
-          onPress={() => promptAsync()}
-          disabled={!request}
+          onPress={async () => {
+            try {
+              const res = await promptAsync();
+              if (res.type === 'cancel') {
+                toastError('Cancelled', 'Login process was cancelled');
+              }
+            } catch (err: any) {
+              console.error('Login prompt error:', err);
+              toastError('Login Error', err.message || 'Failed to open login');
+            }
+          }}
+          disabled={!request && AuthConfig.clientId !== undefined}
+          loading={!request && AuthConfig.clientId !== undefined}
           leftIcon={
             <Ionicons
               name="logo-github"

@@ -8,4 +8,15 @@ const expoDb = openDatabaseSync(DATABASE_NAME);
 
 export const db = drizzle(expoDb, { schema });
 
+let resolveMigration: () => void;
+export const migrationPromise = new Promise<void>((resolve) => {
+  resolveMigration = resolve;
+});
+
+export const signalMigrationComplete = () => {
+  if (resolveMigration) {
+    resolveMigration();
+  }
+};
+
 export { schema };

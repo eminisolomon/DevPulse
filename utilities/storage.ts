@@ -1,4 +1,4 @@
-import { db, schema } from '@/db';
+import { db, migrationPromise, schema } from '@/db';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { eq } from 'drizzle-orm';
 import * as SecureStore from 'expo-secure-store';
@@ -32,6 +32,7 @@ export const asyncStorage: StateStorage = {
 export const drizzleStorage: StateStorage = {
   getItem: async (name: string): Promise<string | null> => {
     try {
+      await migrationPromise;
       const result = await db.query.kvCache.findFirst({
         where: eq(schema.kvCache.key, name),
       });
@@ -43,6 +44,7 @@ export const drizzleStorage: StateStorage = {
   },
   setItem: async (name: string, value: string): Promise<void> => {
     try {
+      await migrationPromise;
       await db
         .insert(schema.kvCache)
         .values({
@@ -63,6 +65,7 @@ export const drizzleStorage: StateStorage = {
   },
   removeItem: async (name: string): Promise<void> => {
     try {
+      await migrationPromise;
       await db.delete(schema.kvCache).where(eq(schema.kvCache.key, name));
     } catch (error) {
       console.error('drizzleStorage.removeItem error:', error);
