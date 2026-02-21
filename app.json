@@ -27,7 +27,6 @@
       "package": "com.techx.devpulse"
     },
     "web": {
-      "output": "static",
       "favicon": "./assets/images/favicon.png"
     },
     "plugins": [
