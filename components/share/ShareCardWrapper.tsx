@@ -1,5 +1,4 @@
-import { useTheme } from '@/hooks/useTheme';
-import { useAuthStore } from '@/stores/useAuthStore';
+import { useTheme, useUser } from '@/hooks';
 import { LinearGradient } from 'expo-linear-gradient';
 import React, { forwardRef } from 'react';
 import { Image, StyleSheet, Text, View } from 'react-native';
@@ -15,7 +14,7 @@ interface ShareCardWrapperProps {
 export const ShareCardWrapper = forwardRef<View, ShareCardWrapperProps>(
   ({ children, accentColor, outerPadding = 32 }, ref) => {
     const { theme, isDark } = useTheme();
-    const { user } = useAuthStore();
+    const { data: user } = useUser();
     const accent = accentColor || theme.colors.primary;
 
     const bgColor = isDark ? '#121212' : '#FFFFFF';
@@ -48,16 +47,20 @@ export const ShareCardWrapper = forwardRef<View, ShareCardWrapperProps>(
             >
               <View style={styles.userRow}>
                 <Avatar
-                  source={user?.photo ? { uri: user.photo } : undefined}
-                  initials={user?.display_name || user?.username || 'DP'}
+                  source={
+                    user?.data?.photo ? { uri: user.data.photo } : undefined
+                  }
+                  initials={user?.data?.display_name || user?.data?.username}
                   size={36}
                 />
                 <View>
                   <Typography variant="body" weight="bold" color={textColor}>
-                    {user?.display_name || user?.username || 'Developer'}
+                    {user?.data?.display_name ||
+                      user?.data?.username ||
+                      'Developer'}
                   </Typography>
                   <Typography variant="micro" color={mutedColor}>
-                    @{user?.username || 'devpulse_user'}
+                    @{user?.data?.username || 'devpulse_user'}
                   </Typography>
                 </View>
               </View>

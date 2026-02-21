@@ -39,12 +39,11 @@ export default function Dashboard() {
     isRefetching: isStatsRefetching,
   } = useStats('last_7_days');
 
-  const { data: recentStats, refetch: refetchRecent } = useStats('last_7_days');
-
-  const { data: todaySummaries, refetch: refetchToday } = useSummaries(
-    today,
-    today,
-  );
+  const {
+    data: todaySummaries,
+    refetch: refetchToday,
+    isLoading: todayLoading,
+  } = useSummaries(today, today);
 
   const {
     data: monthSummaries,
@@ -52,12 +51,16 @@ export default function Dashboard() {
     isLoading: monthLoading,
   } = useSummaries(startMonth, endMonth);
 
-  const isLoading = userLoading || statsLoading || allTimeLoading;
+  const isLoading =
+    userLoading ||
+    statsLoading ||
+    allTimeLoading ||
+    todayLoading ||
+    isStatsRefetching;
 
   const handleRefresh = () => {
     refetchStats();
     refetchAllTime();
-    refetchRecent();
     refetchToday();
     refetchMonth();
   };
@@ -67,53 +70,58 @@ export default function Dashboard() {
   const totalTimeDisplay = allTimeData?.data?.text || '0 HRS 0 MINS';
   const totalProjects = stats?.data?.projects?.length || 0;
 
-  const recentProjects = (recentStats?.data?.projects || [])
+  const recentProjects = (stats?.data?.projects || [])
     .slice(0, 3)
-    .map((p) => ({
-      name: p.name,
-      text: p.text || formatDuration(p.total_seconds),
-      color: getProjectColor(p.name),
-    }));
-
-  const { todayTotal, todayPercent, todayGoalDiffText } = useMemo(() => {
-    const seconds = todaySummaries?.cumulative_total?.seconds || 0;
-    const text = todaySummaries?.cumulative_total?.text || '0 mins';
-    const percent =
-      dailyAverage > 0
-        ? Math.min(100, Math.round((seconds / dailyAverage) * 100))
-        : 0;
-
-    let goalDiffText = '';
-    if (dailyAverage > 0) {
-      const diff = seconds - dailyAverage;
-      const sign = diff >= 0 ? '+' : '-';
-      const absDiff = Math.abs(diff);
-      const h = Math.floor(absDiff / 3600);
-      const m = Math.floor((absDiff % 3600) / 60);
-
-      if (h > 0) {
-        goalDiffText = `${sign}${h}h ${m}m`;
-      } else {
-        goalDiffText = `${sign}${m}m`;
-      }
-    }
-
-    return {
-      todayTotal: text,
-      todayPercent: percent,
-      todayGoalDiffText: goalDiffText,
-    };
-  }, [todaySummaries, dailyAverage]);
-
-  const todayProjects = (todaySummaries?.data?.[0]?.projects || [])
-    .slice(0, 5)
     .map((p: any) => ({
       name: p.name,
-      text: p.text,
+      text:
+        p.text || (p.total_seconds ? formatDuration(p.total_seconds) : '0m'),
       color: getProjectColor(p.name),
-      percent: p.percent || 0,
     }));
 
+  const { todayTotal, todayPercent, todayGoalDiffText, latestProjects } =
+    useMemo(() => {
+      const todayData = todaySummaries?.data?.[0];
+      const seconds = todayData?.grand_total?.total_seconds || 0;
+      const text = todayData?.grand_total?.text || '0 mins';
+      const percent =
+        dailyAverage > 0
+          ? Math.min(100, Math.round((seconds / dailyAverage) * 100))
+          : 0;
+
+      let goalDiffText = '';
+      if (dailyAverage > 0) {
+        const diff = seconds - dailyAverage;
+        const sign = diff >= 0 ? '+' : '-';
+        const absDiff = Math.abs(diff);
+        const h = Math.floor(absDiff / 3600);
+        const m = Math.floor((absDiff % 3600) / 60);
+
+        if (h > 0) {
+          goalDiffText = `${sign}${h}h ${m}m`;
+        } else {
+          goalDiffText = `${sign}${m}m`;
+        }
+      }
+
+      const projects = (todayData?.projects || [])
+        .slice(0, 5)
+        .map((p: any) => ({
+          name: p.name,
+          text: p.text,
+          color: getProjectColor(p.name),
+          percent: p.percent || 0,
+        }));
+
+      return {
+        todayTotal: text,
+        todayPercent: percent,
+        todayGoalDiffText: goalDiffText,
+        latestProjects: projects,
+      };
+    }, [todaySummaries, dailyAverage]);
+
+  const todayProjects = latestProjects;
   const monthTotal = monthSummaries?.cumulative_total?.text || '0 hrs 0 mins';
 
   const handlePrevMonth = () => {
@@ -150,7 +158,7 @@ export default function Dashboard() {
     };
   });
 
-  if (isLoading) {
+  if (isLoading && !stats) {
     return (
       <SafeAreaView
         style={[styles.container, { backgroundColor: theme.colors.background }]}
