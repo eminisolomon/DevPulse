@@ -67,37 +67,43 @@ export default function SettingsScreen() {
   return (
     <SafeAreaView
       style={[styles.container, { backgroundColor: theme.colors.background }]}
-      edges={['bottom', 'left', 'right']}
+      edges={['left', 'right']}
     >
       <ScrollView contentContainerStyle={styles.scrollContent}>
-        {/* Profile Header Card */}
         <Card style={styles.profileCard}>
           <View style={styles.profileInfo}>
             <Avatar
               source={userData?.photo ? { uri: userData.photo } : undefined}
               initials={userData?.display_name || userData?.username}
-              size={90}
+              size={70}
             />
-            <View style={{ height: 12 }} />
-            <Typography variant="title" weight="bold" style={styles.userName}>
-              {userData?.display_name || userData?.username || 'Developer'}
-            </Typography>
-            <Typography color={theme.colors.textSecondary} variant="body">
-              Software Engineer
-            </Typography>
-            <View style={styles.locationContainer}>
-              <Feather
-                name="map-pin"
-                size={12}
-                color={theme.colors.textTertiary}
-              />
-              <Typography
-                variant="caption"
-                color={theme.colors.textTertiary}
-                style={{ marginLeft: 4 }}
-              >
-                {(userData as any)?.city?.name || 'World'}
+            <View style={styles.profileDetails}>
+              <Typography variant="title" weight="bold" style={styles.userName}>
+                {userData?.display_name || userData?.username || 'Developer'}
               </Typography>
+              <View style={styles.usernameRow}>
+                <Typography
+                  color={theme.colors.textSecondary}
+                  style={styles.username}
+                >
+                  @{userData?.username || 'anonymous'}
+                </Typography>
+              </View>
+              <View style={styles.locationContainer}>
+                <Feather
+                  name="map-pin"
+                  size={12}
+                  color={theme.colors.textSecondary}
+                />
+                <Typography
+                  variant="caption"
+                  color={theme.colors.textSecondary}
+                  weight="bold"
+                  style={styles.locationText}
+                >
+                  {userData?.city?.title?.toUpperCase() || 'WORLD'}
+                </Typography>
+              </View>
             </View>
           </View>
         </Card>

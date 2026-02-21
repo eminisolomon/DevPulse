@@ -21,7 +21,7 @@ export default function AuthRedirectScreen() {
   useEffect(() => {
     if (error) {
       toastError('Login Failed', error_description || error);
-      router.replace('/');
+      router.replace('/auth');
       return;
     }
 
@@ -29,7 +29,7 @@ export default function AuthRedirectScreen() {
       isExchanging.current = true;
       handleExchange(code);
     } else if (!code) {
-      router.replace('/');
+      router.replace('/auth');
     }
   }, [code, error]);
 
@@ -46,7 +46,7 @@ export default function AuthRedirectScreen() {
       router.replace('/(tabs)');
     } catch (err: any) {
       toastError('Login Error', err.message);
-      router.replace('/');
+      router.replace('/auth');
     }
   };
 

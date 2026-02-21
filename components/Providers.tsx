@@ -29,8 +29,8 @@ interface AppProvidersProps {
 export function AppProviders({ children }: AppProvidersProps) {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <KeyboardProvider>
-        <SafeAreaProvider>
+      <SafeAreaProvider>
+        <KeyboardProvider>
           <QueryClientProvider client={queryClient}>
             <ThemeProvider>
               <DatabaseProvider>
@@ -40,8 +40,8 @@ export function AppProviders({ children }: AppProvidersProps) {
               </DatabaseProvider>
             </ThemeProvider>
           </QueryClientProvider>
-        </SafeAreaProvider>
-      </KeyboardProvider>
+        </KeyboardProvider>
+      </SafeAreaProvider>
     </GestureHandlerRootView>
   );
 }

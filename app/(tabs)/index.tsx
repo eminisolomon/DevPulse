@@ -18,8 +18,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function Dashboard() {
   const { theme } = useTheme();
-
   const { isLoading: userLoading } = useUser();
+
   const {
     data: allTimeData,
     isLoading: allTimeLoading,

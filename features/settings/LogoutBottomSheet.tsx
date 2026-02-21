@@ -44,7 +44,7 @@ export const LogoutBottomSheet = forwardRef<
             label="LOGOUT"
             variant="destructive"
             onPress={onConfirm}
-            style={{ flex: 2 }}
+            style={{ flex: 1 }}
           />
         </View>
       </View>

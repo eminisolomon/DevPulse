@@ -9,21 +9,40 @@ export const settingsStyles = StyleSheet.create({
     paddingBottom: 40,
   },
   profileCard: {
-    alignItems: 'center',
-    padding: 24,
+    padding: 20,
     marginBottom: 24,
   },
   profileInfo: {
+    flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 20,
+  },
+  profileDetails: {
+    flex: 1,
+    marginLeft: 20,
   },
   userName: {
-    marginBottom: 4,
+    marginBottom: 0,
+  },
+  usernameRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    marginTop: 2,
+    marginBottom: 8,
+  },
+  username: {
+    marginBottom: 0,
   },
   locationContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: 4,
+    gap: 4,
+    marginTop: 2,
+    marginBottom: 12,
+  },
+  locationText: {
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
   },
   sectionCard: {
     padding: 4,

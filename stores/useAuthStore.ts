@@ -9,13 +9,21 @@ interface AuthState {
   expiresAt: number | null;
   tokenType: 'bearer' | 'basic' | null;
   isAuthenticated: boolean;
+  user: {
+    photo: string | null;
+    display_name: string | null;
+    username: string | null;
+  } | null;
+  hasHydrated: boolean;
   setTokens: (
     accessToken: string,
     refreshToken: string | null,
     expiresIn: number | null,
     tokenType?: 'bearer' | 'basic',
   ) => void;
+  setUser: (user: AuthState['user']) => void;
   logout: () => void;
+  setHasHydrated: (state: boolean) => void;
 }
 
 const secureStorage = {
@@ -38,6 +46,8 @@ export const useAuthStore = create<AuthState>()(
       expiresAt: null,
       tokenType: null,
       isAuthenticated: false,
+      user: null,
+      hasHydrated: false,
       setTokens: (
         accessToken,
         refreshToken,
@@ -53,6 +63,7 @@ export const useAuthStore = create<AuthState>()(
           isAuthenticated: true,
         });
       },
+      setUser: (user) => set({ user }),
       logout: () => {
         set({
           accessToken: null,
@@ -60,12 +71,19 @@ export const useAuthStore = create<AuthState>()(
           expiresAt: null,
           tokenType: null,
           isAuthenticated: false,
+          user: null,
         });
       },
+      setHasHydrated: (state) => set({ hasHydrated: state }),
     }),
     {
       name: 'auth-storage',
       storage: createJSONStorage(() => secureStorage),
+      onRehydrateStorage: (state) => {
+        return () => {
+          state.setHasHydrated(true);
+        };
+      },
     },
   ),
 );

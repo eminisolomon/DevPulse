@@ -7,7 +7,7 @@ import { Animated, StyleSheet, View } from 'react-native';
 
 export const InitialLoader = () => {
   const { theme } = useTheme();
-  const { isAuthenticated } = useAuthStore();
+  const { isAuthenticated, user: persistedUser } = useAuthStore();
   const { data: user } = useUser();
   const pulseAnim = React.useRef(new Animated.Value(1)).current;
 
@@ -28,8 +28,8 @@ export const InitialLoader = () => {
     ).start();
   }, [pulseAnim]);
 
-  const profilePic = isAuthenticated && user ? user.data?.photo : null;
-  const iconSource = profilePic ? { uri: profilePic } : Icon;
+  const image = isAuthenticated && (user?.data?.photo || persistedUser?.photo);
+  const iconSource = image ? { uri: image } : Icon;
 
   return (
     <View
