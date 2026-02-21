@@ -13,4 +13,7 @@ config.resolver.assetExts = config.resolver.assetExts.filter(
 );
 config.resolver.sourceExts.push('svg');
 
+// Add WASM support for SQLite Web
+config.resolver.assetExts.push('wasm');
+
 module.exports = config;

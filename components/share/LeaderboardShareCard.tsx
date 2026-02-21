@@ -100,7 +100,7 @@ export const LeaderboardShareCard = forwardRef<View, LeaderboardShareCardProps>(
             {country && (
               <View style={styles.heroStatItem}>
                 <Typography variant="micro" weight="bold" color={mutedColor}>
-                  COUNTRY
+                  LOCATION
                 </Typography>
                 <Typography variant="title" weight="bold" color={textColor}>
                   {country.toUpperCase()}

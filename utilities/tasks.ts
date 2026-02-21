@@ -1,4 +1,5 @@
 import * as Notifications from 'expo-notifications';
+import { Platform } from 'react-native';
 import { getAllQuotes } from 'success-motivational-quotes';
 import {
   SATURDAY_MESSAGES,
@@ -27,6 +28,7 @@ function getRandomMessage(messages: { title: string; body: string }[]): {
 }
 
 export async function scheduleSmartDailyReminders(): Promise<void> {
+  if (Platform.OS === 'web') return;
   try {
     await Notifications.cancelAllScheduledNotificationsAsync();
 
@@ -89,6 +91,7 @@ export async function scheduleGoalReminders(
   targetHours: number,
   delta: 'day' | 'week' | 'month',
 ): Promise<void> {
+  if (Platform.OS === 'web') return;
   try {
     await Notifications.scheduleNotificationAsync({
       content: {
