@@ -18,7 +18,10 @@ export const ProjectListSkeleton = () => {
               <Skeleton width={120} height={16} style={{ marginBottom: 6 }} />
               <Skeleton width={80} height={12} />
             </View>
-            <Skeleton width={24} height={24} borderRadius={12} />
+            <View style={{ alignItems: 'flex-end' }}>
+              <Skeleton width={30} height={8} style={{ marginBottom: 4 }} />
+              <Skeleton width={50} height={14} />
+            </View>
           </View>
         </View>
       ))}

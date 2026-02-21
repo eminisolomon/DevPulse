@@ -1,6 +1,5 @@
 export * from './ActivityRhythm';
 export * from './Avatar';
-export * from './Badge';
 export * from './BottomSheet';
 export * from './Button';
 export * from './Card';
@@ -15,7 +14,6 @@ export * from './Select';
 export * from './share';
 export * from './Skeleton';
 export * from './skeletons';
-export * from './StatBox';
 export * from './Switch';
 export * from './ThemedToaster';
 export * from './TimeRangeSelector';
