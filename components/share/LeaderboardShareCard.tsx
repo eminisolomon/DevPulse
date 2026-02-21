@@ -66,6 +66,8 @@ export const LeaderboardShareCard = forwardRef<View, LeaderboardShareCardProps>(
                 weight="bold"
                 color={rankColor}
                 style={styles.rankText}
+                numberOfLines={1}
+                adjustsFontSizeToFit
               >
                 {rankDisplay}
               </Typography>
@@ -85,7 +87,13 @@ export const LeaderboardShareCard = forwardRef<View, LeaderboardShareCardProps>(
               <Typography variant="micro" weight="bold" color={mutedColor}>
                 RECORDED TIME
               </Typography>
-              <Typography variant="title" weight="bold" color={textColor}>
+              <Typography
+                variant="title"
+                weight="bold"
+                color={textColor}
+                numberOfLines={1}
+                adjustsFontSizeToFit
+              >
                 {totalTime || '--'}
               </Typography>
             </View>

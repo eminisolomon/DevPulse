@@ -76,6 +76,8 @@ export const DailyStatsShareCard = forwardRef<View, DailyStatsShareCardProps>(
               weight="bold"
               color={textColor}
               style={styles.totalTime}
+              numberOfLines={1}
+              adjustsFontSizeToFit
             >
               {totalTime}
             </Typography>
@@ -118,7 +120,13 @@ export const DailyStatsShareCard = forwardRef<View, DailyStatsShareCardProps>(
               <Typography variant="micro" weight="bold" color={mutedColor}>
                 LAST 7 DAYS
               </Typography>
-              <Typography variant="body" weight="bold" color={textColor}>
+              <Typography
+                variant="body"
+                weight="bold"
+                color={textColor}
+                numberOfLines={1}
+                adjustsFontSizeToFit
+              >
                 {total7d}
               </Typography>
             </View>
