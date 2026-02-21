@@ -11,7 +11,7 @@ import {
   useTheme,
 } from '@/hooks';
 import { formatDisplayDuration, getDailyStatsTitle } from '@/utilities';
-import { endOfDay, parseISO, startOfDay } from 'date-fns';
+import { endOfDay, format, parseISO, startOfDay } from 'date-fns';
 import { Stack, useLocalSearchParams } from 'expo-router';
 import React, { useMemo } from 'react';
 import { RefreshControl, ScrollView, StyleSheet, View } from 'react-native';
@@ -186,7 +186,10 @@ export default function DailyScreen() {
             />
 
             {/* Segmented Stats */}
-            <DailyDistributionStats data={dayData} />
+            <DailyDistributionStats
+              data={dayData}
+              date={params.date || format(selectedDate, 'yyyy-MM-dd')}
+            />
           </>
         )}
       </ScrollView>

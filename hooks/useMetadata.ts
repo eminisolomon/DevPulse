@@ -15,6 +15,12 @@ export function useMetadata() {
     staleTime: 24 * 60 * 60 * 1000, // 24 hours
   });
 
+  const machinesQuery = useQuery({
+    queryKey: ['machines'],
+    queryFn: () => wakaService.getMachineNames(),
+    staleTime: 24 * 60 * 60 * 1000, // 24 hours
+  });
+
   const languageColors = useMemo(() => {
     const apiColors: Record<string, string> = {};
     languagesQuery.data?.data.forEach((lang) => {
@@ -58,8 +64,12 @@ export function useMetadata() {
     editorColors,
     getLanguageColor,
     getEditorColor,
-    isLoading: languagesQuery.isLoading || editorsQuery.isLoading,
+    isLoading:
+      languagesQuery.isLoading ||
+      editorsQuery.isLoading ||
+      machinesQuery.isLoading,
     languages: languagesQuery.data?.data || [],
     editors: editorsQuery.data?.data || [],
+    machines: machinesQuery.data?.data || [],
   };
 }

@@ -4,7 +4,9 @@ import {
   WakaTimeDurationsResponse,
   WakaTimeGoal,
   WakaTimeGoalsResponse,
+  WakaTimeHeartbeatsResponse,
   WakaTimeLeaderboard,
+  WakaTimeMachinesResponse,
   WakaTimeMetadataResponse,
   WakaTimeOrganizationsResponse,
   WakaTimeProjectsResponse,
@@ -99,6 +101,14 @@ export const wakaService = {
 
   getEditors: (): Promise<WakaTimeMetadataResponse> =>
     fetchWithAuth<WakaTimeMetadataResponse>('/editors'),
+
+  getMachineNames: (): Promise<WakaTimeMachinesResponse> =>
+    fetchWithAuth<WakaTimeMachinesResponse>('/users/current/machine_names'),
+
+  getHeartbeats: (date: string): Promise<WakaTimeHeartbeatsResponse> =>
+    fetchWithAuth<WakaTimeHeartbeatsResponse>(
+      `/users/current/heartbeats?date=${date}`,
+    ),
 
   getAllTimeSinceToday: (): Promise<WakaTimeAllTime> =>
     fetchWithAuth<WakaTimeAllTime>('/users/current/all_time_since_today'),

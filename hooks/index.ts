@@ -1,3 +1,4 @@
+export * from './useActivity';
 export * from './useAllTime';
 export * from './useDebounce';
 export * from './useDurations';

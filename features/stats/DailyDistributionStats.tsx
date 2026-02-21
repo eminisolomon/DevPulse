@@ -1,21 +1,45 @@
 import { SegmentedStatsCard } from '@/components';
 import { getCategoryColor, getOSColor, getWorkstationColor } from '@/constants';
-import { useMetadata } from '@/hooks';
+import { useActivity, useMetadata } from '@/hooks';
 import { WakaTimeSummary } from '@/interfaces';
 import React from 'react';
 
 interface DailyDistributionStatsProps {
   data: WakaTimeSummary | null | undefined;
+  date?: string;
 }
 
 export const DailyDistributionStats = ({
   data,
+  date,
 }: DailyDistributionStatsProps) => {
   const { getLanguageColor, getEditorColor } = useMetadata();
+  const { stats: aiStats } = useActivity(date || '');
+
   if (!data) return null;
 
   return (
     <>
+      {aiStats && aiStats.totalLines > 0 && (
+        <SegmentedStatsCard
+          title="AI VS HUMAN CONTRIBUTIONS"
+          segments={[
+            {
+              label: 'Human',
+              percent: aiStats.humanPercent,
+              color: '#6366F1',
+              valueText: `${aiStats.humanLines.toLocaleString()} lines`,
+            },
+            {
+              label: 'AI',
+              percent: aiStats.aiPercent,
+              color: '#4ADE80',
+              valueText: `${aiStats.aiLines.toLocaleString()} lines`,
+            },
+          ]}
+        />
+      )}
+
       {data.languages && data.languages.length > 0 && (
         <SegmentedStatsCard
           title="LANGUAGES"
