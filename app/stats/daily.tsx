@@ -113,6 +113,7 @@ export default function DailyScreen() {
       dayData?.projects?.slice(0, 3).map((p: any) => ({
         name: p.name,
         text: p.text,
+        color: p.color,
       })) || []
     );
   }, [dayData]);
@@ -148,6 +149,7 @@ export default function DailyScreen() {
           isPositiveDiff={isPositiveDiff}
           topLanguages={topLanguages}
           topProjects={topProjects}
+          total7d={stats?.data?.human_readable_total}
         />
       )}
 

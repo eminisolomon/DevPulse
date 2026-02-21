@@ -2,9 +2,8 @@ import { useShareTheme } from '@/hooks/useShareTheme';
 import { Feather } from '@expo/vector-icons';
 import React, { forwardRef } from 'react';
 import { StyleSheet, View } from 'react-native';
-import { ShareCardWrapper } from './ShareCardWrapper';
 import { Typography } from '../Typography';
-import { StatBox } from '../StatBox';
+import { ShareCardWrapper } from './ShareCardWrapper';
 
 interface ProjectShareCardProps {
   projectName: string;
@@ -12,79 +11,100 @@ interface ProjectShareCardProps {
   total7d: string;
   dailyAvg: string;
   topLanguages?: Array<{ name: string; percent: number }>;
+  color?: string;
 }
 
 export const ProjectShareCard = forwardRef<View, ProjectShareCardProps>(
-  ({ projectName, allTimeTotal, total7d, dailyAvg, topLanguages }, ref) => {
-    const { textColor, mutedColor, surfaceColor, accent } = useShareTheme();
+  (
+    { projectName, allTimeTotal, total7d, dailyAvg, topLanguages, color },
+    ref,
+  ) => {
+    const {
+      textColor,
+      mutedColor,
+      surfaceColor,
+      accent: themeAccent,
+    } = useShareTheme();
+    const accent = color || themeAccent;
 
     return (
-      <ShareCardWrapper ref={ref} outerPadding={24}>
-        {/* Project name */}
-        <View style={styles.nameRow}>
-          <View
-            style={[styles.projectIcon, { backgroundColor: accent + '20' }]}
-          >
-            <Feather name="folder" size={16} color={accent} />
+      <ShareCardWrapper ref={ref} outerPadding={24} accentColor={accent}>
+        <View style={styles.topContainer}>
+          <View style={styles.nameRow}>
+            <View
+              style={[styles.projectIcon, { backgroundColor: accent + '15' }]}
+            >
+              <Feather name="folder" size={20} color={accent} />
+            </View>
+            <View style={styles.nameInfo}>
+              <Typography
+                variant="micro"
+                weight="bold"
+                color={mutedColor}
+                style={styles.label}
+              >
+                PROJECT
+              </Typography>
+              <Typography
+                variant="title"
+                weight="bold"
+                color={textColor}
+                numberOfLines={1}
+              >
+                {projectName}
+              </Typography>
+            </View>
           </View>
-          <Typography
-            variant="title"
-            weight="bold"
-            color={textColor}
-            style={styles.projectName}
-            numberOfLines={1}
-          >
-            {projectName}
-          </Typography>
+
+          <View style={styles.heroSection}>
+            <Typography
+              variant="micro"
+              weight="bold"
+              color={mutedColor}
+              style={styles.label}
+            >
+              TOTAL TIME INVESTED
+            </Typography>
+            <Typography
+              variant="display"
+              weight="bold"
+              color={textColor}
+              style={styles.heroTime}
+            >
+              {allTimeTotal}
+            </Typography>
+          </View>
         </View>
 
-        {/* Hero stat */}
-        <View>
-          <Typography
-            variant="micro"
-            weight="bold"
-            color={mutedColor}
-            style={styles.statLabel}
-          >
-            ALL TIME
-          </Typography>
-          <Typography
-            variant="display"
-            weight="bold"
-            color={textColor}
-            style={styles.heroTime}
-          >
-            {allTimeTotal}
-          </Typography>
-        </View>
-
-        {/* Two-col stats */}
         <View style={styles.statsGrid}>
-          <StatBox
-            label="LAST 7 DAYS"
-            value={total7d}
-            valueColor={accent}
-            style={{ backgroundColor: surfaceColor }}
-          />
-          <StatBox
-            label="DAILY AVG"
-            value={dailyAvg}
-            valueColor={textColor}
-            style={{ backgroundColor: surfaceColor }}
-          />
+          <View style={[styles.statItem, { backgroundColor: surfaceColor }]}>
+            <Typography variant="micro" weight="bold" color={mutedColor}>
+              LAST 7 DAYS
+            </Typography>
+            <Typography variant="body" weight="bold" color={accent}>
+              {total7d}
+            </Typography>
+          </View>
+          <View style={[styles.statItem, { backgroundColor: surfaceColor }]}>
+            <Typography variant="micro" weight="bold" color={mutedColor}>
+              DAILY AVG
+            </Typography>
+            <Typography variant="body" weight="bold" color={textColor}>
+              {dailyAvg}
+            </Typography>
+          </View>
         </View>
 
         {/* Languages */}
         {topLanguages && topLanguages.length > 0 && (
           <View style={[styles.langBox, { backgroundColor: surfaceColor }]}>
-            <Typography
-              variant="micro"
-              weight="bold"
-              color={mutedColor}
-              style={styles.statLabel}
-            >
-              LANGUAGES
-            </Typography>
+            <View style={styles.langHeader}>
+              <Feather name="code" size={14} color={accent} />
+              <Typography variant="micro" weight="bold" color={mutedColor}>
+                CORE LANGUAGES
+              </Typography>
+            </View>
+
             <View style={styles.langBarContainer}>
               {topLanguages.slice(0, 5).map((lang, i) => (
                 <View
@@ -92,7 +112,7 @@ export const ProjectShareCard = forwardRef<View, ProjectShareCardProps>(
                   style={[
                     styles.langBarSegment,
                     {
-                      flex: lang.percent,
+                      width: `${lang.percent}%`,
                       backgroundColor: accent,
                       opacity: 1 - i * 0.15,
                     },
@@ -100,8 +120,9 @@ export const ProjectShareCard = forwardRef<View, ProjectShareCardProps>(
                 />
               ))}
             </View>
+
             <View style={styles.langLabels}>
-              {topLanguages.slice(0, 4).map((lang, i) => (
+              {topLanguages.slice(0, 3).map((lang, i) => (
                 <View key={lang.name} style={styles.langLabelRow}>
                   <View
                     style={[
@@ -110,20 +131,15 @@ export const ProjectShareCard = forwardRef<View, ProjectShareCardProps>(
                     ]}
                   />
                   <Typography
-                    variant="body"
-                    weight="semibold"
+                    variant="caption"
+                    weight="bold"
                     color={textColor}
                     style={styles.langName}
                     numberOfLines={1}
                   >
                     {lang.name}
                   </Typography>
-                  <Typography
-                    variant="caption"
-                    weight="semibold"
-                    color={mutedColor}
-                    style={styles.langPercent}
-                  >
+                  <Typography variant="micro" weight="bold" color={mutedColor}>
                     {Math.round(lang.percent)}%
                   </Typography>
                 </View>
@@ -139,64 +155,83 @@ export const ProjectShareCard = forwardRef<View, ProjectShareCardProps>(
 ProjectShareCard.displayName = 'ProjectShareCard';
 
 const styles = StyleSheet.create({
-  nameRow: {
-    flexDirection: 'row',
+  topContainer: {
     alignItems: 'center',
-    gap: 10,
+    gap: 16,
+  },
+  nameRow: {
+    flexDirection: 'column',
+    alignItems: 'center',
+    gap: 12,
   },
   projectIcon: {
-    width: 44,
-    height: 44,
-    borderRadius: 12,
+    width: 48,
+    height: 48,
+    borderRadius: 14,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  projectName: {
-    flex: 1,
+  nameInfo: {
+    alignItems: 'center',
+    gap: 2,
   },
-  statLabel: {
-    marginBottom: 6,
+  label: {
+    letterSpacing: 1,
+    opacity: 0.8,
+  },
+  heroSection: {
+    alignItems: 'center',
+    gap: 4,
   },
   heroTime: {
-    fontSize: 40,
-    letterSpacing: -0.5,
+    fontSize: 48,
+    lineHeight: 56,
+    textAlign: 'center',
   },
   statsGrid: {
     flexDirection: 'row',
     gap: 12,
   },
-  langBox: {
+  statItem: {
+    flex: 1,
     borderRadius: 16,
-    padding: 16,
-    gap: 12,
+    padding: 14,
+    gap: 4,
+  },
+  langBox: {
+    borderRadius: 20,
+    padding: 20,
+    gap: 16,
+  },
+  langHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
   },
   langBarContainer: {
     flexDirection: 'row',
-    height: 10,
-    borderRadius: 5,
+    height: 8,
+    borderRadius: 4,
     overflow: 'hidden',
-    gap: 2,
+    backgroundColor: 'rgba(0,0,0,0.05)',
   },
   langBarSegment: {
-    borderRadius: 4,
+    height: '100%',
   },
   langLabels: {
-    gap: 8,
+    gap: 10,
   },
   langLabelRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 4,
+    gap: 8,
   },
   langDot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
+    width: 6,
+    height: 6,
+    borderRadius: 3,
   },
   langName: {
     flex: 1,
-  },
-  langPercent: {
-    fontVariant: ['tabular-nums'],
   },
 });

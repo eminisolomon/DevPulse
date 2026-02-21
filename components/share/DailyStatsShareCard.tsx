@@ -11,12 +11,21 @@ interface DailyStatsShareCardProps {
   diffText?: string;
   isPositiveDiff?: boolean;
   topLanguages?: Array<{ name: string; percent: number }>;
-  topProjects?: Array<{ name: string; text: string }>;
+  topProjects?: Array<{ name: string; text: string; color?: string }>;
+  total7d?: string;
 }
 
 export const DailyStatsShareCard = forwardRef<View, DailyStatsShareCardProps>(
   (
-    { date, totalTime, diffText, isPositiveDiff, topLanguages, topProjects },
+    {
+      date,
+      totalTime,
+      diffText,
+      isPositiveDiff,
+      topLanguages,
+      topProjects,
+      total7d,
+    },
     ref,
   ) => {
     const { textColor, mutedColor, surfaceColor, accent } = useShareTheme();
@@ -30,137 +39,168 @@ export const DailyStatsShareCard = forwardRef<View, DailyStatsShareCardProps>(
 
     return (
       <ShareCardWrapper ref={ref} outerPadding={24}>
-        <View style={styles.dateRow}>
-          <View
-            style={[
-              styles.dateIconContainer,
-              {
-                backgroundColor: accent + '15',
-                borderColor: accent + '20',
-              },
-            ]}
-          >
-            <Feather name={dateIcon} size={11} color={accent} />
-          </View>
-          <Typography
-            variant="micro"
-            weight="bold"
-            color={isToday ? textColor : mutedColor}
-            style={styles.dateLabel}
-          >
-            {date}
-          </Typography>
-        </View>
-
-        <View style={styles.heroSection}>
-          <Typography
-            variant="display"
-            weight="bold"
-            color={textColor}
-            style={styles.totalTime}
-          >
-            {totalTime}
-          </Typography>
-          {diffText ? (
+        <View style={styles.topContainer}>
+          <View style={styles.headerInfo}>
             <View
               style={[
-                styles.diffBadge,
+                styles.dateBadge,
                 {
-                  backgroundColor:
-                    (isPositiveDiff ? positiveColor : negativeColor) + '18',
+                  backgroundColor: accent + '10',
+                  borderColor: accent + '20',
                 },
               ]}
             >
-              <Feather
-                name={isPositiveDiff ? 'trending-up' : 'trending-down'}
-                size={13}
-                color={isPositiveDiff ? positiveColor : negativeColor}
-              />
-              <Typography
-                variant="caption"
-                weight="bold"
-                color={isPositiveDiff ? positiveColor : negativeColor}
-                style={styles.diffText}
-              >
-                {diffText}
-              </Typography>
-            </View>
-          ) : null}
-        </View>
-
-        <View style={styles.statsRow}>
-          {topLanguages && topLanguages.length > 0 && (
-            <View style={[styles.statBox, { backgroundColor: surfaceColor }]}>
+              <Feather name={dateIcon} size={12} color={accent} />
               <Typography
                 variant="micro"
                 weight="bold"
-                color={mutedColor}
-                style={styles.statLabel}
+                color={accent}
+                style={styles.dateLabel}
               >
-                TOP LANGUAGES
+                {date.toUpperCase()}
               </Typography>
-              {topLanguages.slice(0, 3).map((lang, i) => (
-                <View key={lang.name} style={styles.langRow}>
-                  <View
-                    style={[
-                      styles.langDot,
-                      { backgroundColor: accent, opacity: 1 - i * 0.25 },
-                    ]}
-                  />
-                  <Typography
-                    variant="body"
-                    weight="semibold"
-                    color={textColor}
-                    style={styles.langName}
-                    numberOfLines={1}
-                  >
-                    {lang.name}
-                  </Typography>
-                  <Typography
-                    variant="caption"
-                    weight="semibold"
-                    color={mutedColor}
-                    style={styles.langPercent}
-                  >
-                    {Math.round(lang.percent)}%
-                  </Typography>
-                </View>
-              ))}
+            </View>
+          </View>
+
+          <View style={styles.heroSection}>
+            <Typography
+              variant="micro"
+              weight="bold"
+              color={mutedColor}
+              style={styles.heroLabel}
+            >
+              TOTAL CODING TIME
+            </Typography>
+            <Typography
+              variant="display"
+              weight="bold"
+              color={textColor}
+              style={styles.totalTime}
+            >
+              {totalTime}
+            </Typography>
+
+            {diffText ? (
+              <View
+                style={[
+                  styles.diffBadge,
+                  {
+                    backgroundColor:
+                      (isPositiveDiff ? positiveColor : negativeColor) + '15',
+                  },
+                ]}
+              >
+                <Feather
+                  name={isPositiveDiff ? 'trending-up' : 'trending-down'}
+                  size={12}
+                  color={isPositiveDiff ? positiveColor : negativeColor}
+                />
+                <Typography
+                  variant="caption"
+                  weight="bold"
+                  color={isPositiveDiff ? positiveColor : negativeColor}
+                >
+                  {diffText}
+                </Typography>
+              </View>
+            ) : null}
+          </View>
+        </View>
+
+        {total7d && (
+          <View style={styles.secondaryStats}>
+            <View
+              style={[
+                styles.sevenDayBadge,
+                { backgroundColor: surfaceColor, borderColor: accent + '15' },
+              ]}
+            >
+              <Typography variant="micro" weight="bold" color={mutedColor}>
+                LAST 7 DAYS
+              </Typography>
+              <Typography variant="body" weight="bold" color={textColor}>
+                {total7d}
+              </Typography>
+            </View>
+          </View>
+        )}
+
+        <View style={styles.statsGrid}>
+          {topLanguages && topLanguages.length > 0 && (
+            <View style={[styles.statBox, { backgroundColor: surfaceColor }]}>
+              <View style={styles.statHeader}>
+                <Feather name="code" size={12} color={accent} />
+                <Typography variant="micro" weight="bold" color={mutedColor}>
+                  LANGUAGES
+                </Typography>
+              </View>
+              <View style={styles.statContent}>
+                {topLanguages.slice(0, 3).map((lang, i) => (
+                  <View key={lang.name} style={styles.statItem}>
+                    <View
+                      style={[
+                        styles.statDot,
+                        { backgroundColor: accent, opacity: 1 - i * 0.25 },
+                      ]}
+                    />
+                    <Typography
+                      variant="caption"
+                      weight="bold"
+                      color={textColor}
+                      style={styles.itemName}
+                      numberOfLines={1}
+                    >
+                      {lang.name}
+                    </Typography>
+                    <Typography
+                      variant="micro"
+                      weight="bold"
+                      color={mutedColor}
+                    >
+                      {Math.round(lang.percent)}%
+                    </Typography>
+                  </View>
+                ))}
+              </View>
             </View>
           )}
 
           {topProjects && topProjects.length > 0 && (
             <View style={[styles.statBox, { backgroundColor: surfaceColor }]}>
-              <Typography
-                variant="micro"
-                weight="bold"
-                color={mutedColor}
-                style={styles.statLabel}
-              >
-                TOP PROJECTS
-              </Typography>
-              {topProjects.slice(0, 3).map((proj) => (
-                <View key={proj.name} style={styles.langRow}>
-                  <Feather name="folder" size={12} color={accent} />
-                  <Typography
-                    variant="body"
-                    weight="semibold"
-                    color={textColor}
-                    style={styles.langName}
-                    numberOfLines={1}
-                  >
-                    {proj.name}
-                  </Typography>
-                  <Typography
-                    variant="caption"
-                    weight="semibold"
-                    color={mutedColor}
-                    style={styles.langPercent}
-                  >
-                    {proj.text}
-                  </Typography>
-                </View>
-              ))}
+              <View style={styles.statHeader}>
+                <Feather name="folder" size={12} color={accent} />
+                <Typography variant="micro" weight="bold" color={mutedColor}>
+                  PROJECTS
+                </Typography>
+              </View>
+              <View style={styles.statContent}>
+                {topProjects.slice(0, 3).map((proj) => (
+                  <View key={proj.name} style={styles.statItem}>
+                    <View
+                      style={[
+                        styles.statDot,
+                        { backgroundColor: proj.color || accent },
+                      ]}
+                    />
+                    <Typography
+                      variant="caption"
+                      weight="bold"
+                      color={textColor}
+                      style={styles.itemName}
+                      numberOfLines={1}
+                    >
+                      {proj.name}
+                    </Typography>
+                    <Typography
+                      variant="micro"
+                      weight="bold"
+                      color={mutedColor}
+                    >
+                      {proj.text}
+                    </Typography>
+                  </View>
+                ))}
+              </View>
             </View>
           )}
         </View>
@@ -172,65 +212,89 @@ export const DailyStatsShareCard = forwardRef<View, DailyStatsShareCardProps>(
 DailyStatsShareCard.displayName = 'DailyStatsShareCard';
 
 const styles = StyleSheet.create({
-  dateRow: {
+  topContainer: {
+    alignItems: 'center',
+    gap: 12,
+  },
+  headerInfo: {
+    alignItems: 'center',
+  },
+  dateBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
-    gap: 8,
-    marginBottom: 4,
-  },
-  dateIconContainer: {
-    padding: 4,
-    borderRadius: 6,
+    gap: 6,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 8,
     borderWidth: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
   },
   dateLabel: {
-    letterSpacing: 1.2,
+    letterSpacing: 1.5,
   },
   heroSection: {
     alignItems: 'center',
-    gap: 8,
-    marginBottom: 8,
+    gap: 4,
+  },
+  heroLabel: {
+    letterSpacing: 1,
+    opacity: 0.8,
   },
   totalTime: {
+    fontSize: 48,
+    lineHeight: 56,
     textAlign: 'center',
   },
   diffBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 4,
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 20,
+    gap: 6,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 12,
   },
-  diffText: {},
-  statsRow: {
+  secondaryStats: {
+    alignItems: 'center',
+    marginVertical: 12,
+  },
+  sevenDayBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 20,
+    borderWidth: 1,
+  },
+  statsGrid: {
+    flexDirection: 'column',
     gap: 12,
   },
   statBox: {
+    flex: 1,
     borderRadius: 16,
-    padding: 16,
+    padding: 14,
+    gap: 12,
+  },
+  statHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    opacity: 0.9,
+  },
+  statContent: {
     gap: 10,
   },
-  statLabel: {
-    marginBottom: 4,
-  },
-  langRow: {
+  statItem: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
   },
-  langDot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
+  statDot: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
   },
-  langName: {
+  itemName: {
     flex: 1,
-  },
-  langPercent: {
-    fontVariant: ['tabular-nums'],
   },
 });

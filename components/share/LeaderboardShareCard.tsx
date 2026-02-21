@@ -1,9 +1,9 @@
 import { useShareTheme } from '@/hooks/useShareTheme';
 import { LeaderboardUser } from '@/interfaces/leaderboard';
+import { Feather } from '@expo/vector-icons';
 import React, { forwardRef } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Avatar } from '../Avatar';
-import { StatBox } from '../StatBox';
 import { Typography } from '../Typography';
 import { ShareCardWrapper } from './ShareCardWrapper';
 
@@ -41,106 +41,109 @@ export const LeaderboardShareCard = forwardRef<View, LeaderboardShareCardProps>(
 
     return (
       <ShareCardWrapper ref={ref} outerPadding={24}>
-        {/* Scope header */}
-        <Typography
-          variant="micro"
-          weight="bold"
-          color={mutedColor}
-          style={styles.scopeStart}
-        >
-          {scope || 'GLOBAL TOP DEVELOPERS'}
-        </Typography>
+        <View style={styles.topContainer}>
+          <Typography
+            variant="micro"
+            weight="bold"
+            color={mutedColor}
+            style={styles.scopeLabel}
+          >
+            {scope || 'GLOBAL TOP DEVELOPERS'}
+          </Typography>
 
-        {/* Hero Rank + User */}
-        <View style={styles.heroSection}>
-          <Avatar
-            source={photo ? { uri: photo } : undefined}
-            initials={displayName}
-            size={56}
-          />
-          <View>
-            <Typography
-              variant="headline"
-              weight="bold"
-              color={textColor}
-              style={styles.displayName}
+          <View style={styles.rankSection}>
+            <View
+              style={[
+                styles.rankBadge,
+                {
+                  backgroundColor: rankColor + '15',
+                  borderColor: rankColor + '30',
+                },
+              ]}
             >
-              {displayName}
-            </Typography>
-            {country && (
               <Typography
-                variant="body"
-                weight="medium"
-                color={mutedColor}
-                style={styles.countryText}
+                variant="display"
+                weight="bold"
+                color={rankColor}
+                style={styles.rankText}
               >
-                {country}
+                {rankDisplay}
               </Typography>
+            </View>
+            <Typography
+              variant="micro"
+              weight="bold"
+              color={mutedColor}
+              style={styles.rankLabel}
+            >
+              LEADERBOARD RANK
+            </Typography>
+          </View>
+
+          <View style={styles.heroStats}>
+            <View style={styles.heroStatItem}>
+              <Typography variant="micro" weight="bold" color={mutedColor}>
+                RECORDED TIME
+              </Typography>
+              <Typography variant="title" weight="bold" color={textColor}>
+                {totalTime || '--'}
+              </Typography>
+            </View>
+            {country && (
+              <View style={styles.heroStatItem}>
+                <Typography variant="micro" weight="bold" color={mutedColor}>
+                  COUNTRY
+                </Typography>
+                <Typography variant="title" weight="bold" color={textColor}>
+                  {country.toUpperCase()}
+                </Typography>
+              </View>
             )}
           </View>
-        </View>
-
-        {/* Stats grid */}
-        <View style={styles.statsRow}>
-          <StatBox
-            label="RANK"
-            value={rankDisplay}
-            valueColor={rankColor}
-            style={{ backgroundColor: surfaceColor }}
-          />
-          <StatBox
-            label="TOTAL TIME"
-            value={totalTime || '--'}
-            style={{ backgroundColor: surfaceColor }}
-          />
         </View>
 
         {/* Top 3 Podium Section */}
         {top3Users && top3Users.length > 0 && (
           <View
-            style={[
-              styles.podiumContainer,
-              { borderTopColor: isDark ? '#333' : '#eee' },
-            ]}
+            style={[styles.podiumContainer, { backgroundColor: surfaceColor }]}
           >
-            <Typography
-              variant="micro"
-              weight="bold"
-              color={mutedColor}
-              style={styles.podiumTitle}
-            >
-              Leading the charts
-            </Typography>
-            {top3Users.map((user, index) => (
-              <View key={user.user.id} style={styles.podiumRow}>
-                <Typography style={styles.podiumEmoji}>
-                  {index === 0 ? '🥇' : index === 1 ? '🥈' : '🥉'}
-                </Typography>
-                <Avatar
-                  source={
-                    user.user.photo ? { uri: user.user.photo } : undefined
-                  }
-                  initials={user.user.display_name || user.user.username}
-                  size={24}
-                />
-                <Typography
-                  variant="body"
-                  weight="semibold"
-                  color={textColor}
-                  style={styles.podiumName}
-                  numberOfLines={1}
-                >
-                  {user.user.display_name || user.user.username}
-                </Typography>
-                <Typography
-                  variant="caption"
-                  weight="bold"
-                  color={theme.colors.primary}
-                >
-                  {user.running_total.human_readable_total}
-                </Typography>
-              </View>
-            ))}
+            <View style={styles.podiumHeader}>
+              <Feather name="award" size={14} color={goldColor} />
+              <Typography variant="micro" weight="bold" color={mutedColor}>
+                TOP PERFORMERS
+              </Typography>
+            </View>
+            <View style={styles.podiumList}>
+              {top3Users.map((user, index) => (
+                <View key={user.user.id} style={styles.podiumRow}>
+                  <View style={styles.podiumRank}>
+                    <Typography style={styles.podiumEmoji}>
+                      {index === 0 ? '🥇' : index === 1 ? '🥈' : '🥉'}
+                    </Typography>
+                  </View>
+                  <Avatar
+                    source={
+                      user.user.photo ? { uri: user.user.photo } : undefined
+                    }
+                    initials={user.user.display_name || user.user.username}
+                    size={28}
+                  />
+                  <View style={styles.podiumInfo}>
+                    <Typography
+                      variant="caption"
+                      weight="bold"
+                      color={textColor}
+                      numberOfLines={1}
+                    >
+                      {user.user.display_name || user.user.username}
+                    </Typography>
+                    <Typography variant="micro" color={mutedColor}>
+                      {user.running_total.human_readable_total}
+                    </Typography>
+                  </View>
+                </View>
+              ))}
+            </View>
           </View>
         )}
       </ShareCardWrapper>
@@ -149,44 +152,71 @@ export const LeaderboardShareCard = forwardRef<View, LeaderboardShareCardProps>(
 );
 
 const styles = StyleSheet.create({
-  scopeStart: {
-    letterSpacing: 1.2,
-    alignSelf: 'flex-start',
-    marginBottom: 4,
-  },
-  heroSection: {
-    flexDirection: 'row',
+  topContainer: {
     alignItems: 'center',
     gap: 16,
-    marginBottom: 8,
   },
-  displayName: {
-    marginBottom: 2,
+  scopeLabel: {
+    letterSpacing: 2,
+    opacity: 0.8,
   },
-  countryText: {},
-  statsRow: {
+  rankSection: {
+    alignItems: 'center',
+    gap: 8,
+  },
+  rankBadge: {
+    paddingHorizontal: 24,
+    paddingVertical: 12,
+    borderRadius: 24,
+    borderWidth: 2,
+    minWidth: 120,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  rankText: {
+    fontSize: 42,
+    lineHeight: 48,
+  },
+  rankLabel: {
+    letterSpacing: 1.5,
+  },
+  heroStats: {
     flexDirection: 'row',
-    gap: 12,
+    gap: 32,
+    marginTop: 8,
+  },
+  heroStatItem: {
+    alignItems: 'center',
+    gap: 4,
   },
   podiumContainer: {
-    marginTop: 24,
-    paddingTop: 16,
-    borderTopWidth: 1,
+    marginTop: 20,
+    borderRadius: 20,
+    padding: 20,
+    gap: 16,
   },
-  podiumTitle: {
-    marginBottom: 12,
+  podiumHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  podiumList: {
+    gap: 12,
   },
   podiumRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 8,
+    gap: 12,
+  },
+  podiumRank: {
+    width: 28,
+    alignItems: 'center',
   },
   podiumEmoji: {
-    width: 24,
-    fontSize: 16,
+    fontSize: 18,
   },
-  podiumName: {
-    marginLeft: 8,
+  podiumInfo: {
     flex: 1,
+    gap: 2,
   },
 });
