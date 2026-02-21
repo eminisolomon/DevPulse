@@ -84,28 +84,6 @@ export async function scheduleSmartDailyReminders(): Promise<void> {
   }
 }
 
-export async function sendImmediateGoalNotification(
-  title: string,
-  body: string,
-): Promise<void> {
-  try {
-    await Notifications.scheduleNotificationAsync({
-      content: {
-        title,
-        body,
-        sound: 'default',
-        data: { type: 'goal_milestone' },
-      },
-      trigger: null,
-    });
-  } catch (error) {
-    console.error(
-      '[Notifications] Failed to send immediate notification:',
-      error,
-    );
-  }
-}
-
 export async function scheduleGoalReminders(
   goalTitle: string,
   targetHours: number,
@@ -150,30 +128,5 @@ export async function scheduleGoalReminders(
     }
   } catch (error) {
     console.error('[Notifications] Failed to schedule goal reminders:', error);
-  }
-}
-
-export async function cancelAllScheduledNotifications(): Promise<void> {
-  try {
-    await Notifications.cancelAllScheduledNotificationsAsync();
-  } catch (error) {
-    console.error(
-      '[Notifications] Failed to cancel scheduled notifications:',
-      error,
-    );
-  }
-}
-
-export async function getScheduledNotifications(): Promise<
-  Notifications.NotificationRequest[]
-> {
-  try {
-    return await Notifications.getAllScheduledNotificationsAsync();
-  } catch (error) {
-    console.error(
-      '[Notifications] Failed to get scheduled notifications:',
-      error,
-    );
-    return [];
   }
 }
