@@ -1,5 +1,6 @@
 export * from './api';
 export * from './colors';
+export * from './dateUtils';
 export * from './formatters';
 export * from './math';
 export * from './notifications';

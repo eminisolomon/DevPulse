@@ -8,7 +8,7 @@ export interface WakaTimeLanguage {
   minutes: number;
   color?: string;
 }
-export interface WakaTimeMachine extends WakaTimeLanguage {
+export interface WakaTimeMachineStat extends WakaTimeLanguage {
   machine_name_id: string;
 }
 
@@ -18,7 +18,7 @@ export interface WakaTimeStats {
     editors: WakaTimeLanguage[];
     operating_systems: WakaTimeLanguage[];
     categories: WakaTimeLanguage[];
-    machines: WakaTimeMachine[];
+    machines: WakaTimeMachineStat[];
     projects: WakaTimeLanguage[];
     best_day?: {
       date: string;
