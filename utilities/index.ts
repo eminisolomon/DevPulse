@@ -1,4 +1,5 @@
 export * from './api';
+export * from './base64';
 export * from './colors';
 export * from './dateUtils';
 export * from './formatters';

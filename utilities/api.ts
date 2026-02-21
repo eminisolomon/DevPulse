@@ -2,6 +2,7 @@ import { AuthService } from '@/services/auth.service';
 import { useAuthStore } from '@/stores/useAuthStore';
 import { config } from './config';
 import { WakaTimeApiError } from './errors';
+import { encodeBase64 } from './base64';
 
 export const getAuthToken = () => {
   const { accessToken } = useAuthStore.getState();
@@ -16,7 +17,7 @@ export const getHeaders = (
   type: 'bearer' | 'basic' = 'bearer',
 ) => {
   const authHeader =
-    type === 'basic' ? `Basic ${btoa(token)}` : `Bearer ${token}`;
+    type === 'basic' ? `Basic ${encodeBase64(token)}` : `Bearer ${token}`;
 
   return {
     Authorization: authHeader,

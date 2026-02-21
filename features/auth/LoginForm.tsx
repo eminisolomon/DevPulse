@@ -9,6 +9,7 @@ import { toastError, toastSuccess } from '@/utilities/toast';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuthRequest } from 'expo-auth-session';
 import { Image } from 'expo-image';
+import { useRouter } from 'expo-router';
 import * as WebBrowser from 'expo-web-browser';
 import React, { useState } from 'react';
 import { ActivityIndicator, Pressable, StyleSheet, View } from 'react-native';
@@ -16,6 +17,7 @@ import { ActivityIndicator, Pressable, StyleSheet, View } from 'react-native';
 export function LoginForm() {
   const { theme, isDark } = useTheme();
   const setTokens = useAuthStore((state) => state.setTokens);
+  const router = useRouter();
   const [apiKey, setApiKey] = useState('');
   const [isValidatingKey, setIsValidatingKey] = useState(false);
 
@@ -28,6 +30,7 @@ export function LoginForm() {
       if (isValid) {
         setTokens(apiKey.trim(), null, null, 'basic');
         toastSuccess('Login Successful', 'Welcome back!');
+        router.replace('/(tabs)');
       } else {
         toastError('Invalid API Key', 'Please check your key and try again.');
       }

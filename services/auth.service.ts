@@ -92,11 +92,12 @@ export const AuthService = {
    */
   validateApiKey: async (key: string): Promise<boolean> => {
     try {
+      const { encodeBase64 } = require('@/utilities/base64');
       const response = await fetch(
         `${AuthConfig.discovery.authorizationEndpoint.replace('/oauth/authorize', '/api/v1/users/current')}`,
         {
           headers: {
-            Authorization: `Basic ${btoa(key)}`,
+            Authorization: `Basic ${encodeBase64(key)}`,
           },
         },
       );
