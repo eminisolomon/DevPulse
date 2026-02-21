@@ -57,7 +57,11 @@ export async function fetchWithAuth<T>(
 
     if (!currentRefreshToken) {
       logout();
-      throw new Error('Unauthorized: No refresh token available');
+      throw new WakaTimeApiError(
+        401,
+        'Unauthorized',
+        'No refresh token available',
+      );
     }
 
     try {
@@ -76,11 +80,16 @@ export async function fetchWithAuth<T>(
 
       if (response.status === 401) {
         logout();
-        throw new Error('Unauthorized: Session expired after refresh');
+        throw new WakaTimeApiError(
+          401,
+          'Unauthorized',
+          'Session expired after refresh',
+        );
       }
     } catch (error) {
       logout();
-      throw new Error('Unauthorized: Session expired');
+      if (error instanceof WakaTimeApiError) throw error;
+      throw new WakaTimeApiError(401, 'Unauthorized', 'Session expired');
     }
   }
 

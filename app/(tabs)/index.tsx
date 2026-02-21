@@ -8,19 +8,16 @@ import {
   TotalTimeCard,
 } from '@/features';
 import { useAllTime, useStats, useSummaries, useTheme, useUser } from '@/hooks';
-import { useAuthStore } from '@/stores';
 import { dashboardStyles as styles } from '@/theme/styles/dashboard';
 import { formatDuration } from '@/utilities';
 import { getProjectColor } from '@/utilities/projectColors';
 import { endOfMonth, startOfMonth } from 'date-fns';
-import { Redirect } from 'expo-router';
 import React, { useMemo, useState } from 'react';
 import { RefreshControl, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function Dashboard() {
   const { theme } = useTheme();
-  const { isAuthenticated } = useAuthStore();
 
   const { isLoading: userLoading } = useUser();
   const {
@@ -152,10 +149,6 @@ export default function Dashboard() {
       activityLevel,
     };
   });
-
-  if (!isAuthenticated) {
-    return <Redirect href="/" />;
-  }
 
   if (isLoading) {
     return (

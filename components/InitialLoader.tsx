@@ -1,15 +1,17 @@
 import Icon from '@/assets/images/icon.png';
 import { useTheme, useUser } from '@/hooks';
+import { useAuthStore } from '@/stores/useAuthStore';
 import { Image } from 'expo-image';
-import React, { useEffect, useRef } from 'react';
+import React from 'react';
 import { Animated, StyleSheet, View } from 'react-native';
 
 export const InitialLoader = () => {
   const { theme } = useTheme();
+  const { isAuthenticated } = useAuthStore();
   const { data: user } = useUser();
-  const pulseAnim = useRef(new Animated.Value(1)).current;
+  const pulseAnim = React.useRef(new Animated.Value(1)).current;
 
-  useEffect(() => {
+  React.useEffect(() => {
     Animated.loop(
       Animated.sequence([
         Animated.timing(pulseAnim, {
@@ -26,7 +28,7 @@ export const InitialLoader = () => {
     ).start();
   }, [pulseAnim]);
 
-  const profilePic = user?.data?.photo;
+  const profilePic = isAuthenticated && user ? user.data?.photo : null;
   const iconSource = profilePic ? { uri: profilePic } : Icon;
 
   return (

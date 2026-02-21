@@ -1,6 +1,7 @@
 import { AppProviders, ThemedToaster } from '@/components';
 import { db } from '@/db';
 import migrations from '@/drizzle/migrations';
+import { useAuthStore } from '@/stores/useAuthStore';
 import {
   requestNotificationPermissions,
   scheduleSmartDailyReminders,
@@ -13,7 +14,7 @@ import {
 } from '@expo-google-fonts/outfit';
 import { useMigrations } from 'drizzle-orm/expo-sqlite/migrator';
 import { useFonts } from 'expo-font';
-import { Stack } from 'expo-router';
+import { Stack, useRouter, useSegments } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import * as WebBrowser from 'expo-web-browser';
@@ -49,7 +50,7 @@ export default function RootLayout() {
         }
       });
     }
-  }, [fontsLoaded]);
+  }, [fontsLoaded, migrationsLoaded, migrationError]);
 
   if (!fontsLoaded) {
     return null;
@@ -57,9 +58,27 @@ export default function RootLayout() {
 
   return (
     <AppProviders>
-      <Stack screenOptions={{ headerShown: false }} />
+      <RootNavigation />
       <StatusBar style="auto" />
       <ThemedToaster />
     </AppProviders>
   );
+}
+
+function RootNavigation() {
+  const { isAuthenticated } = useAuthStore();
+  const router = useRouter();
+  const segments = useSegments();
+
+  useEffect(() => {
+    const inAuthGroup = segments[0] === '(tabs)';
+
+    if (!isAuthenticated && inAuthGroup) {
+      router.replace('/');
+    } else if (isAuthenticated && !inAuthGroup) {
+      router.replace('/(tabs)');
+    }
+  }, [isAuthenticated, segments]);
+
+  return <Stack screenOptions={{ headerShown: false }} />;
 }
