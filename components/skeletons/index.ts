@@ -4,7 +4,6 @@ export * from './GoalDetailsSkeleton';
 export * from './GoalsSkeleton';
 export * from './LeaderboardSkeleton';
 export * from './NumbersSkeleton';
-export * from './ProjectDetailsSkeleton';
 export * from './ProjectListSkeleton';
 export * from './SessionRowSkeleton';
 export * from './UserProfileSkeleton';

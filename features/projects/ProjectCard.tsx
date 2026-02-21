@@ -6,13 +6,14 @@ import { commonStyles } from '@/theme';
 import { Feather } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import React from 'react';
-import { StyleSheet, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 
 interface ProjectCardProps {
   item: WakaTimeProject;
+  allTimeText?: string;
 }
 
-export const ProjectCard = ({ item }: ProjectCardProps) => {
+export const ProjectCard = ({ item, allTimeText }: ProjectCardProps) => {
   const { theme } = useTheme();
   const router = useRouter();
 
@@ -69,70 +70,65 @@ export const ProjectCard = ({ item }: ProjectCardProps) => {
   const projectColor = item.color || theme.colors.primary;
 
   return (
-    <TouchableOpacity
-      activeOpacity={0.7}
-      onPress={() => router.push(`/project/${item.urlencoded_name}`)}
-    >
-      <Card style={styles.projectCard}>
-        <View style={styles.projectHeader}>
-          <View
-            style={[
-              styles.iconContainer,
-              { backgroundColor: projectColor + '15' },
-            ]}
-          >
-            <Feather name="code" size={18} color={projectColor} />
-          </View>
+    <Card style={styles.projectCard}>
+      <View style={styles.projectHeader}>
+        <View
+          style={[
+            styles.iconContainer,
+            { backgroundColor: projectColor + '15' },
+          ]}
+        >
+          <Feather name="code" size={18} color={projectColor} />
+        </View>
 
-          <View style={styles.projectMainInfo}>
-            <View style={styles.nameRow}>
-              <Typography variant="body" weight="bold" numberOfLines={1}>
-                {item.name}
-              </Typography>
-              <View
-                style={[
-                  styles.colorIndicator,
-                  { backgroundColor: projectColor },
-                ]}
-              />
-            </View>
-
-            <Typography
-              variant="micro"
-              color={theme.colors.textSecondary}
-              style={styles.lastActiveText}
-            >
-              Last active: {item.human_readable_last_heartbeat_at || 'Never'}
+        <View style={styles.projectMainInfo}>
+          <View style={styles.nameRow}>
+            <Typography variant="body" weight="bold" numberOfLines={1}>
+              {item.name}
             </Typography>
-
-            {item.repository && (
-              <View style={styles.repoInfo}>
-                <Feather
-                  name="github"
-                  size={12}
-                  color={theme.colors.textSecondary}
-                />
-                <Typography
-                  variant="micro"
-                  color={theme.colors.textSecondary}
-                  style={styles.repoText}
-                  numberOfLines={1}
-                >
-                  {item.repository.html_url.split('/').pop()}
-                </Typography>
-              </View>
-            )}
-          </View>
-
-          <View style={styles.projectStats}>
-            <Feather
-              name="chevron-right"
-              size={18}
-              color={theme.colors.border}
+            <View
+              style={[styles.colorIndicator, { backgroundColor: projectColor }]}
             />
           </View>
+
+          <Typography
+            variant="micro"
+            color={theme.colors.textSecondary}
+            style={styles.lastActiveText}
+          >
+            Last active: {item.human_readable_last_heartbeat_at || 'Never'}
+          </Typography>
+
+          {item.repository && (
+            <View style={styles.repoInfo}>
+              <Feather
+                name="github"
+                size={12}
+                color={theme.colors.textSecondary}
+              />
+              <Typography
+                variant="micro"
+                color={theme.colors.textSecondary}
+                style={styles.repoText}
+                numberOfLines={1}
+              >
+                {item.repository.html_url.split('/').pop()}
+              </Typography>
+            </View>
+          )}
         </View>
-      </Card>
-    </TouchableOpacity>
+
+        {allTimeText && (
+          <View style={styles.projectStats}>
+            <Typography variant="micro" color={theme.colors.textSecondary}>
+              TOTAL
+            </Typography>
+            <Typography variant="body" weight="bold" color={projectColor}>
+              {allTimeText}
+            </Typography>
+          </View>
+        )}
+      </View>
+    </Card>
   );
 };

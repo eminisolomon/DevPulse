@@ -5,8 +5,6 @@ export * from './useGoalMutation';
 export * from './useGoals';
 export * from './useLeaderboard';
 export * from './useProjects';
-export * from './useProjectStats';
-export * from './useProjectSummaries';
 export * from './useShareScreenshot';
 export * from './useStats';
 export * from './useSummaries';

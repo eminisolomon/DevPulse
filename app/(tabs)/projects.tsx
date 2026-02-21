@@ -1,7 +1,7 @@
 import { BottomSheet, ListItem, ScreenHeader, Typography } from '@/components';
 import { ProjectListSkeleton } from '@/components/skeletons';
 import { ProjectCard } from '@/features';
-import { useDebounce, useProjects, useTheme } from '@/hooks';
+import { useDebounce, useProjects, useStats, useTheme } from '@/hooks';
 import { WakaTimeProject } from '@/interfaces';
 import { projectsStyles as styles } from '@/theme';
 import { toastSuccess } from '@/utilities';
@@ -69,8 +69,22 @@ export default function ProjectsScreen() {
     return result;
   }, [projectsData, debouncedSearchQuery, sortBy]);
 
+  const { data: allTimeStats } = useStats('all_time');
+
+  const projectAllTimeMap = React.useMemo(() => {
+    const map: Record<string, string> = {};
+    if (allTimeStats?.data?.projects) {
+      allTimeStats.data.projects.forEach((p: any) => {
+        map[p.name] = p.text;
+      });
+    }
+    return map;
+  }, [allTimeStats]);
+
   const renderProjectItem = ({ item }: { item: WakaTimeProject }) => {
-    return <ProjectCard item={item} />;
+    return (
+      <ProjectCard item={item} allTimeText={projectAllTimeMap[item.name]} />
+    );
   };
 
   const handlePresentSortSheet = React.useCallback(() => {
