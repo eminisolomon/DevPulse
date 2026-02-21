@@ -1,7 +1,6 @@
+import * as SecureStore from 'expo-secure-store';
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
-
-import * as SecureStore from 'expo-secure-store';
 
 interface AuthState {
   accessToken: string | null;

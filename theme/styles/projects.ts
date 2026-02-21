@@ -61,15 +61,27 @@ export const projectDetailStyles = StyleSheet.create({
   container: {
     ...commonStyles.flex1,
   },
-  center: {
-    ...commonStyles.center,
-  },
   scrollContent: {
     padding: spacing[4],
     paddingBottom: 40,
   },
   allTimeCard: {
-    marginBottom: spacing[5],
+    marginBottom: spacing[4],
+    padding: spacing[4],
+  },
+  heroContent: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: spacing[2],
+  },
+  heroBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    alignSelf: 'center',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 12,
+    marginTop: 4,
   },
   statsGrid: {
     ...commonStyles.row,
@@ -78,6 +90,7 @@ export const projectDetailStyles = StyleSheet.create({
   },
   statCard: {
     ...commonStyles.flex1,
+    padding: spacing[3],
   },
   section: {
     marginBottom: spacing[6],
@@ -87,20 +100,13 @@ export const projectDetailStyles = StyleSheet.create({
   },
   chartCard: {
     padding: spacing[4],
-    minHeight: 280,
-    ...commonStyles.center,
-  },
-  listCard: {
-    padding: spacing[2],
-  },
-  listItem: {
-    ...commonStyles.row,
-    justifyContent: 'space-between',
-    padding: spacing[3],
-    borderBottomWidth: 1,
   },
   noData: {
     textAlign: 'center',
     paddingVertical: spacing[10],
+  },
+  footerAction: {
+    marginTop: spacing[4],
+    marginBottom: spacing[10],
   },
 });

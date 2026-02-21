@@ -4,14 +4,31 @@ import { WakaTimeLanguage } from '@/interfaces';
 import { Canvas, Path, Skia } from '@shopify/react-native-skia';
 import React, { useMemo } from 'react';
 import { StyleSheet, View } from 'react-native';
-import { Typography } from './Typography';
+import { Button, Typography } from './';
+
+const SIZE = 240;
+const RADIUS = SIZE / 2 - 20;
 
 interface LanguageChartProps {
   data: WakaTimeLanguage[];
+  showLegend?: boolean;
+  footerLabel?: string;
+  onFooterPress?: () => void;
+  title?: string;
+  centerTitle?: string;
+  centerSubtitle?: string;
 }
 
-export default function LanguageChart({ data }: LanguageChartProps) {
-  const { theme } = useTheme();
+export default function LanguageChart({
+  data,
+  showLegend = false,
+  footerLabel,
+  onFooterPress,
+  title,
+  centerTitle,
+  centerSubtitle,
+}: LanguageChartProps) {
+  const { theme, isDark } = useTheme();
 
   const chartData = useMemo(() => {
     return data.slice(0, 5).map((lang) => ({
@@ -30,25 +47,24 @@ export default function LanguageChart({ data }: LanguageChartProps) {
     if (totalSeconds === 0) return [];
 
     let currentAngle = -Math.PI / 2;
-    const center = 80;
-    const radius = 70;
-    const innerRadius = 45;
-    const midRadius = (radius + innerRadius) / 2;
-    const strokeWidth = radius - innerRadius;
+    const center = SIZE / 2;
+    const strokeWidth = 20;
+    const gapAngle = 0.05;
 
     return chartData.map((d) => {
       const sweepAngle = (d.value / totalSeconds) * 2 * Math.PI;
+      const drawAngle = Math.max(0, sweepAngle - gapAngle);
       const path = Skia.Path.Make();
 
       path.addArc(
         {
-          x: center - midRadius,
-          y: center - midRadius,
-          width: midRadius * 2,
-          height: midRadius * 2,
+          x: center - RADIUS,
+          y: center - RADIUS,
+          width: RADIUS * 2,
+          height: RADIUS * 2,
         },
         (currentAngle * 180) / Math.PI,
-        (sweepAngle * 180) / Math.PI,
+        (drawAngle * 180) / Math.PI,
       );
 
       currentAngle += sweepAngle;
@@ -58,7 +74,7 @@ export default function LanguageChart({ data }: LanguageChartProps) {
 
   if (totalSeconds === 0) {
     return (
-      <View style={[styles.container, styles.center]}>
+      <View style={styles.container}>
         <Typography color={theme.colors.textSecondary}>
           No data available
         </Typography>
@@ -67,76 +83,146 @@ export default function LanguageChart({ data }: LanguageChartProps) {
   }
 
   return (
-    <View style={[styles.container, styles.center]}>
+    <View style={styles.container}>
+      {title && (
+        <Typography
+          variant="title"
+          weight="bold"
+          align="center"
+          style={styles.title}
+        >
+          {title}
+        </Typography>
+      )}
+
       <View style={styles.chartContainer}>
-        <Canvas style={styles.canvas}>
+        <Canvas style={{ width: SIZE, height: SIZE }}>
           {arcs.map((arc, index) => (
             <Path
               key={index}
               path={arc.path}
               color={arc.color}
               style="stroke"
-              strokeWidth={25}
+              strokeWidth={20}
+              strokeCap="round"
             />
           ))}
         </Canvas>
+        {(centerTitle || centerSubtitle) && (
+          <View style={styles.centerText}>
+            {centerTitle && (
+              <Typography variant="headline" weight="bold">
+                {centerTitle}
+              </Typography>
+            )}
+            {centerSubtitle && (
+              <Typography variant="micro" color={theme.colors.textSecondary}>
+                {centerSubtitle}
+              </Typography>
+            )}
+          </View>
+        )}
       </View>
 
-      <View style={styles.legendContainer}>
-        {chartData.map((d) => (
-          <View key={d.languageName} style={styles.legendItem}>
-            <View style={[styles.dot, { backgroundColor: d.color }]} />
-            <Typography
-              variant="micro"
-              color={theme.colors.textSecondary}
-              weight="medium"
-            >
-              {d.languageName}
-            </Typography>
-          </View>
-        ))}
-      </View>
+      {showLegend && (
+        <View
+          style={[
+            styles.languageList,
+            { backgroundColor: theme.colors.surfaceSubtle },
+          ]}
+        >
+          {data.map((l, index) => (
+            <View key={l.name} style={styles.languageRow}>
+              <View style={styles.languageInfo}>
+                <Typography
+                  variant="caption"
+                  weight="bold"
+                  color={theme.colors.primary}
+                  style={styles.percent}
+                >
+                  {Math.round(l.percent)}%
+                </Typography>
+                <View
+                  style={[
+                    styles.dot,
+                    { backgroundColor: getLanguageColor(l.name) },
+                  ]}
+                />
+                <Typography variant="body" weight="medium">
+                  {l.name}
+                </Typography>
+              </View>
+              <Typography variant="body" weight="bold">
+                {l.text.toLowerCase()}
+              </Typography>
+            </View>
+          ))}
+
+          {footerLabel && onFooterPress && (
+            <Button
+              label={footerLabel}
+              onPress={onFooterPress}
+              variant="soft"
+              fullWidth
+              style={{ marginTop: 8 }}
+              labelStyle={{
+                fontSize: 10,
+                letterSpacing: 0.5,
+                color: isDark ? theme.colors.text : theme.colors.textInverse,
+              }}
+              size="sm"
+            />
+          )}
+        </View>
+      )}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    paddingVertical: 16,
-  },
-  center: {
-    justifyContent: 'center',
     alignItems: 'center',
+    width: '100%',
+  },
+  title: {
+    marginBottom: 12,
   },
   chartContainer: {
-    width: 160,
-    height: 160,
+    width: SIZE,
+    height: SIZE,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 20,
+    position: 'relative',
+  },
+  centerText: {
+    position: 'absolute',
     justifyContent: 'center',
     alignItems: 'center',
   },
-  canvas: {
-    flex: 1,
+  languageList: {
     width: '100%',
-    height: '100%',
+    borderRadius: 12,
+    overflow: 'hidden',
+    padding: 16,
   },
-  legendContainer: {
+  languageRow: {
     flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'center',
-    marginTop: 24,
-    gap: 8,
-    paddingHorizontal: 16,
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 12,
   },
-  legendItem: {
+  languageInfo: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginRight: 8,
-    marginBottom: 4,
+    gap: 8,
+  },
+  percent: {
+    minWidth: 35,
   },
   dot: {
-    width: 10,
-    height: 10,
-    borderRadius: 5,
-    marginRight: 6,
+    width: 8,
+    height: 8,
+    borderRadius: 4,
   },
 });

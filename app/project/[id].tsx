@@ -11,9 +11,10 @@ import {
   useTheme,
 } from '@/hooks';
 import { projectDetailStyles as styles } from '@/theme';
-import { formatDisplayDuration } from '@/utilities';
+import { formatDisplayDuration, formatDuration } from '@/utilities';
+import { Ionicons } from '@expo/vector-icons';
 import { subDays } from 'date-fns';
-import { useLocalSearchParams } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useMemo } from 'react';
 import { RefreshControl, ScrollView, View } from 'react-native';
 
@@ -21,6 +22,7 @@ export default function ProjectDetailScreen() {
   const { id } = useLocalSearchParams();
   const { theme } = useTheme();
   const { shareCardRef, handleShare } = useShareScreenshot();
+  const router = useRouter();
 
   const projectId = id as string;
   const today = new Date();
@@ -60,8 +62,9 @@ export default function ProjectDetailScreen() {
     return totalSeconds7d / summariesData.data.length;
   }, [totalSeconds7d, summariesData]);
 
-  const formattedTotal7d = formatDisplayDuration(totalSeconds7d);
-  const formattedAverage7d = formatDisplayDuration(dailyAverage7d);
+  const formattedTotal7d = formatDuration(totalSeconds7d);
+  const formattedAverage7d = formatDuration(dailyAverage7d);
+  const heroFormattedTotal7d = formatDisplayDuration(totalSeconds7d);
 
   const getProjectSpecificData = (statsData: any, projectName: string) => {
     if (!statsData) return null;
@@ -82,7 +85,6 @@ export default function ProjectDetailScreen() {
     };
   };
 
-  const project7d = getProjectSpecificData(stats7d?.data, projectId);
   const projectAllTime = getProjectSpecificData(statsAllTime?.data, projectId);
 
   const displayedAllTimeSeconds = Math.max(
@@ -90,6 +92,70 @@ export default function ProjectDetailScreen() {
     totalSeconds7d,
   );
   const formattedAllTime = formatDisplayDuration(displayedAllTimeSeconds);
+
+  // Aggregated project-specific languages and editors from summaries
+  const aggregatedStats = useMemo(() => {
+    if (!summariesData?.data) return { languages: [], editors: [] };
+
+    const langMap = new Map<string, { name: string; total_seconds: number }>();
+    const editMap = new Map<string, { name: string; total_seconds: number }>();
+
+    summariesData.data.forEach((day) => {
+      day.languages?.forEach((lang) => {
+        const current = langMap.get(lang.name) || {
+          name: lang.name,
+          total_seconds: 0,
+        };
+        current.total_seconds += lang.total_seconds;
+        langMap.set(lang.name, current);
+      });
+
+      day.editors?.forEach((editor) => {
+        const current = editMap.get(editor.name) || {
+          name: editor.name,
+          total_seconds: 0,
+        };
+        current.total_seconds += editor.total_seconds;
+        editMap.set(editor.name, current);
+      });
+    });
+
+    const languages = Array.from(langMap.values())
+      .map((l) => {
+        const h = Math.floor(l.total_seconds / 3600);
+        const m = Math.floor((l.total_seconds % 3600) / 60);
+        return {
+          name: l.name,
+          total_seconds: l.total_seconds,
+          percent:
+            totalSeconds7d > 0 ? (l.total_seconds / totalSeconds7d) * 100 : 0,
+          text: formatDuration(l.total_seconds),
+          digital: `${h}:${m.toString().padStart(2, '0')}`,
+          hours: h,
+          minutes: m,
+        };
+      })
+      .sort((a, b) => b.total_seconds - a.total_seconds);
+
+    const editors = Array.from(editMap.values())
+      .map((e) => {
+        const h = Math.floor(e.total_seconds / 3600);
+        const m = Math.floor((e.total_seconds % 3600) / 60);
+        return {
+          name: e.name,
+          total_seconds: e.total_seconds,
+          percent:
+            totalSeconds7d > 0 ? (e.total_seconds / totalSeconds7d) * 100 : 0,
+          text: formatDuration(e.total_seconds),
+          digital: `${h}:${m.toString().padStart(2, '0')}`,
+          hours: h,
+          minutes: m,
+        };
+      })
+      .sort((a, b) => b.total_seconds - a.total_seconds);
+
+    return { languages, editors };
+  }, [summariesData, totalSeconds7d]);
 
   if (isLoading) {
     return (
@@ -103,13 +169,11 @@ export default function ProjectDetailScreen() {
   }
 
   const shareLanguages = useMemo(() => {
-    return (
-      project7d?.languages?.slice(0, 5).map((l: any) => ({
-        name: l.name,
-        percent: l.percent,
-      })) || []
-    );
-  }, [project7d]);
+    return aggregatedStats.languages.slice(0, 5).map((l) => ({
+      name: l.name,
+      percent: l.percent,
+    }));
+  }, [aggregatedStats.languages]);
 
   return (
     <View
@@ -144,48 +208,69 @@ export default function ProjectDetailScreen() {
         }
       >
         <Card style={styles.allTimeCard}>
-          <Typography variant="micro" color={theme.colors.textSecondary}>
-            ALL TIME TOTAL
-          </Typography>
-          <Typography
-            variant="headline"
-            weight="bold"
-            color={theme.colors.primary}
-          >
-            {formattedAllTime}
-          </Typography>
-        </Card>
-
-        <View style={styles.statsGrid}>
-          <Card style={styles.statCard}>
-            <Typography variant="micro" color={theme.colors.textSecondary}>
-              TOTAL (7D)
+          <View style={styles.heroContent}>
+            <Typography
+              variant="micro"
+              weight="bold"
+              align="center"
+              style={[
+                {
+                  color: theme.colors.primary,
+                  textTransform: 'uppercase',
+                  letterSpacing: 0.5,
+                  marginBottom: 2,
+                },
+              ]}
+            >
+              PROJECT TOTAL TIME
             </Typography>
             <Typography
-              variant="title"
+              variant="display"
               weight="bold"
-              color={theme.colors.primary}
+              align="center"
+              style={{ fontSize: 32, lineHeight: 40, marginVertical: 4 }}
             >
-              {formattedTotal7d}
+              {formattedAllTime}
             </Typography>
-          </Card>
-          <Card style={styles.statCard}>
-            <Typography variant="micro" color={theme.colors.textSecondary}>
-              DAILY AVG
-            </Typography>
-            <Typography variant="title" weight="bold">
-              {formattedAverage7d}
-            </Typography>
-          </Card>
-        </View>
+
+            <View
+              style={[
+                styles.heroBadge,
+                {
+                  backgroundColor: theme.colors.successContainer,
+                },
+              ]}
+            >
+              <Ionicons
+                name="trending-up"
+                size={12}
+                color={theme.colors.success}
+                style={{ marginRight: 4 }}
+              />
+              <Typography
+                variant="caption"
+                weight="bold"
+                align="center"
+                style={{ color: theme.colors.success }}
+              >
+                7-DAY TOTAL: {heroFormattedTotal7d}
+              </Typography>
+            </View>
+          </View>
+        </Card>
 
         <View style={styles.section}>
-          <Typography variant="title" weight="bold" style={styles.sectionTitle}>
-            Languages
-          </Typography>
           <Card style={styles.chartCard}>
-            {project7d?.languages && project7d.languages.length > 0 ? (
-              <LanguageChart data={project7d.languages} />
+            {aggregatedStats.languages.length > 0 ? (
+              <LanguageChart
+                data={aggregatedStats.languages}
+                showLegend={true}
+                footerLabel="VIEW ALL TIME STATS"
+                onFooterPress={() => router.push('/stats/numbers')}
+                title="Languages"
+                centerTitle={formattedAverage7d}
+                centerSubtitle="WEEKLY AVG"
+              />
             ) : (
               <Typography
                 color={theme.colors.textSecondary}
@@ -197,10 +282,10 @@ export default function ProjectDetailScreen() {
           </Card>
         </View>
 
-        {project7d?.editors && project7d.editors.length > 0 && (
+        {aggregatedStats.editors.length > 0 && (
           <SegmentedStatsCard
             title="Editors"
-            segments={project7d.editors.slice(0, 5).map((e: any) => ({
+            segments={aggregatedStats.editors.slice(0, 5).map((e: any) => ({
               label: e.name,
               percent: e.percent,
               color: getEditorColor(e.name),
