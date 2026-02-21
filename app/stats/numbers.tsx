@@ -7,14 +7,9 @@ import {
   TimeRangeSelector,
   Typography,
 } from '@/components';
-import {
-  getCategoryColor,
-  getEditorColor,
-  getLanguageColor,
-  getOSColor,
-} from '@/constants';
+import { getCategoryColor, getOSColor } from '@/constants';
 import { BestDayCard } from '@/features';
-import { useDurations, useStats, useTheme } from '@/hooks';
+import { useDurations, useMetadata, useStats, useTheme } from '@/hooks';
 import { Ionicons } from '@expo/vector-icons';
 import { subDays } from 'date-fns';
 import { useLocalSearchParams } from 'expo-router';
@@ -50,6 +45,7 @@ const getDates = (r: TimeRange) => {
 
 export default function NumbersScreen() {
   const { theme } = useTheme();
+  const { getLanguageColor, getEditorColor } = useMetadata();
   const params = useLocalSearchParams<{ range?: string }>();
   const [range, setRange] = useState<TimeRange>('last_7_days');
   useMemo(() => getDates(range), [range]);

@@ -1,6 +1,7 @@
 export * from './duration';
 export * from './goal';
 export * from './leaderboard';
+export * from './metadata';
 export * from './organization';
 export * from './project';
 export * from './stats';

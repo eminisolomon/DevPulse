@@ -1,5 +1,4 @@
-import { getLanguageColor } from '@/constants';
-import { useTheme } from '@/hooks';
+import { useMetadata, useTheme } from '@/hooks';
 import { WakaTimeLanguage } from '@/interfaces';
 import { Canvas, Path, Skia } from '@shopify/react-native-skia';
 import React, { useMemo } from 'react';
@@ -29,6 +28,7 @@ export default function LanguageChart({
   centerSubtitle,
 }: LanguageChartProps) {
   const { theme, isDark } = useTheme();
+  const { getLanguageColor } = useMetadata();
 
   const chartData = useMemo(() => {
     return data.slice(0, 5).map((lang) => ({
@@ -36,7 +36,7 @@ export default function LanguageChart({
       value: lang.total_seconds,
       color: getLanguageColor(lang.name),
     }));
-  }, [data]);
+  }, [data, getLanguageColor]);
 
   const totalSeconds = useMemo(
     () => chartData.reduce((acc, curr) => acc + curr.value, 0),

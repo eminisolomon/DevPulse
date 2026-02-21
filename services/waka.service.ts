@@ -5,6 +5,7 @@ import {
   WakaTimeGoal,
   WakaTimeGoalsResponse,
   WakaTimeLeaderboard,
+  WakaTimeMetadataResponse,
   WakaTimeOrganizationsResponse,
   WakaTimeProjectsResponse,
   WakaTimeStats,
@@ -93,8 +94,11 @@ export const wakaService = {
       `/users/current/durations?date=${date}`,
     ),
 
-  getProgramLanguages: (): Promise<any> =>
-    fetchWithAuth<any>('/program_languages'),
+  getProgramLanguages: (): Promise<WakaTimeMetadataResponse> =>
+    fetchWithAuth<WakaTimeMetadataResponse>('/program_languages'),
+
+  getEditors: (): Promise<WakaTimeMetadataResponse> =>
+    fetchWithAuth<WakaTimeMetadataResponse>('/editors'),
 
   getAllTimeSinceToday: (): Promise<WakaTimeAllTime> =>
     fetchWithAuth<WakaTimeAllTime>('/users/current/all_time_since_today'),

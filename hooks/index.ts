@@ -4,6 +4,7 @@ export * from './useDurations';
 export * from './useGoalMutation';
 export * from './useGoals';
 export * from './useLeaderboard';
+export * from './useMetadata';
 export * from './useProjects';
 export * from './useShareScreenshot';
 export * from './useStats';

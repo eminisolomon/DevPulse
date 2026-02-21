@@ -1,11 +1,6 @@
 import { SegmentedStatsCard } from '@/components';
-import {
-  getCategoryColor,
-  getEditorColor,
-  getLanguageColor,
-  getOSColor,
-  getWorkstationColor,
-} from '@/constants';
+import { getCategoryColor, getOSColor, getWorkstationColor } from '@/constants';
+import { useMetadata } from '@/hooks';
 import { WakaTimeSummary } from '@/interfaces';
 import React from 'react';
 
@@ -16,6 +11,7 @@ interface DailyDistributionStatsProps {
 export const DailyDistributionStats = ({
   data,
 }: DailyDistributionStatsProps) => {
+  const { getLanguageColor, getEditorColor } = useMetadata();
   if (!data) return null;
 
   return (
