@@ -1,3 +1,5 @@
+import { generateDeterministicColor } from '@/utilities/colors';
+
 /**
  * Mappings for Operating System colors.
  */
@@ -11,13 +13,11 @@ export const OS_COLORS: Record<string, string> = {
   Other: '#64748B',
 };
 
-const DEFAULT_OS_COLOR = '#64748B';
-
 export const getOSColor = (osName: string): string => {
-  if (!osName) return DEFAULT_OS_COLOR;
+  if (!osName) return '#64748B';
 
   if (osName.includes('Mac')) return OS_COLORS.Mac;
   if (osName.includes('Windows')) return OS_COLORS.Windows;
 
-  return OS_COLORS[osName] || DEFAULT_OS_COLOR;
+  return OS_COLORS[osName] || generateDeterministicColor(osName);
 };

@@ -1,7 +1,8 @@
 import { Button, Card, Skeleton, Typography } from '@/components';
 import { WEEK_DAYS } from '@/constants';
 import { useTheme } from '@/hooks';
-import { DATE_FORMATS, formatDate, hexToRgba } from '@/utilities';
+import { DATE_FORMATS, formatDate } from '@/utilities';
+import { hexToRgba } from '@/utilities/colors';
 import { Ionicons } from '@expo/vector-icons';
 import {
   eachDayOfInterval,

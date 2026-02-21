@@ -1,3 +1,4 @@
+import { generateDeterministicColor } from '@/utilities/colors';
 import { ALPHABET_COLORS } from './alphabet';
 
 /**
@@ -12,5 +13,5 @@ export const getWorkstationColor = (machineName: string): string => {
     return ALPHABET_COLORS[firstChar];
   }
 
-  return '#64748B';
+  return generateDeterministicColor(machineName);
 };

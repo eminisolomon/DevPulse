@@ -1,3 +1,5 @@
+import { generateDeterministicColor } from '@/utilities/colors';
+
 /**
  * Mappings for WakaTime Category colors.
  */
@@ -17,9 +19,7 @@ export const CATEGORY_COLORS: Record<string, string> = {
   Other: '#64748B',
 };
 
-const DEFAULT_CATEGORY_COLOR = '#64748B';
-
 export const getCategoryColor = (category: string): string => {
-  if (!category) return DEFAULT_CATEGORY_COLOR;
-  return CATEGORY_COLORS[category] || DEFAULT_CATEGORY_COLOR;
+  if (!category) return '#64748B';
+  return CATEGORY_COLORS[category] || generateDeterministicColor(category);
 };

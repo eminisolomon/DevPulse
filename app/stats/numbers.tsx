@@ -1,5 +1,4 @@
 import {
-  ActivityRhythm,
   Card,
   NumbersSkeleton,
   SegmentedStatsCard,
@@ -10,7 +9,8 @@ import {
 import { getCategoryColor, getOSColor } from '@/constants';
 import { BestDayCard } from '@/features';
 import { AIProductivityCard } from '@/features/stats';
-import { useDurations, useMetadata, useStats, useTheme } from '@/hooks';
+import { useMetadata, useStats, useTheme } from '@/hooks';
+import { generateDeterministicColor } from '@/utilities/colors';
 import { Ionicons } from '@expo/vector-icons';
 import { subDays } from 'date-fns';
 import { useLocalSearchParams } from 'expo-router';
@@ -46,8 +46,7 @@ const getDates = (r: TimeRange) => {
 
 export default function NumbersScreen() {
   const { theme } = useTheme();
-  const { getLanguageColor, getEditorColor, getWorkstationColor } =
-    useMetadata();
+  const { getLanguageColor, getEditorColor, getMachineColor } = useMetadata();
   const params = useLocalSearchParams<{ range?: string }>();
   const [range, setRange] = useState<TimeRange>('last_7_days');
   useMemo(() => getDates(range), [range]);
@@ -67,16 +66,10 @@ export default function NumbersScreen() {
 
   const {
     data: stats,
-    isLoading: statsLoading,
+    isLoading,
     refetch: refetchStats,
-    isRefetching: isStatsRefetching,
+    isRefetching,
   } = useStats(rangeApiMap[range]);
-
-  const { data: durationSessions, isLoading: durationsLoading } =
-    useDurations();
-
-  const isLoading = statsLoading || durationsLoading;
-  const isRefetching = isStatsRefetching;
 
   const handleRefresh = () => {
     refetchStats();
@@ -253,16 +246,11 @@ export default function NumbersScreen() {
             segments={stats.data.machines.slice(0, 5).map((m) => ({
               label: m.name,
               percent: m.percent,
-              color: getWorkstationColor(m.machine_name_id),
+              color: getMachineColor(m.machine_name_id),
               valueText: m.text,
             }))}
           />
         )}
-
-        <ActivityRhythm
-          sessions={durationSessions}
-          isLoading={durationsLoading}
-        />
 
         {stats?.data?.ai_additions !== undefined && (
           <AIProductivityCard
@@ -279,7 +267,7 @@ export default function NumbersScreen() {
             segments={stats.data.dependencies.slice(0, 8).map((d) => ({
               label: d.name,
               percent: d.percent,
-              color: theme.colors.primary, // Dependencies don't have colors, using primary
+              color: generateDeterministicColor(d.name),
               valueText: d.text,
             }))}
           />

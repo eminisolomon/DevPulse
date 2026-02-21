@@ -1,4 +1,5 @@
 import { wakaService } from '@/services/waka.service';
+import { generateDeterministicColor } from '@/utilities/colors';
 import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 
@@ -42,26 +43,26 @@ export function useMetadata() {
   }, [editorsQuery.data]);
 
   const getLanguageColor = (name: string) => {
-    return languageColors[name] || '#6e7681';
+    return languageColors[name] || generateDeterministicColor(name);
   };
 
   const getEditorColor = (name: string) => {
     if (!name) return '#64748B';
 
-    // Check for VS Code variants
+    const lowerName = name.toLowerCase();
     if (
-      name.toLowerCase().includes('visual studio code') ||
-      name.toLowerCase().includes('vscode')
+      lowerName.includes('visual studio code') ||
+      lowerName.includes('vscode')
     ) {
       return editorColors['VS Code'] || '#007ACC';
     }
 
-    return editorColors[name] || '#64748B';
+    return editorColors[name] || generateDeterministicColor(name);
   };
 
-  const getWorkstationColor = (machine_name_id?: string) => {
-    // We don't have explicit machine colors from API, but we can generate or use a default
-    return '#94A3B8';
+  const getMachineColor = (machine_name_id?: string) => {
+    if (!machine_name_id) return '#64748B';
+    return generateDeterministicColor(machine_name_id);
   };
 
   const getWorkstationMetadata = (machine_name_id: string) => {
@@ -73,7 +74,7 @@ export function useMetadata() {
     editorColors,
     getLanguageColor,
     getEditorColor,
-    getWorkstationColor,
+    getMachineColor,
     getWorkstationMetadata,
     isLoading:
       languagesQuery.isLoading ||
