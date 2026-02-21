@@ -106,7 +106,12 @@ export const BestDayCard = ({
             </View>
 
             <View style={styles.statsRow}>
-              <Typography variant="title" weight="bold">
+              <Typography
+                variant="title"
+                weight="bold"
+                numberOfLines={1}
+                adjustsFontSizeToFit
+              >
                 {totalTime}
               </Typography>
               {percentAboveAverage > 0 && (

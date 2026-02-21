@@ -132,7 +132,12 @@ export const ActivityRhythm = ({
       ]}
     >
       <View style={styles.header}>
-        <Typography variant="title" weight="bold">
+        <Typography
+          variant="title"
+          weight="bold"
+          numberOfLines={1}
+          adjustsFontSizeToFit
+        >
           {title}
         </Typography>
       </View>
@@ -203,7 +208,12 @@ export const ActivityRhythm = ({
             { justifyContent: 'center', alignItems: 'center' },
           ]}
         >
-          <Typography variant="headline" weight="bold">
+          <Typography
+            variant="headline"
+            weight="bold"
+            numberOfLines={1}
+            adjustsFontSizeToFit
+          >
             {formattedTotal}
           </Typography>
           <Typography variant="micro" color={theme.colors.textSecondary}>

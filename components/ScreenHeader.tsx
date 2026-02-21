@@ -44,6 +44,8 @@ export const ScreenHeader = ({
                 weight="semibold"
                 color={theme.colors.textSecondary}
                 style={styles.greeting}
+                numberOfLines={1}
+                adjustsFontSizeToFit
               >
                 {subtitle}
               </Typography>
@@ -52,6 +54,8 @@ export const ScreenHeader = ({
               variant="headline"
               weight="bold"
               color={theme.colors.text}
+              numberOfLines={1}
+              adjustsFontSizeToFit
             >
               {title}
             </Typography>

@@ -23,7 +23,12 @@ export const AIProductivityCard = ({
 
   return (
     <Card style={styles.container}>
-      <Typography variant="title" style={styles.title}>
+      <Typography
+        variant="title"
+        style={styles.title}
+        numberOfLines={1}
+        adjustsFontSizeToFit
+      >
         AI PRODUCTIVITY INDEX
       </Typography>
 
@@ -32,7 +37,13 @@ export const AIProductivityCard = ({
           <Typography variant="caption" color="gray">
             AI CHANGES
           </Typography>
-          <Typography variant="headline" weight="bold" color="#4ADE80">
+          <Typography
+            variant="headline"
+            weight="bold"
+            color="#4ADE80"
+            numberOfLines={1}
+            adjustsFontSizeToFit
+          >
             {aiAdditions + aiDeletions}
           </Typography>
           <Typography variant="caption">
@@ -46,7 +57,13 @@ export const AIProductivityCard = ({
           <Typography variant="caption" color="gray">
             HUMAN CHANGES
           </Typography>
-          <Typography variant="headline" weight="bold" color="#6366F1">
+          <Typography
+            variant="headline"
+            weight="bold"
+            color="#6366F1"
+            numberOfLines={1}
+            adjustsFontSizeToFit
+          >
             {humanAdditions + humanDeletions}
           </Typography>
           <Typography variant="caption">

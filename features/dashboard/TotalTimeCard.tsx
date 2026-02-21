@@ -74,7 +74,13 @@ export const TotalTimeCard = ({
       ]}
     >
       <View style={styles.header}>
-        <Typography variant="title" weight="bold" align="center">
+        <Typography
+          variant="title"
+          weight="bold"
+          align="center"
+          numberOfLines={1}
+          adjustsFontSizeToFit
+        >
           {totalTime}
         </Typography>
         <Typography

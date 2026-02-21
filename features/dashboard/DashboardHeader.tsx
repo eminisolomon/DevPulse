@@ -14,7 +14,13 @@ export const DashboardHeader = () => {
     <View style={styles.header}>
       <View style={styles.headerTop}>
         <View style={styles.greetingContainer}>
-          <Typography variant="headline" weight="bold" style={styles.greeting}>
+          <Typography
+            variant="headline"
+            weight="bold"
+            style={styles.greeting}
+            numberOfLines={1}
+            adjustsFontSizeToFit
+          >
             Dashboard
           </Typography>
         </View>

@@ -130,7 +130,13 @@ export const DailyProgressCard = ({
       ]}
     >
       <View style={styles.header}>
-        <Typography variant="title" weight="bold" align="center">
+        <Typography
+          variant="title"
+          weight="bold"
+          align="center"
+          numberOfLines={1}
+          adjustsFontSizeToFit
+        >
           {totalTime}
         </Typography>
         <Typography
@@ -175,7 +181,12 @@ export const DailyProgressCard = ({
           )}
         </Canvas>
         <View style={styles.centerText}>
-          <Typography variant="headline" weight="bold">
+          <Typography
+            variant="headline"
+            weight="bold"
+            numberOfLines={1}
+            adjustsFontSizeToFit
+          >
             {avgDiff || `${percent}%`}
           </Typography>
           <Typography variant="micro" color={theme.colors.textSecondary}>

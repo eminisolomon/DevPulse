@@ -29,7 +29,12 @@ export const SegmentedStatsCard = ({
   return (
     <Card style={styles.container}>
       <View style={styles.header}>
-        <Typography variant="title" style={styles.title}>
+        <Typography
+          variant="title"
+          style={styles.title}
+          numberOfLines={1}
+          adjustsFontSizeToFit
+        >
           {title}
         </Typography>
         {subtitle && (

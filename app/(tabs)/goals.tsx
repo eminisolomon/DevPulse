@@ -38,7 +38,12 @@ export default function GoalsScreen() {
         <Card style={styles.goalCard}>
           <View style={styles.goalHeader}>
             <View style={styles.titleContainer}>
-              <Typography variant="title" weight="bold">
+              <Typography
+                variant="title"
+                weight="bold"
+                numberOfLines={1}
+                adjustsFontSizeToFit
+              >
                 {item.title}
               </Typography>
               <Typography variant="micro" color={theme.colors.textSecondary}>

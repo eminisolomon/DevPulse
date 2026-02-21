@@ -172,7 +172,13 @@ export const MonthlyCalendarCard = ({
             <Ionicons name="chevron-back" size={24} color={theme.colors.text} />
           </TouchableOpacity>
           <View style={styles.monthInfo}>
-            <Typography variant="title" weight="bold" align="center">
+            <Typography
+              variant="title"
+              weight="bold"
+              align="center"
+              numberOfLines={1}
+              adjustsFontSizeToFit
+            >
               {totalTime}
             </Typography>
             <Typography

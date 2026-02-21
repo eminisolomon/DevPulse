@@ -189,7 +189,12 @@ export default function NumbersScreen() {
                 >
                   {item.label}
                 </Typography>
-                <Typography variant="title" weight="bold">
+                <Typography
+                  variant="title"
+                  weight="bold"
+                  numberOfLines={1}
+                  adjustsFontSizeToFit
+                >
                   {item.value}
                 </Typography>
               </View>

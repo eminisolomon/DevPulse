@@ -23,7 +23,12 @@ export default function ProfileStats({ runningTotal }: ProfileStatsProps) {
         >
           WEEKLY TOTAL
         </Typography>
-        <Typography variant="title" weight="bold">
+        <Typography
+          variant="title"
+          weight="bold"
+          numberOfLines={1}
+          adjustsFontSizeToFit
+        >
           {runningTotal.human_readable_total}
         </Typography>
       </Card>
@@ -35,7 +40,12 @@ export default function ProfileStats({ runningTotal }: ProfileStatsProps) {
         >
           DAILY AVG
         </Typography>
-        <Typography variant="title" weight="bold">
+        <Typography
+          variant="title"
+          weight="bold"
+          numberOfLines={1}
+          adjustsFontSizeToFit
+        >
           {runningTotal.human_readable_daily_average}
         </Typography>
       </Card>

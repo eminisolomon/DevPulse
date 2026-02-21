@@ -111,7 +111,12 @@ export default function LanguageChart({
         {(centerTitle || centerSubtitle) && (
           <View style={styles.centerText}>
             {centerTitle && (
-              <Typography variant="headline" weight="bold">
+              <Typography
+                variant="headline"
+                weight="bold"
+                numberOfLines={1}
+                adjustsFontSizeToFit
+              >
                 {centerTitle}
               </Typography>
             )}
