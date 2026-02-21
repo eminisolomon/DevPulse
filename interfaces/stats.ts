@@ -8,6 +8,9 @@ export interface WakaTimeLanguage {
   minutes: number;
   color?: string;
 }
+export interface WakaTimeMachine extends WakaTimeLanguage {
+  machine_name_id: string;
+}
 
 export interface WakaTimeStats {
   data: {
@@ -15,7 +18,7 @@ export interface WakaTimeStats {
     editors: WakaTimeLanguage[];
     operating_systems: WakaTimeLanguage[];
     categories: WakaTimeLanguage[];
-    machines: WakaTimeLanguage[];
+    machines: WakaTimeMachine[];
     projects: WakaTimeLanguage[];
     best_day?: {
       date: string;
@@ -27,6 +30,17 @@ export interface WakaTimeStats {
     human_readable_daily_average: string;
     total_seconds: number;
     human_readable_total: string;
+    ai_additions?: number;
+    ai_deletions?: number;
+    human_additions?: number;
+    human_deletions?: number;
+    dependencies?: {
+      name: string;
+      total_seconds: number;
+      percent: number;
+      digital: string;
+      text: string;
+    }[];
     is_up_to_date: boolean;
     start: string;
     end: string;

@@ -9,6 +9,7 @@ import {
 } from '@/components';
 import { getCategoryColor, getOSColor } from '@/constants';
 import { BestDayCard } from '@/features';
+import { AIProductivityCard } from '@/features/stats';
 import { useDurations, useMetadata, useStats, useTheme } from '@/hooks';
 import { Ionicons } from '@expo/vector-icons';
 import { subDays } from 'date-fns';
@@ -45,7 +46,8 @@ const getDates = (r: TimeRange) => {
 
 export default function NumbersScreen() {
   const { theme } = useTheme();
-  const { getLanguageColor, getEditorColor } = useMetadata();
+  const { getLanguageColor, getEditorColor, getWorkstationColor } =
+    useMetadata();
   const params = useLocalSearchParams<{ range?: string }>();
   const [range, setRange] = useState<TimeRange>('last_7_days');
   useMemo(() => getDates(range), [range]);
@@ -245,10 +247,43 @@ export default function NumbersScreen() {
           />
         )}
 
+        {stats?.data?.machines && stats.data.machines.length > 0 && (
+          <SegmentedStatsCard
+            title="Workstations"
+            segments={stats.data.machines.slice(0, 5).map((m) => ({
+              label: m.name,
+              percent: m.percent,
+              color: getWorkstationColor(m.machine_name_id),
+              valueText: m.text,
+            }))}
+          />
+        )}
+
         <ActivityRhythm
           sessions={durationSessions}
           isLoading={durationsLoading}
         />
+
+        {stats?.data?.ai_additions !== undefined && (
+          <AIProductivityCard
+            aiAdditions={stats.data.ai_additions || 0}
+            aiDeletions={stats.data.ai_deletions || 0}
+            humanAdditions={stats.data.human_additions || 0}
+            humanDeletions={stats.data.human_deletions || 0}
+          />
+        )}
+
+        {stats?.data?.dependencies && stats.data.dependencies.length > 0 && (
+          <SegmentedStatsCard
+            title="Top Dependencies"
+            segments={stats.data.dependencies.slice(0, 8).map((d) => ({
+              label: d.name,
+              percent: d.percent,
+              color: theme.colors.primary, // Dependencies don't have colors, using primary
+              valueText: d.text,
+            }))}
+          />
+        )}
       </ScrollView>
     </SafeAreaView>
   );

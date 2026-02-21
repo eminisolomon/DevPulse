@@ -59,11 +59,22 @@ export function useMetadata() {
     return editorColors[name] || '#64748B';
   };
 
+  const getWorkstationColor = (machine_name_id?: string) => {
+    // We don't have explicit machine colors from API, but we can generate or use a default
+    return '#94A3B8';
+  };
+
+  const getWorkstationMetadata = (machine_name_id: string) => {
+    return machinesQuery.data?.data.find((m) => m.id === machine_name_id);
+  };
+
   return {
     languageColors,
     editorColors,
     getLanguageColor,
     getEditorColor,
+    getWorkstationColor,
+    getWorkstationMetadata,
     isLoading:
       languagesQuery.isLoading ||
       editorsQuery.isLoading ||
