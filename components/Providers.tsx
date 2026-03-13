@@ -1,5 +1,4 @@
 import { LeaderboardProvider } from '@/contexts/LeaderboardContext';
-import { DatabaseProvider } from '@/db/DatabaseProvider';
 import { ThemeProvider } from '@/theme';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -33,11 +32,9 @@ export function AppProviders({ children }: AppProvidersProps) {
         <KeyboardProvider>
           <QueryClientProvider client={queryClient}>
             <ThemeProvider>
-              <DatabaseProvider>
-                <BottomSheetModalProvider>
-                  <LeaderboardProvider>{children}</LeaderboardProvider>
-                </BottomSheetModalProvider>
-              </DatabaseProvider>
+              <BottomSheetModalProvider>
+                <LeaderboardProvider>{children}</LeaderboardProvider>
+              </BottomSheetModalProvider>
             </ThemeProvider>
           </QueryClientProvider>
         </KeyboardProvider>

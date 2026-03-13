@@ -1,6 +1,4 @@
-import { db } from '@/db';
-import { settings } from '@/db/schema';
-import { eq } from 'drizzle-orm';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export interface AppSettings {
   themeMode: 'light' | 'dark' | 'system';
@@ -10,64 +8,35 @@ export interface AppSettings {
   collectAnalytics: boolean;
 }
 
+const SETTINGS_STORAGE_KEY = '@app_settings';
+
+const DEFAULT_SETTINGS: AppSettings = {
+  themeMode: 'system',
+  accentColor: '#3B82F6',
+  collectCrashes: true,
+  collectPerformance: true,
+  collectAnalytics: true,
+};
+
 export const settingsService = {
   getSettings: async (): Promise<AppSettings> => {
     try {
-      const result = await db.query.settings.findFirst({
-        where: eq(settings.id, 1),
-      });
-
-      if (!result) {
-        const [newSettings] = await db
-          .insert(settings)
-          .values({
-            id: 1,
-            themeMode: 'system',
-            accentColor: '#3B82F6',
-            collectCrashes: true,
-            collectPerformance: true,
-            collectAnalytics: true,
-            lastUpdatedAt: new Date(),
-          })
-          .returning();
-
-        return {
-          themeMode: newSettings.themeMode as 'light' | 'dark' | 'system',
-          accentColor: newSettings.accentColor,
-          collectCrashes: !!newSettings.collectCrashes,
-          collectPerformance: !!newSettings.collectPerformance,
-          collectAnalytics: !!newSettings.collectAnalytics,
-        };
+      const jsonValue = await AsyncStorage.getItem(SETTINGS_STORAGE_KEY);
+      if (jsonValue != null) {
+        return { ...DEFAULT_SETTINGS, ...JSON.parse(jsonValue) };
       }
-
-      return {
-        themeMode: result.themeMode as 'light' | 'dark' | 'system',
-        accentColor: result.accentColor,
-        collectCrashes: !!result.collectCrashes,
-        collectPerformance: !!result.collectPerformance,
-        collectAnalytics: !!result.collectAnalytics,
-      };
+      return DEFAULT_SETTINGS;
     } catch (error) {
       console.error('Failed to fetch settings:', error);
-      return {
-        themeMode: 'system',
-        accentColor: '#3B82F6',
-        collectCrashes: true,
-        collectPerformance: true,
-        collectAnalytics: true,
-      };
+      return DEFAULT_SETTINGS;
     }
   },
 
   updateSettings: async (update: Partial<AppSettings>) => {
     try {
-      await db
-        .update(settings)
-        .set({
-          ...update,
-          lastUpdatedAt: new Date(),
-        })
-        .where(eq(settings.id, 1));
+      const currentSettings = await settingsService.getSettings();
+      const newSettings = { ...currentSettings, ...update };
+      await AsyncStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify(newSettings));
     } catch (error) {
       console.error('Failed to update settings:', error);
     }

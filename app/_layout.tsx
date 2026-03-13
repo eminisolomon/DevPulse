@@ -1,6 +1,4 @@
 import { AppProviders, ThemedToaster } from '@/components';
-import { db } from '@/db';
-import migrations from '@/drizzle/migrations';
 import {
   requestNotificationPermissions,
   scheduleSmartDailyReminders,
@@ -11,7 +9,6 @@ import {
   Outfit_600SemiBold,
   Outfit_700Bold,
 } from '@expo-google-fonts/outfit';
-import { useMigrations } from 'drizzle-orm/expo-sqlite/migrator';
 import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
@@ -35,11 +32,6 @@ SplashScreen.preventAutoHideAsync();
 WebBrowser.maybeCompleteAuthSession();
 
 export default function RootLayout() {
-  const { success: migrationsLoaded, error: migrationError } = useMigrations(
-    db,
-    migrations,
-  );
-
   const [fontsLoaded] = useFonts({
     Outfit_400Regular,
     Outfit_600SemiBold,
@@ -47,11 +39,7 @@ export default function RootLayout() {
   });
 
   useEffect(() => {
-    if (migrationError) {
-      console.error('Migration error:', migrationError);
-    }
-
-    if (fontsLoaded && migrationsLoaded) {
+    if (fontsLoaded) {
       SplashScreen.hideAsync();
 
       setupNotificationHandler();
@@ -61,7 +49,7 @@ export default function RootLayout() {
         }
       });
     }
-  }, [fontsLoaded, migrationsLoaded, migrationError]);
+  }, [fontsLoaded]);
 
   if (!fontsLoaded) {
     return null;

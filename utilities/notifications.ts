@@ -21,7 +21,7 @@ export async function setupAndroidNotificationChannel(): Promise<void> {
       importance: Notifications.AndroidImportance.MAX,
       vibrationPattern: [0, 250, 250, 250],
       lightColor: '#366bd6',
-      sound: 'default',
+      sound: 'notification.wav',
     });
   }
 }

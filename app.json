@@ -47,10 +47,12 @@
         {
           "icon": "./assets/images/icon.png",
           "color": "#ffffff",
+          "sounds": [
+            "./assets/sounds/notification.wav"
+          ],
           "defaultChannel": "default"
         }
       ],
-      "expo-sqlite",
       "expo-font",
       "expo-image",
       "expo-sharing",
