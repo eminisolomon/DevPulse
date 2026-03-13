@@ -3,8 +3,8 @@ import { Stack } from 'expo-router';
 
 export default function UserLayout() {
   return (
-    <DefaultStackLayout>
-      <Stack.Screen name="[id]" options={{ title: '' }} />
+    <DefaultStackLayout screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="[id]" />
     </DefaultStackLayout>
   );
 }

@@ -11,7 +11,7 @@ import { useAuthRequest } from 'expo-auth-session';
 import { Image } from 'expo-image';
 import { useRouter } from 'expo-router';
 import * as WebBrowser from 'expo-web-browser';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, Pressable, StyleSheet, View } from 'react-native';
 
 export function LoginForm() {
@@ -45,7 +45,7 @@ export function LoginForm() {
     WebBrowser.openBrowserAsync(url);
   };
 
-  const [request, , promptAsync] = useAuthRequest(
+  const [request, response, promptAsync] = useAuthRequest(
     {
       clientId: AuthConfig.clientId,
       scopes: AuthConfig.scopes,
@@ -53,6 +53,22 @@ export function LoginForm() {
     },
     AuthConfig.discovery,
   );
+
+  useEffect(() => {
+    if (response?.type === 'success' && response.params?.code) {
+      router.push({
+        pathname: '/redirect',
+        params: { code: response.params.code },
+      });
+    } else if (response?.type === 'error') {
+      toastError(
+        'Login Failed',
+        response.params?.error_description || 'An error occurred.',
+      );
+    } else if (response?.type === 'cancel' || response?.type === 'dismiss') {
+      toastError('Cancelled', 'Login process was cancelled');
+    }
+  }, [response, router]);
 
   return (
     <View style={styles.container}>
@@ -100,10 +116,7 @@ export function LoginForm() {
           label={!request ? 'Initializing...' : 'Log in with WakaTime'}
           onPress={async () => {
             try {
-              const res = await promptAsync();
-              if (res?.type === 'cancel') {
-                toastError('Cancelled', 'Login process was cancelled');
-              }
+              await promptAsync();
             } catch (err: any) {
               toastError('Login Error', 'Failed to open the login screen.');
             }

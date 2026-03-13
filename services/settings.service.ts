@@ -36,7 +36,10 @@ export const settingsService = {
     try {
       const currentSettings = await settingsService.getSettings();
       const newSettings = { ...currentSettings, ...update };
-      await AsyncStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify(newSettings));
+      await AsyncStorage.setItem(
+        SETTINGS_STORAGE_KEY,
+        JSON.stringify(newSettings),
+      );
     } catch (error) {
       console.error('Failed to update settings:', error);
     }

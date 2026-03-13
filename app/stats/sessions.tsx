@@ -1,3 +1,4 @@
+import { ScreenHeader } from '@/components';
 import { Card } from '@/components/Card';
 import { Typography } from '@/components/Typography';
 import { SessionRowSkeleton } from '@/components/skeletons';
@@ -24,6 +25,7 @@ export default function SessionHistoryScreen() {
     <View
       style={[styles.container, { backgroundColor: theme.colors.background }]}
     >
+      <ScreenHeader title="Sessions" />
       <FlatList
         data={days}
         renderItem={renderDayItem}

@@ -1,13 +1,15 @@
 import { useTheme } from '@/hooks/useTheme';
+import { NativeStackNavigationOptions } from '@react-navigation/native-stack';
 import { Stack } from 'expo-router';
-import { BackButton } from './BackButton';
 
 interface DefaultStackLayoutProps {
   children: React.ReactNode;
+  screenOptions?: NativeStackNavigationOptions;
 }
 
 export default function DefaultStackLayout({
   children,
+  screenOptions,
 }: DefaultStackLayoutProps) {
   const { theme } = useTheme();
 
@@ -28,7 +30,7 @@ export default function DefaultStackLayout({
         },
         headerShadowVisible: false,
         animation: 'slide_from_bottom',
-        headerLeft: (props) => <BackButton {...props} />,
+        ...screenOptions,
       }}
     >
       {children}

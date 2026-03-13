@@ -3,9 +3,9 @@ import { Stack } from 'expo-router';
 
 export default function SettingsLayout() {
   return (
-    <DefaultStackLayout>
-      <Stack.Screen name="index" options={{ title: 'Settings' }} />
-      <Stack.Screen name="theme" options={{ title: 'Theme' }} />
+    <DefaultStackLayout screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="index" />
+      <Stack.Screen name="theme" />
     </DefaultStackLayout>
   );
 }

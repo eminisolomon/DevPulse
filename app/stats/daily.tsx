@@ -12,7 +12,7 @@ import {
 } from '@/hooks';
 import { formatDisplayDuration, getDailyStatsTitle } from '@/utilities';
 import { endOfDay, format, parseISO, startOfDay } from 'date-fns';
-import { Stack, useLocalSearchParams } from 'expo-router';
+import { useLocalSearchParams } from 'expo-router';
 import React, { useMemo } from 'react';
 import { RefreshControl, ScrollView, StyleSheet, View } from 'react-native';
 
@@ -136,10 +136,8 @@ export default function DailyScreen() {
     <View
       style={[styles.container, { backgroundColor: theme.colors.background }]}
     >
-      <Stack.Screen options={{ headerShown: false }} />
       <StatsHeader title={title} onShare={handleShare} />
 
-      {/* Hidden share card for capture */}
       {hasData && (
         <DailyStatsShareCard
           ref={shareCardRef}

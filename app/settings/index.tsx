@@ -1,4 +1,4 @@
-import { Avatar, Button, Card, Typography } from '@/components';
+import { Avatar, Button, Card, ScreenHeader, Typography } from '@/components';
 import { ACCENT_COLORS } from '@/constants';
 import {
   LogoutBottomSheet,
@@ -69,6 +69,7 @@ export default function SettingsScreen() {
       style={[styles.container, { backgroundColor: theme.colors.background }]}
       edges={['left', 'right']}
     >
+      <ScreenHeader title="Settings" />
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <Card style={styles.profileCard}>
           <View style={styles.profileInfo}>

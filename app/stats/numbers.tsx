@@ -1,6 +1,7 @@
 import {
   Card,
   NumbersSkeleton,
+  ScreenHeader,
   SegmentedStatsCard,
   TimeRangeSelector,
   Typography,
@@ -44,7 +45,7 @@ export default function NumbersScreen() {
     return (
       <SafeAreaView
         style={[styles.container, { backgroundColor: theme.colors.background }]}
-        edges={['bottom', 'left', 'right']}
+        edges={['left', 'right']}
       >
         <NumbersSkeleton />
       </SafeAreaView>
@@ -139,8 +140,9 @@ export default function NumbersScreen() {
   return (
     <SafeAreaView
       style={[styles.container, { backgroundColor: theme.colors.background }]}
-      edges={['bottom', 'left', 'right']}
+      edges={['left', 'right']}
     >
+      <ScreenHeader title="The Numbers" />
       <ScrollView
         contentContainerStyle={styles.scrollContent}
         refreshControl={
