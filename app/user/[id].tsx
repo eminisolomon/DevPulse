@@ -54,7 +54,7 @@ export default function UserProfileScreen() {
   return (
     <SafeAreaView
       style={[styles.container, { backgroundColor: theme.colors.background }]}
-      edges={['bottom', 'left', 'right']}
+      edges={['left', 'right']}
     >
       <ScreenHeader title={user.username.toUpperCase()} />
       <ScrollView

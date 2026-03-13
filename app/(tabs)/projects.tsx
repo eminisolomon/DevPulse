@@ -1,4 +1,4 @@
-import { BottomSheet, ListItem, ScreenHeader, Typography } from '@/components';
+import { BottomSheet, Header, ListItem, Typography } from '@/components';
 import { ProjectListSkeleton } from '@/components/skeletons';
 import { ProjectCard } from '@/features';
 import { useDebounce, useProjects, useStats, useTheme } from '@/hooks';
@@ -103,7 +103,7 @@ export default function ProjectsScreen() {
       <View
         style={[styles.container, { backgroundColor: theme.colors.background }]}
       >
-        <ScreenHeader
+        <Header
           title="Projects"
           subtitle={`${projectsData.length} projects tracked`}
           actions={[
@@ -126,7 +126,7 @@ export default function ProjectsScreen() {
     <View
       style={[styles.container, { backgroundColor: theme.colors.background }]}
     >
-      <ScreenHeader
+      <Header
         title="Projects"
         subtitle={`${projectsData.length} projects tracked`}
         actions={[

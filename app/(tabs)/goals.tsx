@@ -1,4 +1,4 @@
-import { Card, ScreenHeader, Typography } from '@/components';
+import { Card, Header, Typography } from '@/components';
 import { GoalsSkeleton } from '@/components/skeletons';
 import { useGoals, useTheme } from '@/hooks';
 import { WakaTimeGoal } from '@/interfaces';
@@ -113,7 +113,7 @@ export default function GoalsScreen() {
       <View
         style={[styles.container, { backgroundColor: theme.colors.background }]}
       >
-        <ScreenHeader
+        <Header
           title="Goals"
           subtitle="Track your coding milestones"
           actions={[
@@ -132,7 +132,7 @@ export default function GoalsScreen() {
     <View
       style={[styles.container, { backgroundColor: theme.colors.background }]}
     >
-      <ScreenHeader
+      <Header
         title="Goals"
         subtitle="Track your coding milestones"
         actions={[

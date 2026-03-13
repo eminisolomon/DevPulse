@@ -1,4 +1,4 @@
-import { BottomSheet, ListItem, ScreenHeader, Typography } from '@/components';
+import { BottomSheet, Header, ListItem, Typography } from '@/components';
 import { LeaderboardShareCard } from '@/components/share';
 import { LeaderboardSkeleton } from '@/components/skeletons';
 import { useLeaderboardContext } from '@/contexts';
@@ -78,7 +78,7 @@ export default function LeaderboardScreen() {
       <View
         style={[styles.container, { backgroundColor: theme.colors.background }]}
       >
-        <ScreenHeader
+        <Header
           title="Leaderboard"
           subtitle={getSubtitle()}
           onShare={handleShare}
@@ -115,7 +115,7 @@ export default function LeaderboardScreen() {
     <View
       style={[styles.container, { backgroundColor: theme.colors.background }]}
     >
-      <ScreenHeader
+      <Header
         title="Leaderboard"
         subtitle={getSubtitle()}
         onShare={handleShare}

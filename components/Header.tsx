@@ -5,29 +5,29 @@ import React from 'react';
 import { StyleSheet, TouchableOpacity, View, ViewStyle } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-interface ScreenHeaderAction {
+interface HeaderAction {
   icon: keyof typeof MaterialCommunityIcons.glyphMap;
   onPress: () => void;
   label?: string;
 }
 
-interface ScreenHeaderProps {
+interface HeaderProps {
   title: string;
   subtitle?: string;
-  actions?: ScreenHeaderAction[];
+  actions?: HeaderAction[];
   rightElement?: React.ReactNode;
   onShare?: () => void;
   style?: ViewStyle;
 }
 
-export const ScreenHeader = ({
+export const Header = ({
   title,
   subtitle,
   actions,
   rightElement,
   onShare,
   style,
-}: ScreenHeaderProps) => {
+}: HeaderProps) => {
   const { theme } = useTheme();
 
   return (
