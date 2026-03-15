@@ -11,10 +11,6 @@ const defaultStats = {
 
 const content = <DailyStatsWidgetIOS stats={defaultStats} />;
 
-/**
- * Initial state for the Daily Stats Widget (iOS).
- * iOS expects a Record (object) mapping families to content.
- */
 export const WidgetVariants: VoltraWidgetVariants = {
   systemSmall: content,
   systemMedium: content,

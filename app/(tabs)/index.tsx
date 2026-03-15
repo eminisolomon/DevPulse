@@ -19,7 +19,7 @@ import { dashboardStyles as styles } from '@/theme/styles/dashboard';
 import { formatDuration } from '@/utilities';
 import { getProjectColor } from '@/utilities/projectColors';
 import { endOfMonth, startOfMonth } from 'date-fns';
-import React, { useMemo, useState, useEffect } from 'react';
+import React, { useMemo, useState } from 'react';
 import { RefreshControl, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -145,6 +145,7 @@ export default function Dashboard() {
       statsForWidget: {
         todayTotalText: text,
         todayPercent: percent,
+        themeColor: theme.colors.primary,
         topLanguage,
         topProject,
       },

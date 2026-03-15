@@ -10,11 +10,6 @@ import { DailyStatsWidgetIOS, type StatsData } from './DailyStatsWidgetIOS';
 export { DailyStatsWidgetAndroid, DailyStatsWidgetIOS };
 export type { StatsData };
 
-/**
- * Helper to update the Android widget and iOS Live Activity with real stats.
- *
- * @param stats - The stats data to sync.
- */
 export const syncDailyStats = async (stats: StatsData) => {
   try {
     if (Platform.OS === 'android') {

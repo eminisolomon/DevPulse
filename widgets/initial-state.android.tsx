@@ -11,10 +11,6 @@ const defaultStats = {
 
 const content = <DailyStatsWidgetAndroid stats={defaultStats} />;
 
-/**
- * Initial state for the Daily Stats Widget (Android).
- * Android expects an array of size variants.
- */
 export const WidgetVariants: AndroidWidgetVariants = [
   { size: { width: 170, height: 170 }, content },
   { size: { width: 330, height: 170 }, content },

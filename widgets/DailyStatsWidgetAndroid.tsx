@@ -2,42 +2,24 @@
 
 import React from 'react';
 import { VoltraAndroid } from 'voltra/android';
+import type { StatsData } from './interface';
 
-/**
- * Data structure for the Daily Stats Widget (shared with iOS).
- */
-export interface StatsData {
-  todayTotalText: string;
-  todayPercent: number;
-  topLanguage?: {
-    name: string;
-    percent: number;
-  };
-  topProject?: {
-    name: string;
-    text: string;
-  };
-}
-
-/**
- * DailyStatsWidget for Android.
- * Uses Android-specific Voltra components (AndroidColumn, AndroidRow, AndroidText, etc.).
- */
 export const DailyStatsWidgetAndroid = ({ stats }: { stats: StatsData }) => {
+  const bgColor = stats.themeColor || '#0A0A0A';
+
   return (
     <VoltraAndroid.Column
+      deepLinkUrl="devpulse://"
       style={{
         padding: 16,
         borderRadius: 22,
-        backgroundColor: '#0A0A0A',
+        backgroundColor: bgColor,
         width: '100%',
         height: '100%',
         justifyContent: 'space-between',
       }}
     >
-      {/* Top section */}
       <VoltraAndroid.Column>
-        {/* Header row */}
         <VoltraAndroid.Row style={{ alignItems: 'center', marginBottom: 8 }}>
           <VoltraAndroid.Box
             style={{
@@ -59,7 +41,6 @@ export const DailyStatsWidgetAndroid = ({ stats }: { stats: StatsData }) => {
           </VoltraAndroid.Text>
         </VoltraAndroid.Row>
 
-        {/* Main stats */}
         <VoltraAndroid.Column>
           <VoltraAndroid.Text
             style={{
@@ -82,9 +63,7 @@ export const DailyStatsWidgetAndroid = ({ stats }: { stats: StatsData }) => {
         </VoltraAndroid.Column>
       </VoltraAndroid.Column>
 
-      {/* Bottom section */}
       <VoltraAndroid.Column>
-        {/* Top project */}
         {stats.topProject && (
           <VoltraAndroid.Row
             style={{
@@ -103,8 +82,6 @@ export const DailyStatsWidgetAndroid = ({ stats }: { stats: StatsData }) => {
             </VoltraAndroid.Text>
           </VoltraAndroid.Row>
         )}
-
-        {/* Top language with progress bar */}
         {stats.topLanguage && (
           <VoltraAndroid.Column>
             <VoltraAndroid.Row
