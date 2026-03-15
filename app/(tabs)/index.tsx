@@ -9,6 +9,7 @@ import {
 } from '@/features';
 import {
   useAllTime,
+  useMetadata,
   useStats,
   useSummaries,
   useTheme,
@@ -26,6 +27,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 export default function Dashboard() {
   const { theme } = useTheme();
   const { isLoading: userLoading } = useUser();
+  const { getLanguageColor } = useMetadata();
 
   const {
     data: allTimeData,
@@ -127,6 +129,7 @@ export default function Dashboard() {
       ? {
           name: todayData.languages[0].name,
           percent: todayData.languages[0].percent,
+          color: getLanguageColor(todayData.languages[0].name),
         }
       : undefined;
 
@@ -134,6 +137,7 @@ export default function Dashboard() {
       ? {
           name: projects[0].name,
           text: projects[0].text,
+          color: projects[0].color,
         }
       : undefined;
 
@@ -145,12 +149,20 @@ export default function Dashboard() {
       statsForWidget: {
         todayTotalText: text,
         todayPercent: percent,
-        themeColor: theme.colors.primary,
+        theme: {
+          background: theme.colors.background,
+          surface: theme.colors.surface,
+          surfaceSubtle: theme.colors.surfaceSubtle,
+          border: theme.colors.border,
+          text: theme.colors.text,
+          textSecondary: theme.colors.textSecondary,
+          primary: theme.colors.primary,
+        },
         topLanguage,
         topProject,
       },
     };
-  }, [todaySummaries, dailyAverage]);
+  }, [todaySummaries, dailyAverage, getLanguageColor, theme.colors.primary]);
 
   useWidgetSync(statsForWidget);
 

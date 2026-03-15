@@ -5,15 +5,15 @@ import { VoltraAndroid } from 'voltra/android';
 import type { StatsData } from './interface';
 
 export const DailyStatsWidgetAndroid = ({ stats }: { stats: StatsData }) => {
-  const bgColor = stats.themeColor || '#0A0A0A';
-
   return (
     <VoltraAndroid.Column
       deepLinkUrl="devpulse://"
       style={{
         padding: 16,
         borderRadius: 22,
-        backgroundColor: bgColor,
+        backgroundColor: stats.theme.surface,
+        borderColor: stats.theme.border,
+        borderWidth: 1,
         width: '100%',
         height: '100%',
         justifyContent: 'space-between',
@@ -31,7 +31,7 @@ export const DailyStatsWidgetAndroid = ({ stats }: { stats: StatsData }) => {
           />
           <VoltraAndroid.Text
             style={{
-              color: '#F8FAFC',
+              color: stats.theme.text,
               fontSize: 14,
               fontWeight: '700',
               marginLeft: 6,
@@ -44,7 +44,7 @@ export const DailyStatsWidgetAndroid = ({ stats }: { stats: StatsData }) => {
         <VoltraAndroid.Column>
           <VoltraAndroid.Text
             style={{
-              color: '#F8FAFC',
+              color: stats.theme.text,
               fontSize: 22,
               fontWeight: 'bold',
             }}
@@ -53,7 +53,7 @@ export const DailyStatsWidgetAndroid = ({ stats }: { stats: StatsData }) => {
           </VoltraAndroid.Text>
           <VoltraAndroid.Text
             style={{
-              color: '#94A3B8',
+              color: stats.theme.textSecondary,
               fontSize: 11,
               marginTop: 2,
             }}
@@ -72,12 +72,33 @@ export const DailyStatsWidgetAndroid = ({ stats }: { stats: StatsData }) => {
               marginBottom: 8,
             }}
           >
+            <VoltraAndroid.Row style={{ alignItems: 'center' }}>
+              <VoltraAndroid.Box
+                style={{
+                  width: 8,
+                  height: 8,
+                  borderRadius: 4,
+                  backgroundColor: stats.topProject.color || '#38BDF8',
+                  marginRight: 6,
+                }}
+              />
+              <VoltraAndroid.Text
+                style={{
+                  color: stats.theme.text,
+                  fontSize: 13,
+                  fontWeight: '600',
+                }}
+              >
+                {stats.topProject.name}
+              </VoltraAndroid.Text>
+            </VoltraAndroid.Row>
             <VoltraAndroid.Text
-              style={{ color: '#E2E8F0', fontSize: 13, fontWeight: '600' }}
+              style={{
+                color: stats.theme.text,
+                fontSize: 13,
+                fontWeight: 'bold',
+              }}
             >
-              {stats.topProject.name}
-            </VoltraAndroid.Text>
-            <VoltraAndroid.Text style={{ color: '#64748B', fontSize: 11 }}>
               {stats.topProject.text}
             </VoltraAndroid.Text>
           </VoltraAndroid.Row>
@@ -87,17 +108,21 @@ export const DailyStatsWidgetAndroid = ({ stats }: { stats: StatsData }) => {
             <VoltraAndroid.Row
               style={{ justifyContent: 'space-between', marginBottom: 4 }}
             >
-              <VoltraAndroid.Text style={{ color: '#94A3B8', fontSize: 11 }}>
+              <VoltraAndroid.Text
+                style={{ color: stats.theme.textSecondary, fontSize: 11 }}
+              >
                 {stats.topLanguage.name}
               </VoltraAndroid.Text>
-              <VoltraAndroid.Text style={{ color: '#94A3B8', fontSize: 11 }}>
+              <VoltraAndroid.Text
+                style={{ color: stats.theme.textSecondary, fontSize: 11 }}
+              >
                 {Math.round(stats.topLanguage.percent)}%
               </VoltraAndroid.Text>
             </VoltraAndroid.Row>
             <VoltraAndroid.LinearProgressIndicator
               progress={stats.topLanguage.percent / 100}
-              color="#38BDF8"
-              backgroundColor="#1E293B"
+              color={stats.topLanguage.color || '#38BDF8'}
+              backgroundColor={stats.theme.surfaceSubtle}
               style={{ borderRadius: 2, height: 4 }}
             />
           </VoltraAndroid.Column>

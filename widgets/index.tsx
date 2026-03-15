@@ -5,7 +5,8 @@ import { Platform } from 'react-native';
 import { updateAndroidWidget } from 'voltra/android/client';
 import { startLiveActivity } from 'voltra/client';
 import { DailyStatsWidgetAndroid } from './DailyStatsWidgetAndroid';
-import { DailyStatsWidgetIOS, type StatsData } from './DailyStatsWidgetIOS';
+import { DailyStatsWidgetIOS } from './DailyStatsWidgetIOS';
+import { StatsData } from './interface';
 
 export { DailyStatsWidgetAndroid, DailyStatsWidgetIOS };
 export type { StatsData };

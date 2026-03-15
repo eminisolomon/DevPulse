@@ -1,8 +1,8 @@
+import { syncDailyStats } from '@/widgets';
+import { format } from 'date-fns';
 import * as BackgroundTask from 'expo-background-task';
 import * as TaskManager from 'expo-task-manager';
 import { wakaService } from './waka.service';
-import { syncDailyStats } from '@/widgets';
-import { format } from 'date-fns';
 
 const WAKATIME_WIDGET_SYNC_TASK = 'WAKATIME_WIDGET_SYNC';
 
@@ -64,7 +64,6 @@ export const registerBackgroundSync = async (minimumInterval: number = 15) => {
       await BackgroundTask.registerTaskAsync(WAKATIME_WIDGET_SYNC_TASK, {
         minimumInterval,
       });
-      console.log('[BackgroundSync] Task registered successfully');
     }
   } catch (err) {
     console.error('[BackgroundSync] Registration failed:', err);

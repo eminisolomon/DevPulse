@@ -5,15 +5,15 @@ import { Voltra } from 'voltra';
 import type { StatsData } from './interface';
 
 export const DailyStatsWidgetIOS = ({ stats }: { stats: StatsData }) => {
-  const bgColor = stats.themeColor || '#0A0A0A';
-
   return (
     <Voltra.Link destination="devpulse://">
       <Voltra.VStack
         style={{
           padding: 16,
           borderRadius: 22,
-          backgroundColor: bgColor,
+          backgroundColor: stats.theme.surface,
+          borderColor: stats.theme.border,
+          borderWidth: 1,
           minWidth: 160,
           justifyContent: 'space-between',
         }}
@@ -28,7 +28,7 @@ export const DailyStatsWidgetIOS = ({ stats }: { stats: StatsData }) => {
             />
             <Voltra.Text
               style={{
-                color: '#F8FAFC',
+                color: stats.theme.text,
                 fontSize: 14,
                 fontWeight: '700',
                 marginLeft: 6,
@@ -40,7 +40,7 @@ export const DailyStatsWidgetIOS = ({ stats }: { stats: StatsData }) => {
           <Voltra.VStack>
             <Voltra.Text
               style={{
-                color: '#F8FAFC',
+                color: stats.theme.text,
                 fontSize: 22,
                 fontWeight: 'bold',
               }}
@@ -49,7 +49,7 @@ export const DailyStatsWidgetIOS = ({ stats }: { stats: StatsData }) => {
             </Voltra.Text>
             <Voltra.Text
               style={{
-                color: '#94A3B8',
+                color: stats.theme.textSecondary,
                 fontSize: 11,
                 marginTop: 2,
               }}
@@ -68,12 +68,33 @@ export const DailyStatsWidgetIOS = ({ stats }: { stats: StatsData }) => {
                 marginBottom: 8,
               }}
             >
+              <Voltra.HStack style={{ alignItems: 'center' }}>
+                <Voltra.View
+                  style={{
+                    width: 8,
+                    height: 8,
+                    borderRadius: 4,
+                    backgroundColor: stats.topProject.color || '#38BDF8',
+                    marginRight: 6,
+                  }}
+                />
+                <Voltra.Text
+                  style={{
+                    color: stats.theme.text,
+                    fontSize: 13,
+                    fontWeight: '600',
+                  }}
+                >
+                  {stats.topProject.name}
+                </Voltra.Text>
+              </Voltra.HStack>
               <Voltra.Text
-                style={{ color: '#E2E8F0', fontSize: 13, fontWeight: '600' }}
+                style={{
+                  color: stats.theme.text,
+                  fontSize: 13,
+                  fontWeight: 'bold',
+                }}
               >
-                {stats.topProject.name}
-              </Voltra.Text>
-              <Voltra.Text style={{ color: '#64748B', fontSize: 11 }}>
                 {stats.topProject.text}
               </Voltra.Text>
             </Voltra.HStack>
@@ -83,17 +104,21 @@ export const DailyStatsWidgetIOS = ({ stats }: { stats: StatsData }) => {
               <Voltra.HStack
                 style={{ justifyContent: 'space-between', marginBottom: 4 }}
               >
-                <Voltra.Text style={{ color: '#94A3B8', fontSize: 11 }}>
+                <Voltra.Text
+                  style={{ color: stats.theme.textSecondary, fontSize: 11 }}
+                >
                   {stats.topLanguage.name}
                 </Voltra.Text>
-                <Voltra.Text style={{ color: '#94A3B8', fontSize: 11 }}>
+                <Voltra.Text
+                  style={{ color: stats.theme.textSecondary, fontSize: 11 }}
+                >
                   {Math.round(stats.topLanguage.percent)}%
                 </Voltra.Text>
               </Voltra.HStack>
               <Voltra.View
                 style={{
                   height: 4,
-                  backgroundColor: '#1E293B',
+                  backgroundColor: stats.theme.surfaceSubtle,
                   borderRadius: 2,
                   overflow: 'hidden',
                 }}
@@ -102,7 +127,7 @@ export const DailyStatsWidgetIOS = ({ stats }: { stats: StatsData }) => {
                   style={{
                     height: 4,
                     width: `${stats.topLanguage.percent}%`,
-                    backgroundColor: '#38BDF8',
+                    backgroundColor: stats.topLanguage.color || '#38BDF8',
                     borderRadius: 2,
                   }}
                 />
