@@ -36,6 +36,7 @@
     "date-fns": "^4.1.0",
     "expo": "^55.0.6",
     "expo-auth-session": "~55.0.8",
+    "expo-background-task": "~55.0.9",
     "expo-constants": "~55.0.7",
     "expo-dev-client": "~55.0.16",
     "expo-device": "~55.0.9",

@@ -11,7 +11,9 @@
       "supportsTablet": true,
       "bundleIdentifier": "com.techx.devpulse",
       "infoPlist": {
-        "ITSAppUsesNonExemptEncryption": false
+        "ITSAppUsesNonExemptEncryption": false,
+        "UIBackgroundModes": ["processing"],
+        "BGTaskSchedulerPermittedIdentifiers": ["WAKATIME_WIDGET_SYNC"]
       }
     },
     "android": {
@@ -90,7 +92,8 @@
             ]
           }
         }
-      ]
+      ],
+      "expo-background-task"
     ],
     "experiments": {
       "typedRoutes": true,

@@ -1,4 +1,5 @@
 import { AppProviders, ThemedToaster } from '@/components';
+import { registerBackgroundSync } from '@/services';
 import {
   requestNotificationPermissions,
   scheduleSmartDailyReminders,
@@ -48,6 +49,8 @@ export default function RootLayout() {
           scheduleSmartDailyReminders();
         }
       });
+
+      registerBackgroundSync();
     }
   }, [fontsLoaded]);
 
