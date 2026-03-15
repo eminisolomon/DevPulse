@@ -74,7 +74,7 @@
                 "systemMedium",
                 "systemLarge"
               ],
-              "initialStatePath": "./widgets/initial-state.tsx"
+              "initialStatePath": "./widgets/initial-state.ios.tsx"
             }
           ],
           "android": {
@@ -86,7 +86,7 @@
                 "description": "Stay updated with DevPulse activities",
                 "targetCellWidth": 2,
                 "targetCellHeight": 2,
-                "initialStatePath": "./widgets/initial-state.tsx",
+                "initialStatePath": "./widgets/initial-state.android.tsx",
                 "previewImage": "./assets/widgets/devpulse-preview.png"
               }
             ]

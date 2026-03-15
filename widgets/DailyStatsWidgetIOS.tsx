@@ -18,9 +18,9 @@ export interface StatsData {
 }
 
 /**
- * DailyStatsWidget: Displays today's coding activity.
+ * DailyStatsWidget: Displays today's coding activity (iOS).
  */
-export const DailyStatsWidget = ({ stats }: { stats: StatsData }) => {
+export const DailyStatsWidgetIOS = ({ stats }: { stats: StatsData }) => {
   return (
     <Voltra.VStack
       style={{
