@@ -1,3 +1,5 @@
+'use no memo';
+
 import React from 'react';
 import { Voltra } from 'voltra';
 
@@ -28,52 +30,61 @@ export const DailyStatsWidgetIOS = ({ stats }: { stats: StatsData }) => {
         borderRadius: 22,
         backgroundColor: '#0A0A0A',
         minWidth: 160,
+        justifyContent: 'space-between',
       }}
     >
-      <Voltra.HStack style={{ alignItems: 'center', marginBottom: 12 }}>
-        <Voltra.Symbol
-          name="pulse.circle.fill"
-          type="hierarchical"
-          tintColor="#38BDF8"
-          scale="medium"
-        />
-        <Voltra.Text
-          style={{
-            color: '#F8FAFC',
-            fontSize: 16,
-            fontWeight: '700',
-            marginLeft: 8,
-          }}
-        >
-          Today
-        </Voltra.Text>
-      </Voltra.HStack>
+      {/* Top section */}
+      <Voltra.VStack>
+        <Voltra.HStack style={{ alignItems: 'center', marginBottom: 8 }}>
+          <Voltra.Symbol
+            name="pulse.circle.fill"
+            type="hierarchical"
+            tintColor="#38BDF8"
+            scale="medium"
+          />
+          <Voltra.Text
+            style={{
+              color: '#F8FAFC',
+              fontSize: 14,
+              fontWeight: '700',
+              marginLeft: 6,
+            }}
+          >
+            Today
+          </Voltra.Text>
+        </Voltra.HStack>
 
-      <Voltra.VStack style={{ marginBottom: 16 }}>
-        <Voltra.Text
-          style={{
-            color: '#F8FAFC',
-            fontSize: 24,
-            fontWeight: 'bold',
-          }}
-        >
-          {stats.todayTotalText}
-        </Voltra.Text>
-        <Voltra.Text
-          style={{
-            color: '#94A3B8',
-            fontSize: 12,
-            marginTop: 2,
-          }}
-        >
-          {stats.todayPercent}% of daily average
-        </Voltra.Text>
+        <Voltra.VStack>
+          <Voltra.Text
+            style={{
+              color: '#F8FAFC',
+              fontSize: 22,
+              fontWeight: 'bold',
+            }}
+          >
+            {stats.todayTotalText}
+          </Voltra.Text>
+          <Voltra.Text
+            style={{
+              color: '#94A3B8',
+              fontSize: 11,
+              marginTop: 2,
+            }}
+          >
+            {stats.todayPercent}% of daily average
+          </Voltra.Text>
+        </Voltra.VStack>
       </Voltra.VStack>
 
-      {stats.topProject && (
-        <Voltra.VStack style={{ marginTop: 4 }}>
+      {/* Bottom section */}
+      <Voltra.VStack>
+        {stats.topProject && (
           <Voltra.HStack
-            style={{ justifyContent: 'space-between', alignItems: 'center' }}
+            style={{
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              marginBottom: 8,
+            }}
           >
             <Voltra.Text
               style={{ color: '#E2E8F0', fontSize: 13, fontWeight: '600' }}
@@ -84,39 +95,40 @@ export const DailyStatsWidgetIOS = ({ stats }: { stats: StatsData }) => {
               {stats.topProject.text}
             </Voltra.Text>
           </Voltra.HStack>
-        </Voltra.VStack>
-      )}
+        )}
 
-      {stats.topLanguage && (
-        <Voltra.VStack style={{ marginTop: 8 }}>
-          <Voltra.HStack style={{ justifyContent: 'space-between' }}>
-            <Voltra.Text style={{ color: '#94A3B8', fontSize: 11 }}>
-              {stats.topLanguage.name}
-            </Voltra.Text>
-            <Voltra.Text style={{ color: '#94A3B8', fontSize: 11 }}>
-              {Math.round(stats.topLanguage.percent)}%
-            </Voltra.Text>
-          </Voltra.HStack>
-          <Voltra.View
-            style={{
-              height: 4,
-              backgroundColor: '#1E293B',
-              borderRadius: 2,
-              marginTop: 4,
-              overflow: 'hidden',
-            }}
-          >
+        {stats.topLanguage && (
+          <Voltra.VStack>
+            <Voltra.HStack
+              style={{ justifyContent: 'space-between', marginBottom: 4 }}
+            >
+              <Voltra.Text style={{ color: '#94A3B8', fontSize: 11 }}>
+                {stats.topLanguage.name}
+              </Voltra.Text>
+              <Voltra.Text style={{ color: '#94A3B8', fontSize: 11 }}>
+                {Math.round(stats.topLanguage.percent)}%
+              </Voltra.Text>
+            </Voltra.HStack>
             <Voltra.View
               style={{
                 height: 4,
-                width: `${stats.topLanguage.percent}%`,
-                backgroundColor: '#38BDF8',
+                backgroundColor: '#1E293B',
                 borderRadius: 2,
+                overflow: 'hidden',
               }}
-            />
-          </Voltra.View>
-        </Voltra.VStack>
-      )}
+            >
+              <Voltra.View
+                style={{
+                  height: 4,
+                  width: `${stats.topLanguage.percent}%`,
+                  backgroundColor: '#38BDF8',
+                  borderRadius: 2,
+                }}
+              />
+            </Voltra.View>
+          </Voltra.VStack>
+        )}
+      </Voltra.VStack>
     </Voltra.VStack>
   );
 };

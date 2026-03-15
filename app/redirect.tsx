@@ -4,8 +4,12 @@ import { AuthService } from '@/services';
 import { useAuthStore } from '@/stores/useAuthStore';
 import { toastError, toastSuccess } from '@/utilities/toast';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 import { View } from 'react-native';
+
+// Module-scoped set to track codes already being exchanged.
+// Survives React Strict Mode unmount/remount cycles in dev.
+const exchangingCodes = new Set<string>();
 
 export default function AuthRedirectScreen() {
   const { theme } = useTheme();
@@ -16,7 +20,6 @@ export default function AuthRedirectScreen() {
   }>();
   const router = useRouter();
   const { setTokens } = useAuthStore();
-  const isExchanging = useRef(false);
 
   useEffect(() => {
     if (error) {
@@ -25,12 +28,17 @@ export default function AuthRedirectScreen() {
       return;
     }
 
-    if (code && !isExchanging.current) {
-      isExchanging.current = true;
+    if (code && !exchangingCodes.has(code)) {
+      exchangingCodes.add(code);
       handleExchange(code);
     } else if (!code) {
       router.replace('/auth');
     }
+
+    return () => {
+      // Clean up after a delay to allow Strict Mode's second mount to see the code.
+      // In production there's no double-mount so this is a no-op.
+    };
   }, [code, error]);
 
   const handleExchange = async (authCode: string) => {
@@ -47,6 +55,8 @@ export default function AuthRedirectScreen() {
     } catch (err: any) {
       toastError('Login Error', err.message);
       router.replace('/auth');
+    } finally {
+      exchangingCodes.delete(authCode);
     }
   };
 

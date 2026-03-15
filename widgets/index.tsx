@@ -1,3 +1,5 @@
+'use no memo';
+
 import React from 'react';
 import { Platform } from 'react-native';
 import { updateAndroidWidget } from 'voltra/android/client';
