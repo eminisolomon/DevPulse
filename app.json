@@ -54,7 +54,43 @@
       "expo-font",
       "expo-image",
       "expo-sharing",
-      "expo-web-browser"
+      "expo-web-browser",
+      [
+        "voltra",
+        {
+          "groupIdentifier": "group.com.techx.devpulse",
+          "enablePushNotifications": true,
+          "deploymentTarget": "18.0",
+          "targetName": "DevPulseLiveActivity",
+          "widgets": [
+            {
+              "id": "devpulse_widget",
+              "displayName": "DevPulse Stats",
+              "description": "Stay updated with DevPulse activities",
+              "supportedFamilies": [
+                "systemSmall",
+                "systemMedium",
+                "systemLarge"
+              ],
+              "initialStatePath": "./widgets/initial-state.tsx"
+            }
+          ],
+          "android": {
+            "widgets": [
+              {
+                "id": "devpulse_widget",
+                "name": "DevPulse Widget",
+                "displayName": "DevPulse Stats",
+                "description": "Stay updated with DevPulse activities",
+                "targetCellWidth": 2,
+                "targetCellHeight": 2,
+                "initialStatePath": "./widgets/initial-state.tsx",
+                "previewImage": "./assets/widgets/devpulse-preview.png"
+              }
+            ]
+          }
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true,

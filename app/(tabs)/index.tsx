@@ -7,12 +7,19 @@ import {
   RankPulseCard,
   TotalTimeCard,
 } from '@/features';
-import { useAllTime, useStats, useSummaries, useTheme, useUser } from '@/hooks';
+import {
+  useAllTime,
+  useStats,
+  useSummaries,
+  useTheme,
+  useUser,
+  useWidgetSync,
+} from '@/hooks';
 import { dashboardStyles as styles } from '@/theme/styles/dashboard';
 import { formatDuration } from '@/utilities';
 import { getProjectColor } from '@/utilities/projectColors';
 import { endOfMonth, startOfMonth } from 'date-fns';
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import { RefreshControl, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -79,47 +86,72 @@ export default function Dashboard() {
       color: getProjectColor(p.name),
     }));
 
-  const { todayTotal, todayPercent, todayGoalDiffText, latestProjects } =
-    useMemo(() => {
-      const todayData = todaySummaries?.data?.[0];
-      const seconds = todayData?.grand_total?.total_seconds || 0;
-      const text = todayData?.grand_total?.text || '0 mins';
-      const percent =
-        dailyAverage > 0
-          ? Math.min(100, Math.round((seconds / dailyAverage) * 100))
-          : 0;
+  const {
+    todayTotal,
+    todayPercent,
+    todayGoalDiffText,
+    latestProjects,
+    statsForWidget,
+  } = useMemo(() => {
+    const todayData = todaySummaries?.data?.[0];
+    const seconds = todayData?.grand_total?.total_seconds || 0;
+    const text = todayData?.grand_total?.text || '0 mins';
+    const percent =
+      dailyAverage > 0
+        ? Math.min(100, Math.round((seconds / dailyAverage) * 100))
+        : 0;
 
-      let goalDiffText = '';
-      if (dailyAverage > 0) {
-        const diff = seconds - dailyAverage;
-        const sign = diff >= 0 ? '+' : '-';
-        const absDiff = Math.abs(diff);
-        const h = Math.floor(absDiff / 3600);
-        const m = Math.floor((absDiff % 3600) / 60);
+    let goalDiffText = '';
+    if (dailyAverage > 0) {
+      const diff = seconds - dailyAverage;
+      const sign = diff >= 0 ? '+' : '-';
+      const absDiff = Math.abs(diff);
+      const h = Math.floor(absDiff / 3600);
+      const m = Math.floor((absDiff % 3600) / 60);
 
-        if (h > 0) {
-          goalDiffText = `${sign}${h}h ${m}m`;
-        } else {
-          goalDiffText = `${sign}${m}m`;
-        }
+      if (h > 0) {
+        goalDiffText = `${sign}${h}h ${m}m`;
+      } else {
+        goalDiffText = `${sign}${m}m`;
       }
+    }
 
-      const projects = (todayData?.projects || [])
-        .slice(0, 5)
-        .map((p: any) => ({
-          name: p.name,
-          text: p.text,
-          color: getProjectColor(p.name),
-          percent: p.percent || 0,
-        }));
+    const projects = (todayData?.projects || []).slice(0, 5).map((p: any) => ({
+      name: p.name,
+      text: p.text,
+      color: getProjectColor(p.name),
+      percent: p.percent || 0,
+    }));
 
-      return {
-        todayTotal: text,
+    const topLanguage = todayData?.languages?.[0]
+      ? {
+          name: todayData.languages[0].name,
+          percent: todayData.languages[0].percent,
+        }
+      : undefined;
+
+    const topProject = projects[0]
+      ? {
+          name: projects[0].name,
+          text: projects[0].text,
+        }
+      : undefined;
+
+    return {
+      todayTotal: text,
+      todayPercent: percent,
+      todayGoalDiffText: goalDiffText,
+      latestProjects: projects,
+      statsForWidget: {
+        todayTotalText: text,
         todayPercent: percent,
-        todayGoalDiffText: goalDiffText,
-        latestProjects: projects,
-      };
-    }, [todaySummaries, dailyAverage]);
+        topLanguage,
+        topProject,
+      },
+    };
+  }, [todaySummaries, dailyAverage]);
+
+  useWidgetSync(statsForWidget);
 
   const todayProjects = latestProjects;
   const monthTotal = monthSummaries?.cumulative_total?.text || '0 hrs 0 mins';
