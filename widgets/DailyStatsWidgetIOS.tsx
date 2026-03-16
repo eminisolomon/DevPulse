@@ -10,21 +10,22 @@ export const DailyStatsWidgetIOS = ({ stats }: { stats: StatsData }) => {
       <Voltra.VStack
         style={{
           padding: 16,
-          borderRadius: 22,
+          borderRadius: 24,
           backgroundColor: stats.theme.surface,
           borderColor: stats.theme.border,
           borderWidth: 1,
-          minWidth: 160,
+          width: '100%',
+          height: '100%',
           justifyContent: 'space-between',
         }}
       >
-        {/* Header Row: App Logo & App Name */}
         <Voltra.HStack style={{ alignItems: 'center', marginBottom: 12 }}>
           <Voltra.Image
             source={{ assetName: 'logo.png' }}
-            style={{ width: 16, height: 16, borderRadius: 4, marginRight: 6 }}
+            style={{ width: 16, height: 16, borderRadius: 5, marginRight: 12 }}
           />
           <Voltra.Text
+            numberOfLines={1}
             style={{
               color: stats.theme.text,
               fontSize: 14,
@@ -35,55 +36,55 @@ export const DailyStatsWidgetIOS = ({ stats }: { stats: StatsData }) => {
           </Voltra.Text>
         </Voltra.HStack>
 
-        {/* Center Content: Big Total Time */}
-        <Voltra.VStack>
+        <Voltra.VStack style={{ flex: 1, justifyContent: 'center' }}>
           <Voltra.Text
+            numberOfLines={1}
             style={{
               color: stats.theme.text,
-              fontSize: 26,
+              fontSize: 28,
               fontWeight: 'bold',
-              letterSpacing: -0.5,
+              letterSpacing: -1,
             }}
           >
             {stats.todayTotalText}
           </Voltra.Text>
           <Voltra.Text
+            numberOfLines={1}
             style={{
               color: stats.theme.textSecondary,
-              fontSize: 12,
-              marginTop: 2,
+              fontSize: 13,
+              marginTop: 4,
             }}
           >
             {stats.todayPercent}% of daily average
           </Voltra.Text>
         </Voltra.VStack>
 
-        {/* Bottom Content: Breakdowns (with spacing to push to bottom) */}
-        <Voltra.VStack
-          style={{ flex: 1, justifyContent: 'flex-end', marginTop: 16 }}
-        >
+        <Voltra.VStack style={{ marginTop: 16 }}>
           {stats.topProject && (
             <Voltra.HStack
               style={{
                 justifyContent: 'space-between',
                 alignItems: 'center',
-                marginBottom: 8,
+                marginBottom: 16,
               }}
             >
               <Voltra.HStack style={{ alignItems: 'center' }}>
                 <Voltra.View
                   style={{
-                    width: 8,
-                    height: 8,
-                    borderRadius: 4,
-                    backgroundColor: stats.topProject.color || '#38BDF8',
-                    marginRight: 6,
+                    width: 10,
+                    height: 10,
+                    borderRadius: 5,
+                    backgroundColor:
+                      stats.topProject.color || stats.theme.primary,
+                    marginRight: 8,
                   }}
                 />
                 <Voltra.Text
+                  numberOfLines={1}
                   style={{
                     color: stats.theme.text,
-                    fontSize: 13,
+                    fontSize: 14,
                     fontWeight: '600',
                   }}
                 >
@@ -93,7 +94,7 @@ export const DailyStatsWidgetIOS = ({ stats }: { stats: StatsData }) => {
               <Voltra.Text
                 style={{
                   color: stats.theme.text,
-                  fontSize: 13,
+                  fontSize: 14,
                   fontWeight: 'bold',
                 }}
               >
@@ -105,24 +106,25 @@ export const DailyStatsWidgetIOS = ({ stats }: { stats: StatsData }) => {
           {stats.topLanguage && (
             <Voltra.VStack>
               <Voltra.HStack
-                style={{ justifyContent: 'space-between', marginBottom: 4 }}
+                style={{ justifyContent: 'space-between', marginBottom: 6 }}
               >
                 <Voltra.Text
-                  style={{ color: stats.theme.textSecondary, fontSize: 11 }}
+                  numberOfLines={1}
+                  style={{ color: stats.theme.textSecondary, fontSize: 12 }}
                 >
                   {stats.topLanguage.name}
                 </Voltra.Text>
                 <Voltra.Text
-                  style={{ color: stats.theme.textSecondary, fontSize: 11 }}
+                  style={{ color: stats.theme.textSecondary, fontSize: 12 }}
                 >
                   {Math.round(stats.topLanguage.percent)}%
                 </Voltra.Text>
               </Voltra.HStack>
               <Voltra.View
                 style={{
-                  height: 4,
+                  height: 6,
                   backgroundColor: stats.theme.surfaceSubtle,
-                  borderRadius: 2,
+                  borderRadius: 3,
                   overflow: 'hidden',
                 }}
               >
@@ -130,8 +132,9 @@ export const DailyStatsWidgetIOS = ({ stats }: { stats: StatsData }) => {
                   style={{
                     width: `${stats.topLanguage.percent}%`,
                     height: '100%',
-                    backgroundColor: stats.topLanguage.color || '#38BDF8',
-                    borderRadius: 2,
+                    backgroundColor:
+                      stats.topLanguage.color || stats.theme.primary,
+                    borderRadius: 3,
                   }}
                 />
               </Voltra.View>

@@ -1,4 +1,5 @@
 import { syncDailyStats } from '@/widgets';
+import { formatDuration } from '@/utilities';
 import { format } from 'date-fns';
 import * as BackgroundTask from 'expo-background-task';
 import * as TaskManager from 'expo-task-manager';
@@ -21,22 +22,38 @@ TaskManager.defineTask(WAKATIME_WIDGET_SYNC_TASK, async () => {
       return BackgroundTask.BackgroundTaskResult.Success;
     }
 
+    const topProjectData = todayData.projects?.[0];
+    const topLanguageData = todayData.languages?.[0];
+
+    const summariesData = summaries as any;
     const statsForWidget = {
-      todayTotalText: todayData.grand_total.text,
+      todayTotalText: formatDuration(todayData.grand_total.total_seconds || 0),
       todayPercent: Math.round(
         (todayData.grand_total.total_seconds /
-          (summaries.cumulative_total as any).average_seconds || 1) * 100,
+          (summariesData.cumulative_total?.average_seconds || 1)) *
+          100,
       ),
-      topLanguage: todayData.languages?.[0]
+      theme: {
+        background: '#FFFFFF',
+        surface: '#FFFFFF',
+        surfaceSubtle: '#F1F5F9',
+        border: '#E2E8F0',
+        text: '#0F172A',
+        textSecondary: '#64748B',
+        primary: '#38BDF8',
+      },
+      topLanguage: topLanguageData
         ? {
-            name: todayData.languages[0].name,
-            percent: todayData.languages[0].percent,
+            name: topLanguageData.name,
+            percent: topLanguageData.percent,
+            color: '#38BDF8',
           }
         : undefined,
-      topProject: todayData.projects?.[0]
+      topProject: topProjectData
         ? {
-            name: todayData.projects[0].name,
-            text: todayData.projects[0].text,
+            name: topProjectData.name,
+            text: formatDuration(topProjectData.total_seconds || 0),
+            color: '#38BDF8',
           }
         : undefined,
     };

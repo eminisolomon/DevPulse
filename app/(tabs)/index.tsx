@@ -97,7 +97,7 @@ export default function Dashboard() {
   } = useMemo(() => {
     const todayData = todaySummaries?.data?.[0];
     const seconds = todayData?.grand_total?.total_seconds || 0;
-    const text = todayData?.grand_total?.text || '0 mins';
+    const text = formatDuration(seconds);
     const percent =
       dailyAverage > 0
         ? Math.min(100, Math.round((seconds / dailyAverage) * 100))
@@ -136,7 +136,7 @@ export default function Dashboard() {
     const topProject = projects[0]
       ? {
           name: projects[0].name,
-          text: projects[0].text,
+          text: formatDuration(todayData?.projects?.[0]?.total_seconds || 0),
           color: projects[0].color,
         }
       : undefined;

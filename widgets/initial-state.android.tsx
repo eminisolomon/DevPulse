@@ -15,7 +15,7 @@ const defaultStats = {
     text: '#0F172A',
     textSecondary: '#64748B',
     primary: '#38BDF8',
-  }
+  },
 };
 
 const content = <DailyStatsWidgetAndroid stats={defaultStats} />;
