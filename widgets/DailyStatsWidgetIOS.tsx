@@ -20,9 +20,11 @@ export const DailyStatsWidgetIOS = ({ stats }: { stats: StatsData }) => {
         }}
       >
         <Voltra.HStack style={{ alignItems: 'center', marginBottom: 12 }}>
-          <Voltra.Image
-            source={{ assetName: 'logo.png' }}
-            style={{ width: 16, height: 16, borderRadius: 5, marginRight: 12 }}
+          <Voltra.Symbol
+            name="chart.bar.fill"
+            size={16}
+            tintColor={stats.theme.primary}
+            style={{ marginRight: 12 }}
           />
           <Voltra.Text
             numberOfLines={1}

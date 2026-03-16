@@ -25,9 +25,14 @@ export const DailyStatsWidgetAndroid = ({ stats }: { stats: StatsData }) => {
           width: '100%',
         }}
       >
-        <VoltraAndroid.Image
-          source={{ assetName: 'logo' }}
-          style={{ width: 16, height: 16, borderRadius: 5, marginRight: 12 }}
+        <VoltraAndroid.Box
+          style={{
+            width: 16,
+            height: 16,
+            borderRadius: 5,
+            backgroundColor: stats.theme.primary,
+            marginRight: 12,
+          }}
         />
         <VoltraAndroid.Text
           maxLines={1}

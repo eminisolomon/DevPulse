@@ -2,8 +2,15 @@
 
 import React from 'react';
 import { Platform } from 'react-native';
+import { Voltra } from 'voltra';
 import { updateAndroidWidget } from 'voltra/android/client';
-import { startLiveActivity } from 'voltra/client';
+import {
+  endAllLiveActivities,
+  isLiveActivityActive,
+  startLiveActivity,
+  updateLiveActivity,
+  updateWidget,
+} from 'voltra/client';
 import { DailyStatsWidgetAndroid } from './DailyStatsWidgetAndroid';
 import { DailyStatsWidgetIOS } from './DailyStatsWidgetIOS';
 import { StatsData } from './interface';
@@ -11,10 +18,14 @@ import { StatsData } from './interface';
 export { DailyStatsWidgetAndroid, DailyStatsWidgetIOS };
 export type { StatsData };
 
+const ACTIVITY_NAME = 'devpulse_stats';
+const WIDGET_ID = 'devpulse_widget';
+const DEEP_LINK = 'devpulse://';
+
 export const syncDailyStats = async (stats: StatsData) => {
   try {
     if (Platform.OS === 'android') {
-      await updateAndroidWidget('devpulse_widget', [
+      await updateAndroidWidget(WIDGET_ID, [
         {
           size: { width: 170, height: 170 },
           content: <DailyStatsWidgetAndroid stats={stats} />,
@@ -29,8 +40,54 @@ export const syncDailyStats = async (stats: StatsData) => {
         },
       ]);
     } else {
-      await startLiveActivity({
+      await updateWidget(
+        WIDGET_ID,
+        {
+          systemSmall: <DailyStatsWidgetIOS stats={stats} />,
+          systemMedium: <DailyStatsWidgetIOS stats={stats} />,
+          systemLarge: <DailyStatsWidgetIOS stats={stats} />,
+        },
+        { deepLinkUrl: DEEP_LINK },
+      );
+
+      try {
+        await endAllLiveActivities();
+      } catch (e) {
+      }
+
+      const variants = {
         lockScreen: <DailyStatsWidgetIOS stats={stats} />,
+        island: {
+          minimal: (
+            <Voltra.Symbol
+              name="chart.bar.fill"
+              size={14}
+              tintColor={stats.theme.primary}
+            />
+          ),
+          compact: {
+            leading: (
+              <Voltra.Symbol
+                name="chart.bar.fill"
+                size={14}
+                tintColor={stats.theme.primary}
+              />
+            ),
+            trailing: (
+              <Voltra.Text style={{ fontSize: 10, color: '#FFFFFF' }}>
+                {stats.todayTotalText}
+              </Voltra.Text>
+            ),
+          },
+          expanded: {
+            center: <DailyStatsWidgetIOS stats={stats} />,
+          },
+        },
+      };
+
+      await startLiveActivity(variants, {
+        activityName: ACTIVITY_NAME,
+        deepLinkUrl: DEEP_LINK,
       });
     }
   } catch (error) {
