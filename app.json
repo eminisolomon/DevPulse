@@ -10,6 +10,9 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.techx.devpulse",
+      "entitlements": {
+        "com.apple.security.application-groups": ["group.com.techx.devpulse"]
+      },
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false,
         "UIBackgroundModes": ["processing"],
@@ -90,6 +93,14 @@
                 "previewImage": "./assets/widgets/devpulse-preview.png"
               }
             ]
+          }
+        }
+      ],
+      [
+        "expo-build-properties",
+        {
+          "ios": {
+            "deploymentTarget": "18.0"
           }
         }
       ],
