@@ -6,9 +6,7 @@ import { Voltra } from 'voltra';
 import { updateAndroidWidget } from 'voltra/android/client';
 import {
   endAllLiveActivities,
-  isLiveActivityActive,
   startLiveActivity,
-  updateLiveActivity,
   updateWidget,
 } from 'voltra/client';
 import { DailyStatsWidgetAndroid } from './DailyStatsWidgetAndroid';
@@ -52,11 +50,10 @@ export const syncDailyStats = async (stats: StatsData) => {
 
       try {
         await endAllLiveActivities();
-      } catch (e) {
-      }
+      } catch (e) {}
 
       const variants = {
-        lockScreen: <DailyStatsWidgetIOS stats={stats} />,
+        lockScreen: <DailyStatsWidgetIOS stats={stats} isSimple={true} />,
         island: {
           minimal: (
             <Voltra.Symbol
@@ -80,7 +77,7 @@ export const syncDailyStats = async (stats: StatsData) => {
             ),
           },
           expanded: {
-            center: <DailyStatsWidgetIOS stats={stats} />,
+            center: <DailyStatsWidgetIOS stats={stats} isSimple={true} />,
           },
         },
       };
