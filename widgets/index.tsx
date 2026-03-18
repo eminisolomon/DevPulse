@@ -1,5 +1,6 @@
 'use no memo';
 
+import { androidNotificationService } from '@/services';
 import React from 'react';
 import { Platform } from 'react-native';
 import { Voltra } from 'voltra';
@@ -37,6 +38,7 @@ export const syncDailyStats = async (stats: StatsData) => {
           content: <DailyStatsWidgetAndroid stats={stats} />,
         },
       ]);
+      await androidNotificationService.updateStickyNotification(stats);
     } else {
       await updateWidget(
         WIDGET_ID,

@@ -89,6 +89,7 @@
                 "description": "Stay updated with DevPulse activities",
                 "targetCellWidth": 2,
                 "targetCellHeight": 2,
+                "widgetCategory": "home_screen|keyguard",
                 "initialStatePath": "./widgets/initial-state.android.tsx",
                 "previewImage": "./assets/widgets/devpulse-preview.png"
               }

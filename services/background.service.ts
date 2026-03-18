@@ -1,5 +1,5 @@
-import { syncDailyStats } from '@/widgets';
 import { formatDuration } from '@/utilities';
+import { syncDailyStats } from '@/widgets';
 import { format } from 'date-fns';
 import * as BackgroundTask from 'expo-background-task';
 import * as TaskManager from 'expo-task-manager';
