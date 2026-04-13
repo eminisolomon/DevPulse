@@ -109,19 +109,20 @@ export default function LanguageChart({
           ))}
         </Canvas>
         {(centerTitle || centerSubtitle) && (
-          <View style={styles.centerText}>
+          <View style={[styles.centerText, { width: RADIUS * 2 - 40 }]}>
             {centerTitle && (
               <Typography
                 variant="headline"
                 weight="bold"
                 numberOfLines={1}
                 adjustsFontSizeToFit
+                style={{ textAlign: 'center' }}
               >
                 {centerTitle}
               </Typography>
             )}
             {centerSubtitle && (
-              <Typography variant="micro" color={theme.colors.textSecondary}>
+              <Typography variant="micro" color={theme.colors.textSecondary} align="center">
                 {centerSubtitle}
               </Typography>
             )}

@@ -180,16 +180,17 @@ export const DailyProgressCard = ({
             />
           )}
         </Canvas>
-        <View style={styles.centerText}>
+        <View style={[styles.centerText, { width: RADIUS * 2 - 40 }]}>
           <Typography
             variant="headline"
             weight="bold"
             numberOfLines={1}
             adjustsFontSizeToFit
+            style={{ textAlign: 'center' }}
           >
             {avgDiff || `${percent}%`}
           </Typography>
-          <Typography variant="micro" color={theme.colors.textSecondary}>
+          <Typography variant="micro" color={theme.colors.textSecondary} align="center">
             {avgDiff ? 'past week avg' : 'of average'}
           </Typography>
         </View>

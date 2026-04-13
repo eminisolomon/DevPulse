@@ -208,17 +208,20 @@ export const ActivityRhythm = ({
             { justifyContent: 'center', alignItems: 'center' },
           ]}
         >
-          <Typography
-            variant="headline"
-            weight="bold"
-            numberOfLines={1}
-            adjustsFontSizeToFit
-          >
-            {formattedTotal}
-          </Typography>
-          <Typography variant="micro" color={theme.colors.textSecondary}>
-            total time
-          </Typography>
+          <View style={{ width: innerRadius * 2 - 20, alignItems: 'center' }}>
+            <Typography
+              variant="headline"
+              weight="bold"
+              numberOfLines={1}
+              adjustsFontSizeToFit
+              style={{ textAlign: 'center' }}
+            >
+              {formattedTotal}
+            </Typography>
+            <Typography variant="micro" color={theme.colors.textSecondary} align="center">
+              total time
+            </Typography>
+          </View>
         </View>
       </View>
 
