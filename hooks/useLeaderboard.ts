@@ -29,6 +29,7 @@ export function useLeaderboard() {
       return undefined;
     },
     staleTime: 10 * 60 * 1000,
+    refetchOnWindowFocus: true,
   });
 
   const ranksQuery = useQuery({
@@ -57,18 +58,16 @@ export function useLeaderboard() {
     },
     enabled: !orgId,
     staleTime: 30 * 60 * 1000,
+    refetchOnWindowFocus: true,
   });
 
   return {
-    // Data
     data: leaderboardQuery.data,
     userRanks: {
       global: ranksQuery.data?.global,
       country: ranksQuery.data?.country,
       isLoading: ranksQuery.isLoading,
     },
-
-    // State
     isLoading: leaderboardQuery.isLoading,
     isRefetching: leaderboardQuery.isRefetching,
     isFetchingNextPage: leaderboardQuery.isFetchingNextPage,
@@ -76,8 +75,6 @@ export function useLeaderboard() {
     error: leaderboardQuery.error
       ? (leaderboardQuery.error as Error).message
       : null,
-
-    // Actions
     refetch: leaderboardQuery.refetch,
     fetchNextPage: leaderboardQuery.fetchNextPage,
   };

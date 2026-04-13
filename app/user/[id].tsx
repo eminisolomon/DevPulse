@@ -56,7 +56,7 @@ export default function UserProfileScreen() {
       style={[styles.container, { backgroundColor: theme.colors.background }]}
       edges={['left', 'right']}
     >
-      <ScreenHeader title={user.username.toUpperCase()} />
+      <ScreenHeader title={(user.username || 'Unknown').toUpperCase()} />
       <ScrollView
         contentContainerStyle={styles.scrollContent}
         refreshControl={

@@ -21,22 +21,17 @@ export function useSummaries(start: Date, end: Date) {
       }
       return wakaService.getSummaries(startStr, endStr);
     },
-    staleTime: 2 * 60 * 1000, // 2 minutes
-    refetchInterval: 2 * 60 * 1000, // auto-refresh every 2 minutes
+    staleTime: 2 * 60 * 1000,
+    refetchInterval: 2 * 60 * 1000,
     refetchOnWindowFocus: true,
     refetchOnReconnect: true,
   });
 
   return {
-    // Data
     data: query.data,
-
-    // State
     isLoading: query.isLoading,
     isRefetching: query.isRefetching,
     error: query.error,
-
-    // Actions
     refetch: query.refetch,
   };
 }

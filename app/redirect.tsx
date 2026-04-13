@@ -4,11 +4,9 @@ import { AuthService } from '@/services';
 import { useAuthStore } from '@/stores/useAuthStore';
 import { toastError, toastSuccess } from '@/utilities/toast';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 import { View } from 'react-native';
 
-// Module-scoped set to track codes already being exchanged.
-// Survives React Strict Mode unmount/remount cycles in dev.
 const exchangingCodes = new Set<string>();
 
 export default function AuthRedirectScreen() {
@@ -20,6 +18,28 @@ export default function AuthRedirectScreen() {
   }>();
   const router = useRouter();
   const { setTokens } = useAuthStore();
+
+  const handleExchange = useCallback(
+    async (authCode: string) => {
+      try {
+        const data = await AuthService.exchangeCodeForToken(authCode);
+
+        const expiresIn = data.expires_in
+          ? parseInt(String(data.expires_in), 10)
+          : 0;
+
+        setTokens(data.access_token, data.refresh_token, expiresIn);
+        toastSuccess('Success', 'WakaTime account connected');
+        router.replace('/(tabs)');
+      } catch (err: any) {
+        toastError('Login Error', err.message);
+        router.replace('/auth');
+      } finally {
+        exchangingCodes.delete(authCode);
+      }
+    },
+    [setTokens, router],
+  );
 
   useEffect(() => {
     if (error) {
@@ -34,31 +54,7 @@ export default function AuthRedirectScreen() {
     } else if (!code) {
       router.replace('/auth');
     }
-
-    return () => {
-      // Clean up after a delay to allow Strict Mode's second mount to see the code.
-      // In production there's no double-mount so this is a no-op.
-    };
-  }, [code, error]);
-
-  const handleExchange = async (authCode: string) => {
-    try {
-      const data = await AuthService.exchangeCodeForToken(authCode);
-
-      const expiresIn = data.expires_in
-        ? parseInt(String(data.expires_in), 10)
-        : 0;
-
-      setTokens(data.access_token, data.refresh_token, expiresIn);
-      toastSuccess('Success', 'WakaTime account connected');
-      router.replace('/(tabs)');
-    } catch (err: any) {
-      toastError('Login Error', err.message);
-      router.replace('/auth');
-    } finally {
-      exchangingCodes.delete(authCode);
-    }
-  };
+  }, [code, error, error_description, router, handleExchange]);
 
   return (
     <View

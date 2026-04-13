@@ -1,15 +1,39 @@
+import { darkTheme } from '@/theme/dark';
+import { lightTheme } from '@/theme/light';
 import { formatDuration } from '@/utilities';
 import { syncDailyStats } from '@/widgets';
 import { format } from 'date-fns';
 import * as BackgroundTask from 'expo-background-task';
 import * as TaskManager from 'expo-task-manager';
+import { Appearance } from 'react-native';
+import { settingsService } from './settings.service';
 import { wakaService } from './waka.service';
 
 const WAKATIME_WIDGET_SYNC_TASK = 'WAKATIME_WIDGET_SYNC';
 
-/**
- * Defines the background task for syncing WakaTime stats.
- */
+const resolveWidgetTheme = async () => {
+  const settings = await settingsService.getSettings();
+  const { themeMode, accentColor } = settings;
+
+  let useDark: boolean;
+  if (themeMode === 'system') {
+    useDark = Appearance.getColorScheme() === 'dark';
+  } else {
+    useDark = themeMode === 'dark';
+  }
+
+  const themeColors = useDark ? darkTheme : lightTheme;
+  return {
+    background: themeColors.colors.background,
+    surface: themeColors.colors.surface,
+    surfaceSubtle: themeColors.colors.surfaceSubtle,
+    border: themeColors.colors.border,
+    text: themeColors.colors.text,
+    textSecondary: themeColors.colors.textSecondary,
+    primary: accentColor,
+  };
+};
+
 TaskManager.defineTask(WAKATIME_WIDGET_SYNC_TASK, async () => {
   try {
     const now = new Date();
@@ -26,6 +50,7 @@ TaskManager.defineTask(WAKATIME_WIDGET_SYNC_TASK, async () => {
     const topLanguageData = todayData.languages?.[0];
 
     const summariesData = summaries as any;
+    const widgetTheme = await resolveWidgetTheme();
     const statsForWidget = {
       todayTotalText: formatDuration(todayData.grand_total.total_seconds || 0),
       todayPercent: Math.round(
@@ -33,27 +58,19 @@ TaskManager.defineTask(WAKATIME_WIDGET_SYNC_TASK, async () => {
           (summariesData.cumulative_total?.average_seconds || 1)) *
           100,
       ),
-      theme: {
-        background: '#FFFFFF',
-        surface: '#FFFFFF',
-        surfaceSubtle: '#F1F5F9',
-        border: '#E2E8F0',
-        text: '#0F172A',
-        textSecondary: '#64748B',
-        primary: '#38BDF8',
-      },
+      theme: widgetTheme,
       topLanguage: topLanguageData
         ? {
             name: topLanguageData.name,
             percent: topLanguageData.percent,
-            color: '#38BDF8',
+            color: widgetTheme.primary,
           }
         : undefined,
       topProject: topProjectData
         ? {
             name: topProjectData.name,
             text: formatDuration(topProjectData.total_seconds || 0),
-            color: '#38BDF8',
+            color: widgetTheme.primary,
           }
         : undefined,
     };
@@ -67,11 +84,6 @@ TaskManager.defineTask(WAKATIME_WIDGET_SYNC_TASK, async () => {
   }
 });
 
-/**
- * Registers the background sync task.
- *
- * @param minimumInterval - The minimum interval in MINUTES between task executions (default: 15 mins).
- */
 export const registerBackgroundSync = async (minimumInterval: number = 15) => {
   try {
     const isRegistered = await TaskManager.isTaskRegisteredAsync(

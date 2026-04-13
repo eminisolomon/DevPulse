@@ -240,11 +240,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  loading: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
   scrollContent: {
     paddingHorizontal: 16,
     paddingTop: 0,
@@ -271,24 +266,5 @@ const styles = StyleSheet.create({
   },
   statInfo: {
     flex: 1,
-  },
-  bestDayCard: {
-    marginTop: 24,
-    padding: 20,
-    backgroundColor: '#FFD70010',
-    borderWidth: 1,
-    borderColor: '#FFD70030',
-  },
-  bestDayHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 12,
-  },
-  bestDayTitle: {
-    marginLeft: 12,
-  },
-  bestDayInfo: {
-    alignItems: 'center',
-    paddingVertical: 10,
   },
 });

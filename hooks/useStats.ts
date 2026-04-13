@@ -15,22 +15,17 @@ export function useStats(range: StatsRange = 'last_7_days') {
       }
       return wakaService.getStats(range);
     },
-    staleTime: 2 * 60 * 1000, // 2 minutes
-    refetchInterval: 2 * 60 * 1000, // auto-refresh every 2 minutes
+    staleTime: 2 * 60 * 1000,
+    refetchInterval: 2 * 60 * 1000,
     refetchOnWindowFocus: true,
     refetchOnReconnect: true,
   });
 
   return {
-    // Data
     data: query.data || null,
-
-    // State
     isLoading: query.isLoading,
     isRefetching: query.isRefetching,
     error: query.error,
-
-    // Actions
     refetch: query.refetch,
   };
 }

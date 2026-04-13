@@ -26,7 +26,6 @@ export default function DailyScreen() {
       try {
         return parseISO(params.date);
       } catch (e) {
-        console.warn('Invalid date passed to daily screen:', params.date);
         return new Date();
       }
     }
@@ -165,11 +164,8 @@ export default function DailyScreen() {
       >
         {isRefreshingOrLoading && !hasData ? (
           <DailyStatsSkeleton />
-        ) : isRefetching ? (
-          <DailyStatsSkeleton />
         ) : (
           <>
-            {/* Total Time Card */}
             <DailyTotalCard
               totalTimeLabel={totalTimeLabel}
               goalDiffText={goalDiffText}
@@ -177,13 +173,11 @@ export default function DailyScreen() {
               diffColor={diffColor}
             />
 
-            {/* Activity Rhythm */}
             <ActivityRhythm
               sessions={clockSessions}
               isLoading={durationsLoading}
             />
 
-            {/* Segmented Stats */}
             <DailyDistributionStats
               data={dayData}
               date={params.date || format(selectedDate, 'yyyy-MM-dd')}
@@ -198,11 +192,6 @@ export default function DailyScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-  },
-  loading: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
   },
   scrollContent: {
     padding: 16,

@@ -34,6 +34,7 @@ export default function AuthScreen() {
           alignItems: 'center',
           paddingTop: Platform.OS === 'ios' ? 60 : 80,
           paddingHorizontal: paddingHorizontal,
+          paddingBottom: 40,
         }}
         keyboardShouldPersistTaps="handled"
       >
@@ -45,48 +46,47 @@ export default function AuthScreen() {
         >
           <LoginForm />
         </View>
-      </KeyboardAwareScrollView>
 
-      <View style={styles.footer}>
-        <Typography
-          variant="micro"
-          color={theme.colors.textSecondary}
-          style={styles.footerText}
-        >
-          By continuing, you agree to WakaTime's{' '}
+        <View style={styles.footer}>
           <Typography
             variant="micro"
-            weight="bold"
-            color={theme.colors.primary}
-            onPress={() => handleOpenLink('https://wakatime.com/privacy')}
+            color={theme.colors.textSecondary}
+            style={styles.footerText}
           >
-            Privacy Policy
-          </Typography>{' '}
-          and{' '}
-          <Typography
-            variant="micro"
-            weight="bold"
-            color={theme.colors.primary}
-            onPress={() =>
-              handleOpenLink('https://wakatime.com/legal/terms-of-service')
-            }
-          >
-            Terms of Service
+            By continuing, you agree to WakaTime's{' '}
+            <Typography
+              variant="micro"
+              weight="bold"
+              color={theme.colors.primary}
+              onPress={() => handleOpenLink('https://wakatime.com/privacy')}
+            >
+              Privacy Policy
+            </Typography>{' '}
+            and{' '}
+            <Typography
+              variant="micro"
+              weight="bold"
+              color={theme.colors.primary}
+              onPress={() =>
+                handleOpenLink('https://wakatime.com/legal/terms-of-service')
+              }
+            >
+              Terms of Service
+            </Typography>
+            .
           </Typography>
-          .
-        </Typography>
-      </View>
+        </View>
+      </KeyboardAwareScrollView>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   footer: {
-    position: 'absolute',
-    bottom: 32,
-    left: 0,
-    right: 0,
+    marginTop: 'auto',
     paddingHorizontal: 60,
+    paddingTop: 40,
+    paddingBottom: 20,
   },
   footerText: {
     textAlign: 'center',

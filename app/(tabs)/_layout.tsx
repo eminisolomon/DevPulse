@@ -45,6 +45,8 @@ export default function TabLayout() {
   const { theme } = useTheme();
   const insets = useSafeAreaInsets();
 
+  const safeBottomPadding = Math.max(insets.bottom, 12);
+
   return (
     <Tabs
       screenOptions={{
@@ -54,8 +56,10 @@ export default function TabLayout() {
         tabBarStyle: {
           backgroundColor: theme.colors.surface,
           height:
-            Platform.OS === 'ios' ? 88 + insets.bottom / 2 : 72 + insets.bottom,
-          paddingBottom: insets.bottom > 0 ? insets.bottom + 4 : 12,
+            Platform.OS === 'ios'
+              ? 88 + insets.bottom / 2
+              : 72 + safeBottomPadding,
+          paddingBottom: safeBottomPadding,
           paddingTop: 8,
           borderTopWidth: 0,
           shadowColor: '#000',

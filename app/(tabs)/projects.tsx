@@ -12,7 +12,6 @@ import {
   ActivityIndicator,
   FlatList,
   RefreshControl,
-  ScrollView,
   TextInput,
   TouchableOpacity,
   View,
@@ -97,7 +96,6 @@ export default function ProjectsScreen() {
     toastSuccess(`Sorted by ${sort === 'recent' ? 'Recently Active' : 'Name'}`);
   };
 
-  // Initial load only - subsequent refreshes handled in the main render
   if (isLoading && !data) {
     return (
       <View
@@ -173,80 +171,64 @@ export default function ProjectsScreen() {
         </View>
       )}
 
-      {isRefetching ? (
-        <ScrollView
-          refreshControl={
-            <RefreshControl
-              refreshing={isRefetching}
-              onRefresh={refetch}
-              tintColor={theme.colors.primary}
-              colors={[theme.colors.primary]}
-              progressBackgroundColor={theme.colors.surface}
-            />
+      <FlatList
+        data={filteredProjects}
+        renderItem={renderProjectItem}
+        keyExtractor={(item) => item.id}
+        contentContainerStyle={styles.listContent}
+        onEndReached={() => {
+          if (hasNextPage && !isFetchingNextPage && !searchQuery) {
+            fetchNextPage();
           }
-        >
-          <ProjectListSkeleton />
-        </ScrollView>
-      ) : (
-        <FlatList
-          data={filteredProjects}
-          renderItem={renderProjectItem}
-          keyExtractor={(item) => item.id}
-          contentContainerStyle={styles.listContent}
-          onEndReached={() => {
-            if (hasNextPage && !isFetchingNextPage && !searchQuery) {
-              fetchNextPage();
-            }
-          }}
-          onEndReachedThreshold={0.5}
-          ListFooterComponent={
-            isFetchingNextPage ? (
-              <View style={styles.footerLoader}>
-                <ActivityIndicator color={theme.colors.primary} />
-              </View>
-            ) : (
-              <View style={{ height: 40 }} />
-            )
-          }
-          refreshControl={
-            <RefreshControl
-              refreshing={isRefetching}
-              onRefresh={refetch}
-              tintColor={theme.colors.primary}
-              colors={[theme.colors.primary]}
-              progressBackgroundColor={theme.colors.surface}
-            />
-          }
-          ListEmptyComponent={
-            <View style={styles.emptyState}>
-              <View
-                style={[
-                  styles.emptyIconContainer,
-                  { backgroundColor: theme.colors.border + '20' },
-                ]}
-              >
-                <Feather name="folder" size={48} color={theme.colors.border} />
-              </View>
-              <Typography
-                variant="title"
-                weight="semibold"
-                style={styles.emptyTitle}
-              >
-                {searchQuery ? 'No Projects Match' : 'No Projects Found'}
-              </Typography>
-              <Typography
-                color={theme.colors.textSecondary}
-                style={styles.emptySubtitle}
-              >
-                {searchQuery
-                  ? `No projects found matching "${searchQuery}"`
-                  : 'Make sure you have projects tracked in WakaTime.'}
-              </Typography>
+        }}
+        onEndReachedThreshold={0.5}
+        ListFooterComponent={
+          isFetchingNextPage ? (
+            <View style={styles.footerLoader}>
+              <ActivityIndicator color={theme.colors.primary} />
             </View>
-          }
-          showsVerticalScrollIndicator={false}
-        />
-      )}
+          ) : (
+            <View style={{ height: 40 }} />
+          )
+        }
+        refreshControl={
+          <RefreshControl
+            refreshing={isRefetching}
+            onRefresh={refetch}
+            tintColor={theme.colors.primary}
+            colors={[theme.colors.primary]}
+            progressBackgroundColor={theme.colors.surface}
+          />
+        }
+        ListEmptyComponent={
+          <View style={styles.emptyState}>
+            <View
+              style={[
+                styles.emptyIconContainer,
+                { backgroundColor: theme.colors.border + '20' },
+              ]}
+            >
+              <Feather name="folder" size={48} color={theme.colors.border} />
+            </View>
+            <Typography
+              variant="title"
+              weight="semibold"
+              style={styles.emptyTitle}
+            >
+              {searchQuery ? 'No Projects Match' : 'No Projects Found'}
+            </Typography>
+            <Typography
+              color={theme.colors.textSecondary}
+              style={styles.emptySubtitle}
+            >
+              {searchQuery
+                ? `No projects found matching "${searchQuery}"`
+                : 'Make sure you have projects tracked in WakaTime.'}
+            </Typography>
+          </View>
+        }
+        showsVerticalScrollIndicator={false}
+      />
 
       <BottomSheet
         ref={sortSheetRef}

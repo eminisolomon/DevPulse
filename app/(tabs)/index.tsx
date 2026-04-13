@@ -46,7 +46,6 @@ export default function Dashboard() {
     refetch: refetchAllTime,
   } = useAllTime();
 
-  // Keep `today` current — update when the app returns to foreground
   const [today, setToday] = useState(() => new Date());
   const todayStr = useRef(format(new Date(), 'yyyy-MM-dd'));
 
@@ -59,17 +58,6 @@ export default function Dashboard() {
     }
   }, []);
 
-  // Refetch everything when the app comes back to the foreground
-  useEffect(() => {
-    const handleAppState = (next: AppStateStatus) => {
-      if (next === 'active') {
-        refreshIfNewDay();
-        handleRefresh();
-      }
-    };
-    const sub = AppState.addEventListener('change', handleAppState);
-    return () => sub.remove();
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
   const [viewingMonth, setViewingMonth] = useState(today);
 
   const startMonth = useMemo(() => startOfMonth(viewingMonth), [viewingMonth]);
@@ -94,19 +82,30 @@ export default function Dashboard() {
     isLoading: monthLoading,
   } = useSummaries(startMonth, endMonth);
 
+  const handleRefresh = useCallback(() => {
+    refetchStats();
+    refetchAllTime();
+    refetchToday();
+    refetchMonth();
+  }, [refetchStats, refetchAllTime, refetchToday, refetchMonth]);
+
+  useEffect(() => {
+    const handleAppState = (next: AppStateStatus) => {
+      if (next === 'active') {
+        refreshIfNewDay();
+        handleRefresh();
+      }
+    };
+    const sub = AppState.addEventListener('change', handleAppState);
+    return () => sub.remove();
+  }, [refreshIfNewDay, handleRefresh]);
+
   const isLoading =
     userLoading ||
     statsLoading ||
     allTimeLoading ||
     todayLoading ||
     isStatsRefetching;
-
-  const handleRefresh = () => {
-    refetchStats();
-    refetchAllTime();
-    refetchToday();
-    refetchMonth();
-  };
 
   const dailyAverage = stats?.data?.daily_average || 0;
 
