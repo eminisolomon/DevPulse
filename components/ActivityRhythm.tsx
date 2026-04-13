@@ -218,7 +218,11 @@ export const ActivityRhythm = ({
             >
               {formattedTotal}
             </Typography>
-            <Typography variant="micro" color={theme.colors.textSecondary} align="center">
+            <Typography
+              variant="micro"
+              color={theme.colors.textSecondary}
+              align="center"
+            >
               total time
             </Typography>
           </View>

@@ -45,7 +45,9 @@ export default function UserLanguages({ languages }: UserLanguagesProps) {
                   { backgroundColor: getLanguageColor(lang.name) },
                 ]}
               />
-              <Typography weight="medium">{lang.name}</Typography>
+              <Typography weight="medium" numberOfLines={1}>
+                {lang.name}
+              </Typography>
             </View>
             <Typography color={theme.colors.textSecondary}>
               {formatDuration(lang.total_seconds)}
@@ -82,6 +84,7 @@ const styles = StyleSheet.create({
   langLeft: {
     flexDirection: 'row',
     alignItems: 'center',
+    flex: 1,
   },
   langDot: {
     width: 10,

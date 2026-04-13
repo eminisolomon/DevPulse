@@ -54,10 +54,14 @@ export const LeaderboardItem = ({ item }: LeaderboardItemProps) => {
           />
         </View>
         <View style={styles.userInfo}>
-          <Typography variant="caption" weight="bold">
+          <Typography variant="caption" weight="bold" numberOfLines={1}>
             {item.user.display_name || item.user.username || 'Anonymous'}
           </Typography>
-          <Typography variant="micro" color={theme.colors.textSecondary}>
+          <Typography
+            variant="micro"
+            color={theme.colors.textSecondary}
+            numberOfLines={1}
+          >
             {item.running_total.human_readable_total}
           </Typography>
         </View>

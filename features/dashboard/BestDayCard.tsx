@@ -153,6 +153,8 @@ export const BestDayCard = ({
                 <Typography
                   variant="caption"
                   color={theme.colors.textSecondary}
+                  numberOfLines={1}
+                  style={{ flexShrink: 1 }}
                 >
                   {topProject.name}
                 </Typography>

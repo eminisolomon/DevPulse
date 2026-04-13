@@ -122,7 +122,11 @@ export default function LanguageChart({
               </Typography>
             )}
             {centerSubtitle && (
-              <Typography variant="micro" color={theme.colors.textSecondary} align="center">
+              <Typography
+                variant="micro"
+                color={theme.colors.textSecondary}
+                align="center"
+              >
                 {centerSubtitle}
               </Typography>
             )}

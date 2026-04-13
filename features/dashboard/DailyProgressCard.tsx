@@ -70,6 +70,7 @@ export const DailyProgressCard = ({
     projectInfo: {
       ...commonStyles.row,
       gap: theme.spacing[2],
+      flex: 1,
     },
     dot: {
       width: 8,
@@ -190,7 +191,11 @@ export const DailyProgressCard = ({
           >
             {avgDiff || `${percent}%`}
           </Typography>
-          <Typography variant="micro" color={theme.colors.textSecondary} align="center">
+          <Typography
+            variant="micro"
+            color={theme.colors.textSecondary}
+            align="center"
+          >
             {avgDiff ? 'past week avg' : 'of average'}
           </Typography>
         </View>
@@ -213,7 +218,7 @@ export const DailyProgressCard = ({
                   { backgroundColor: project.color || theme.colors.primary },
                 ]}
               />
-              <Typography variant="body" weight="medium">
+              <Typography variant="body" weight="medium" numberOfLines={1}>
                 {project.name}
               </Typography>
             </View>

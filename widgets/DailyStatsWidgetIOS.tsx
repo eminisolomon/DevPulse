@@ -25,7 +25,9 @@ export const DailyStatsWidgetIOS = ({
           style={{
             alignItems: 'center',
             marginBottom: isSimple ? 0 : 12,
-            backgroundColor: isSimple ? 'transparent' : stats.theme.primary + '15',
+            backgroundColor: isSimple
+              ? 'transparent'
+              : stats.theme.primary + '15',
             paddingHorizontal: isSimple ? 0 : 10,
             paddingVertical: isSimple ? 0 : 6,
             borderRadius: 14,

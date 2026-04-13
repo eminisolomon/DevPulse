@@ -23,7 +23,7 @@ export const DailyProjectsCard = ({ projects }: DailyProjectsCardProps) => {
             <View
               style={[styles.projectDot, { backgroundColor: project.color }]}
             />
-            <Typography variant="body" weight="medium">
+            <Typography variant="body" weight="medium" numberOfLines={1}>
               {project.name}
             </Typography>
           </View>
@@ -50,6 +50,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 10,
+    flex: 1,
   },
   projectDot: {
     width: 10,

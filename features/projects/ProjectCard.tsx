@@ -83,7 +83,12 @@ export const ProjectCard = ({ item, allTimeText }: ProjectCardProps) => {
 
         <View style={styles.projectMainInfo}>
           <View style={styles.nameRow}>
-            <Typography variant="body" weight="bold" numberOfLines={1}>
+            <Typography
+              variant="body"
+              weight="bold"
+              numberOfLines={1}
+              style={{ flexShrink: 1 }}
+            >
               {item.name}
             </Typography>
             <View
