@@ -19,9 +19,20 @@ import {
 import { dashboardStyles as styles } from '@/theme/styles/dashboard';
 import { formatDuration } from '@/utilities';
 import { getProjectColor } from '@/utilities/projectColors';
-import { endOfMonth, startOfMonth } from 'date-fns';
-import React, { useMemo, useState } from 'react';
-import { RefreshControl, ScrollView } from 'react-native';
+import { endOfMonth, format, startOfMonth } from 'date-fns';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
+import {
+  AppState,
+  AppStateStatus,
+  RefreshControl,
+  ScrollView,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function Dashboard() {
@@ -35,7 +46,30 @@ export default function Dashboard() {
     refetch: refetchAllTime,
   } = useAllTime();
 
-  const today = useMemo(() => new Date(), []);
+  // Keep `today` current — update when the app returns to foreground
+  const [today, setToday] = useState(() => new Date());
+  const todayStr = useRef(format(new Date(), 'yyyy-MM-dd'));
+
+  const refreshIfNewDay = useCallback(() => {
+    const now = new Date();
+    const nowStr = format(now, 'yyyy-MM-dd');
+    if (nowStr !== todayStr.current) {
+      todayStr.current = nowStr;
+      setToday(now);
+    }
+  }, []);
+
+  // Refetch everything when the app comes back to the foreground
+  useEffect(() => {
+    const handleAppState = (next: AppStateStatus) => {
+      if (next === 'active') {
+        refreshIfNewDay();
+        handleRefresh();
+      }
+    };
+    const sub = AppState.addEventListener('change', handleAppState);
+    return () => sub.remove();
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
   const [viewingMonth, setViewingMonth] = useState(today);
 
   const startMonth = useMemo(() => startOfMonth(viewingMonth), [viewingMonth]);
@@ -162,7 +196,7 @@ export default function Dashboard() {
         topProject,
       },
     };
-  }, [todaySummaries, dailyAverage, getLanguageColor, theme.colors.primary]);
+  }, [todaySummaries, dailyAverage, getLanguageColor, theme.colors]);
 
   useWidgetSync(statsForWidget);
 

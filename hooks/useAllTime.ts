@@ -5,7 +5,9 @@ export function useAllTime() {
   const query = useQuery({
     queryKey: ['allTime'],
     queryFn: () => wakaService.getAllTimeSinceToday(),
-    staleTime: 60 * 60 * 1000, // 1 hour
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    refetchOnWindowFocus: true,
+    refetchOnReconnect: true,
   });
 
   return {

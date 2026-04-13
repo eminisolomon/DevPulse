@@ -21,7 +21,10 @@ export function useSummaries(start: Date, end: Date) {
       }
       return wakaService.getSummaries(startStr, endStr);
     },
-    staleTime: 5 * 60 * 1000, // 5 minutes
+    staleTime: 2 * 60 * 1000, // 2 minutes
+    refetchInterval: 2 * 60 * 1000, // auto-refresh every 2 minutes
+    refetchOnWindowFocus: true,
+    refetchOnReconnect: true,
   });
 
   return {
