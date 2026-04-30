@@ -7,6 +7,11 @@ import {
   Typography,
 } from '@/components';
 import { getCategoryColor, getOSColor } from '@/constants';
+import {
+  WakaTimeLanguage,
+  WakaTimeMachineStat,
+  WakaTimeStats,
+} from '@/interfaces';
 import { BestDayCard } from '@/features';
 import { AIProductivityCard } from '@/features/stats';
 import { useMetadata, useStats, useTheme } from '@/hooks';
@@ -17,6 +22,18 @@ import { useLocalSearchParams } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { RefreshControl, ScrollView, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+
+type SegmentedStatItem =
+  | WakaTimeLanguage
+  | WakaTimeMachineStat
+  | NonNullable<WakaTimeStats['data']['dependencies']>[number];
+type StatItem = {
+  label: string;
+  value: string;
+  icon: IoniconName;
+  color: string;
+  fullWidth?: boolean;
+};
 
 export default function NumbersScreen() {
   const { theme } = useTheme();
@@ -52,7 +69,7 @@ export default function NumbersScreen() {
     );
   }
 
-  const statItems = [
+  const statItems: StatItem[] = [
     {
       label: 'All Time Total',
       value: stats?.data?.human_readable_total || '0h 0m',
@@ -95,7 +112,7 @@ export default function NumbersScreen() {
 
   const sections: {
     title: string;
-    data: any[] | undefined;
+    data: SegmentedStatItem[] | undefined;
     getColor: (name: string) => string;
     limit?: number;
   }[] = [
@@ -124,7 +141,7 @@ export default function NumbersScreen() {
       data: stats?.data?.machines,
       getColor: (name) => {
         const machine = stats?.data?.machines?.find(
-          (m: any) => m.name === name,
+          (machineItem: WakaTimeMachineStat) => machineItem.name === name,
         );
         return getMachineColor(machine?.machine_name_id);
       },
@@ -178,11 +195,7 @@ export default function NumbersScreen() {
                   { backgroundColor: item.color + '20' },
                 ]}
               >
-                <Ionicons
-                  name={item.icon as any}
-                  size={24}
-                  color={item.color}
-                />
+                <Ionicons name={item.icon} size={24} color={item.color} />
               </View>
               <View style={styles.statInfo}>
                 <Typography

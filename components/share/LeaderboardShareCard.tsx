@@ -10,6 +10,7 @@ import { ShareCardWrapper } from './ShareCardWrapper';
 interface LeaderboardShareCardProps {
   rank?: number | null;
   displayName: string;
+  username?: string;
   totalTime?: string | null;
   country?: string;
   scope?: string;
@@ -18,7 +19,19 @@ interface LeaderboardShareCardProps {
 }
 
 export const LeaderboardShareCard = forwardRef<View, LeaderboardShareCardProps>(
-  ({ rank, displayName, totalTime, country, scope, photo, top3Users }, ref) => {
+  (
+    {
+      rank,
+      displayName,
+      username,
+      totalTime,
+      country,
+      scope,
+      photo,
+      top3Users,
+    },
+    ref,
+  ) => {
     const { textColor, mutedColor, surfaceColor, theme, isDark } =
       useShareTheme();
 
@@ -27,7 +40,7 @@ export const LeaderboardShareCard = forwardRef<View, LeaderboardShareCardProps>(
     const bronzeColor = '#B45309';
 
     const getRankColor = () => {
-      if (!rank) return mutedColor;
+      if (rank == null) return mutedColor;
       if (rank === 1) return goldColor;
       if (rank === 2) return silverColor;
       if (rank === 3) return bronzeColor;
@@ -37,16 +50,23 @@ export const LeaderboardShareCard = forwardRef<View, LeaderboardShareCardProps>(
     const rankColor = getRankColor();
     const rankSuffix =
       rank === 1 ? 'st' : rank === 2 ? 'nd' : rank === 3 ? 'rd' : 'th';
-    const rankDisplay = rank ? `${rank}${rankSuffix}` : '-';
+    const rankDisplay = rank != null ? `${rank}${rankSuffix}` : '#';
 
     return (
-      <ShareCardWrapper ref={ref} outerPadding={24}>
+      <ShareCardWrapper
+        ref={ref}
+        outerPadding={24}
+        displayName={displayName}
+        username={username}
+        photo={photo}
+      >
         <View style={styles.topContainer}>
           <Typography
             variant="micro"
             weight="bold"
             color={mutedColor}
             style={styles.scopeLabel}
+            numberOfLines={2}
           >
             {scope || 'GLOBAL TOP DEVELOPERS'}
           </Typography>
@@ -93,6 +113,8 @@ export const LeaderboardShareCard = forwardRef<View, LeaderboardShareCardProps>(
                 color={textColor}
                 numberOfLines={1}
                 adjustsFontSizeToFit
+                minimumFontScale={0.75}
+                style={styles.heroStatValue}
               >
                 {totalTime || '--'}
               </Typography>
@@ -102,7 +124,15 @@ export const LeaderboardShareCard = forwardRef<View, LeaderboardShareCardProps>(
                 <Typography variant="micro" weight="bold" color={mutedColor}>
                   LOCATION
                 </Typography>
-                <Typography variant="title" weight="bold" color={textColor}>
+                <Typography
+                  variant="title"
+                  weight="bold"
+                  color={textColor}
+                  numberOfLines={1}
+                  adjustsFontSizeToFit
+                  minimumFontScale={0.7}
+                  style={styles.heroStatValue}
+                >
                   {country.toUpperCase()}
                 </Typography>
               </View>
@@ -145,7 +175,11 @@ export const LeaderboardShareCard = forwardRef<View, LeaderboardShareCardProps>(
                     >
                       {user.user.display_name || user.user.username}
                     </Typography>
-                    <Typography variant="micro" color={mutedColor}>
+                    <Typography
+                      variant="micro"
+                      color={mutedColor}
+                      numberOfLines={1}
+                    >
                       {user.running_total.human_readable_total}
                     </Typography>
                   </View>
@@ -167,6 +201,7 @@ const styles = StyleSheet.create({
   scopeLabel: {
     letterSpacing: 2,
     opacity: 0.8,
+    textAlign: 'center',
   },
   rankSection: {
     alignItems: 'center',
@@ -190,12 +225,23 @@ const styles = StyleSheet.create({
   },
   heroStats: {
     flexDirection: 'row',
-    gap: 32,
+    flexWrap: 'wrap',
+    justifyContent: 'center',
+    gap: 16,
     marginTop: 8,
+    width: '100%',
   },
   heroStatItem: {
     alignItems: 'center',
     gap: 4,
+    flexShrink: 1,
+    minWidth: 0,
+    flexBasis: '46%',
+    maxWidth: '46%',
+  },
+  heroStatValue: {
+    textAlign: 'center',
+    width: '100%',
   },
   podiumContainer: {
     marginTop: 20,
@@ -226,5 +272,6 @@ const styles = StyleSheet.create({
   podiumInfo: {
     flex: 1,
     gap: 2,
+    minWidth: 0,
   },
 });

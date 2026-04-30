@@ -17,7 +17,7 @@ export default function ThemeSelectionScreen() {
   }: {
     mode: 'light' | 'dark' | 'system';
     label: string;
-    icon: any;
+    icon: FeatherIconName;
   }) => (
     <TouchableOpacity
       style={[

@@ -1,3 +1,4 @@
+import { WakaTimeDuration } from '@/interfaces';
 import { wakaService } from '@/services';
 import { getProjectColor } from '@/utilities';
 import { useQuery } from '@tanstack/react-query';
@@ -14,17 +15,19 @@ export function useDurations(date: Date = new Date()) {
 
       const dayStart = startOfDay(date).getTime() / 1000;
 
-      return response.data.map((d: any) => {
+      return response.data.map((duration: WakaTimeDuration) => {
         const startTime =
-          typeof d.time === 'string'
-            ? new Date(d.time).getTime() / 1000
-            : d.time || d.start;
+          typeof duration.time === 'string'
+            ? new Date(duration.time).getTime() / 1000
+            : duration.time;
 
         return {
           start: Math.max(0, startTime - dayStart),
-          duration: d.duration,
-          project: d.project,
-          color: d.project ? getProjectColor(d.project) : d.color,
+          duration: duration.duration,
+          project: duration.project,
+          color: duration.project
+            ? getProjectColor(duration.project)
+            : undefined,
         };
       });
     },

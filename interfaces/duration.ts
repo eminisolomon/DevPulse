@@ -1,8 +1,10 @@
 export interface WakaTimeDuration {
   project: string;
   duration: number;
-  time: number;
+  time: number | string;
   id: string;
+  start?: number;
+  color?: string;
 }
 
 export interface WakaTimeDurationsResponse {

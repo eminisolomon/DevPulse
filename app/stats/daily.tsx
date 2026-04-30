@@ -3,6 +3,7 @@ import { StatsHeader } from '@/components/nav/StatsHeader';
 import { DailyStatsShareCard } from '@/components/share';
 import { DailyStatsSkeleton } from '@/components/skeletons';
 import { DailyDistributionStats, DailyTotalCard } from '@/features/stats';
+import { WakaTimeSummaryItem } from '@/interfaces';
 import {
   useDurations,
   useShareScreenshot,
@@ -100,19 +101,19 @@ export default function DailyScreen() {
 
   const topLanguages = useMemo(() => {
     return (
-      dayData?.languages?.slice(0, 3).map((l: any) => ({
-        name: l.name,
-        percent: l.percent,
+      dayData?.languages?.slice(0, 3).map((language: WakaTimeSummaryItem) => ({
+        name: language.name,
+        percent: language.percent,
       })) || []
     );
   }, [dayData]);
 
   const topProjects = useMemo(() => {
     return (
-      dayData?.projects?.slice(0, 3).map((p: any) => ({
-        name: p.name,
-        text: p.text,
-        color: p.color,
+      dayData?.projects?.slice(0, 3).map((project: WakaTimeSummaryItem) => ({
+        name: project.name,
+        text: project.text,
+        color: project.color,
       })) || []
     );
   }, [dayData]);

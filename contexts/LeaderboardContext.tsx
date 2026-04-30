@@ -1,6 +1,9 @@
 import { COUNTRIES } from '@/constants/countries';
 import { useLeaderboard, useUser } from '@/hooks';
-import { LeaderboardUser } from '@/interfaces/leaderboard';
+import {
+  CurrentLeaderboardUser,
+  LeaderboardUser,
+} from '@/interfaces/leaderboard';
 import { useLeaderboardStore } from '@/stores/useLeaderboardStore';
 import React, { createContext, useContext, useEffect, useMemo } from 'react';
 
@@ -10,7 +13,12 @@ interface LeaderboardContextType {
   isLoading: boolean;
   isRefetching: boolean;
   leaderboardData: LeaderboardUser[];
-  currentUserRank: LeaderboardUser | undefined;
+  currentUserRank: CurrentLeaderboardUser | undefined;
+  userRanks: {
+    global: number | null | undefined;
+    country: number | null | undefined;
+    isLoading: boolean;
+  };
   refetch: () => void;
   fetchNextPage: () => void;
   hasNextPage: boolean;
@@ -29,24 +37,22 @@ export function LeaderboardProvider({
   children: React.ReactNode;
 }) {
   const { data: userData } = useUser();
-  const { selectedCountry, setSelectedCountry, fetchUserRanks } =
-    useLeaderboardStore();
+  const { selectedCountry, setSelectedCountry } = useLeaderboardStore();
 
   const userCountry = useMemo(() => {
     return userData?.data?.city?.country_code;
   }, [userData]);
 
   useEffect(() => {
-    if (userCountry) {
-      fetchUserRanks(userCountry);
-      if (selectedCountry === undefined) {
-        setSelectedCountry(userCountry);
-      }
+    if (userCountry && selectedCountry === undefined) {
+      setSelectedCountry(userCountry);
     }
-  }, [userCountry, selectedCountry, setSelectedCountry, fetchUserRanks]);
+  }, [userCountry, selectedCountry, setSelectedCountry]);
 
   const {
     data: leaderboardDataObj,
+    currentUserRank,
+    userRanks,
     isLoading,
     isRefetching,
     refetch,
@@ -60,10 +66,6 @@ export function LeaderboardProvider({
     [leaderboardDataObj?.pages],
   );
 
-  const currentUserRank = useMemo(() => {
-    return leaderboardDataObj?.pages?.[0]?.current_user;
-  }, [leaderboardDataObj?.pages]);
-
   const value = {
     selectedCountry,
     setSelectedCountry,
@@ -71,6 +73,7 @@ export function LeaderboardProvider({
     isRefetching,
     leaderboardData,
     currentUserRank,
+    userRanks,
     refetch,
     fetchNextPage,
     hasNextPage,

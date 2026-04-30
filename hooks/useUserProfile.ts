@@ -1,3 +1,4 @@
+import { LeaderboardUser, WakaTimeLanguage } from '@/interfaces';
 import { useCallback, useMemo, useState } from 'react';
 import { useLeaderboard } from './useLeaderboard';
 import { useStats } from './useStats';
@@ -36,14 +37,14 @@ export function useUserProfile(id: string) {
   const profile = useMemo(() => {
     if (leaderboardData?.pages) {
       const found = leaderboardData.pages
-        .flatMap((page: any) => page.data)
-        .find((item: any) => item.user.id === id);
+        .flatMap((page) => page.data)
+        .find((item: LeaderboardUser) => item.user.id === id);
       if (found) return found;
     }
 
     if (isSelf && currentUser?.data && statsData?.data) {
       return {
-        rank: userRanks.global || '?',
+        rank: userRanks.global ?? '?',
         user: currentUser.data,
         running_total: {
           total_seconds: statsData.data.total_seconds,
@@ -51,10 +52,12 @@ export function useUserProfile(id: string) {
           daily_average: statsData.data.daily_average,
           human_readable_daily_average:
             statsData.data.human_readable_daily_average,
-          languages: statsData.data.languages.map((l: any) => ({
-            name: l.name,
-            total_seconds: l.total_seconds,
-          })),
+          languages: statsData.data.languages.map(
+            (language: WakaTimeLanguage) => ({
+              name: language.name,
+              total_seconds: language.total_seconds,
+            }),
+          ),
         },
       };
     }

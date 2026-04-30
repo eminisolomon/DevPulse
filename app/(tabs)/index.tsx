@@ -1,5 +1,10 @@
 import { DashboardSkeleton } from '@/components/skeletons';
 import {
+  WakaTimeLanguage,
+  WakaTimeSummary,
+  WakaTimeSummaryItem,
+} from '@/interfaces';
+import {
   BestDayCard,
   DailyProgressCard,
   DashboardHeader,
@@ -114,11 +119,12 @@ export default function Dashboard() {
 
   const recentProjects = (stats?.data?.projects || [])
     .slice(0, 3)
-    .map((p: any) => ({
-      name: p.name,
+    .map((project: WakaTimeLanguage) => ({
+      name: project.name,
       text:
-        p.text || (p.total_seconds ? formatDuration(p.total_seconds) : '0m'),
-      color: getProjectColor(p.name),
+        project.text ||
+        (project.total_seconds ? formatDuration(project.total_seconds) : '0m'),
+      color: getProjectColor(project.name),
     }));
 
   const {
@@ -151,12 +157,14 @@ export default function Dashboard() {
       }
     }
 
-    const projects = (todayData?.projects || []).slice(0, 5).map((p: any) => ({
-      name: p.name,
-      text: p.text,
-      color: getProjectColor(p.name),
-      percent: p.percent || 0,
-    }));
+    const projects = (todayData?.projects || [])
+      .slice(0, 5)
+      .map((project: WakaTimeSummaryItem) => ({
+        name: project.name,
+        text: project.text,
+        color: getProjectColor(project.name),
+        percent: project.percent || 0,
+      }));
 
     const topLanguage = todayData?.languages?.[0]
       ? {
@@ -214,27 +222,29 @@ export default function Dashboard() {
     );
   };
 
-  const calendarDays = (monthSummaries?.data || []).map((dayData: any) => {
-    const totalSeconds = dayData.grand_total.total_seconds;
-    let activityLevel = 0;
+  const calendarDays = (monthSummaries?.data || []).map(
+    (dayData: WakaTimeSummary) => {
+      const totalSeconds = dayData.grand_total.total_seconds;
+      let activityLevel = 0;
 
-    if (totalSeconds > 0 && dailyAverage > 0) {
-      const ratio = totalSeconds / dailyAverage;
-      if (ratio > 1) activityLevel = 4;
-      else if (ratio > 0.75) activityLevel = 3;
-      else if (ratio > 0.25) activityLevel = 2;
-      else activityLevel = 1;
-    } else if (totalSeconds > 0) {
-      activityLevel = 2;
-    }
+      if (totalSeconds > 0 && dailyAverage > 0) {
+        const ratio = totalSeconds / dailyAverage;
+        if (ratio > 1) activityLevel = 4;
+        else if (ratio > 0.75) activityLevel = 3;
+        else if (ratio > 0.25) activityLevel = 2;
+        else activityLevel = 1;
+      } else if (totalSeconds > 0) {
+        activityLevel = 2;
+      }
 
-    return {
-      date: dayData.range.date,
-      totalTime: dayData.grand_total.text,
-      hasActivity: totalSeconds > 0,
-      activityLevel,
-    };
-  });
+      return {
+        date: dayData.range.date,
+        totalTime: dayData.grand_total.text,
+        hasActivity: totalSeconds > 0,
+        activityLevel,
+      };
+    },
+  );
 
   if (isLoading && !stats) {
     return (

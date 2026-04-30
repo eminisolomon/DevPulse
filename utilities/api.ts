@@ -75,8 +75,13 @@ export async function fetchWithAuth<T>(
       );
 
       const newToken = refreshData.access_token;
+      const retryHeaders = {
+        ...headers,
+        ...getHeaders(newToken, 'bearer'),
+      };
       response = await fetch(url, {
-        headers: getHeaders(newToken, 'bearer'),
+        ...options,
+        headers: retryHeaders,
       });
 
       if (response.status === 401) {

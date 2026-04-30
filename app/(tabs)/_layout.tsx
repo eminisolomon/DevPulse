@@ -17,7 +17,7 @@ function AnimatedTabIcon({
   size,
   focused,
 }: {
-  name: string;
+  name: MaterialIconName;
   color: string;
   size: number;
   focused: boolean;
@@ -36,7 +36,7 @@ function AnimatedTabIcon({
 
   return (
     <Animated.View style={animatedStyle}>
-      <MaterialCommunityIcons name={name as any} size={size} color={color} />
+      <MaterialCommunityIcons name={name} size={size} color={color} />
     </Animated.View>
   );
 }

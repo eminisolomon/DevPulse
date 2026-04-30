@@ -13,7 +13,7 @@ export const useShareScreenshot = () => {
         console.warn(
           '[Share] shareCardRef is null. Card component might not be rendered.',
         );
-        toast.error('Share card not ready. Are you ranked on the leaderboard?');
+        toast.error('Share card not ready yet. Please try again.');
         return;
       }
 

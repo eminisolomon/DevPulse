@@ -45,3 +45,4 @@ app-example
 /ios
 /android
 .env
+.codex

@@ -1,7 +1,7 @@
 import { Typography } from '@/components/Typography';
 import { COUNTRIES } from '@/constants/countries';
+import { useLeaderboard, useUser } from '@/hooks';
 import { useTheme } from '@/hooks/useTheme';
-import { useLeaderboardStore } from '@/stores/useLeaderboardStore';
 import { useRouter } from 'expo-router';
 import React, { useMemo } from 'react';
 import {
@@ -20,7 +20,19 @@ import Animated, {
 export const RankPulseCard = () => {
   const { theme } = useTheme();
   const router = useRouter();
-  const { userRanks } = useLeaderboardStore();
+  const { userRanks } = useLeaderboard();
+  const { data: user } = useUser();
+
+  const hasGlobalRank = userRanks.global != null;
+  const hasCountryRank = userRanks.country != null;
+  const countryCode = user?.data?.city?.country_code;
+  const countryLabel = useMemo(() => {
+    if (!countryCode) return 'COUNTRY';
+    return (
+      COUNTRIES.find((country) => country.value === countryCode)?.label ||
+      'COUNTRY'
+    );
+  }, [countryCode]);
 
   const pulseStyle = useAnimatedStyle(() => {
     return {
@@ -40,15 +52,13 @@ export const RankPulseCard = () => {
     };
   });
 
-  if (userRanks.isLoading && !userRanks.global && !userRanks.country) {
+  if (userRanks.isLoading && !hasGlobalRank && !hasCountryRank) {
     return (
       <View style={[styles.card, { backgroundColor: theme.colors.surface }]}>
         <ActivityIndicator color={theme.colors.accent} />
       </View>
     );
   }
-
-  if (!userRanks.global && !userRanks.country) return null;
 
   return (
     <TouchableOpacity
@@ -78,7 +88,7 @@ export const RankPulseCard = () => {
               weight="bold"
               color={theme.colors.accent}
             >
-              #{userRanks.global || '-'}
+              {hasGlobalRank ? `#${userRanks.global}` : '#'}
             </Typography>
           </Animated.View>
         </View>
@@ -94,17 +104,14 @@ export const RankPulseCard = () => {
             color={theme.colors.textSecondary}
             style={styles.label}
           >
-            {userRanks.country
-              ? COUNTRIES.find((c) => c.value === userRanks.country)?.label ||
-                'COUNTRY'
-              : 'COUNTRY'}
+            {countryLabel}
           </Typography>
           <Typography
             variant="headline"
             weight="bold"
             color={theme.colors.text}
           >
-            #{userRanks.country || '-'}
+            {hasCountryRank ? `#${userRanks.country}` : '#'}
           </Typography>
         </View>
       </View>

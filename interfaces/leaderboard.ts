@@ -1,5 +1,26 @@
+export interface LeaderboardUserProfile {
+  id: string;
+  email?: string;
+  username?: string;
+  full_name?: string;
+  display_name?: string;
+  website?: string;
+  human_readable_website?: string;
+  is_hireable?: boolean;
+  photo?: string;
+  is_email_public?: boolean;
+  photo_public?: boolean;
+  is_photo_public?: boolean;
+  city?: {
+    country_code: string;
+    name: string;
+    state: string;
+    title: string;
+  };
+}
+
 export interface LeaderboardUser {
-  rank: number;
+  rank: number | null;
   running_total: {
     total_seconds: number;
     human_readable_total: string;
@@ -10,30 +31,18 @@ export interface LeaderboardUser {
       total_seconds: number;
     }[];
   };
-  user: {
-    id: string;
-    email?: string;
-    username?: string;
-    full_name?: string;
-    display_name?: string;
-    website?: string;
-    human_readable_website?: string;
-    is_hireable: boolean;
-    photo: string;
-    is_email_public: boolean;
-    photo_public: boolean;
-    city?: {
-      country_code: string;
-      name: string;
-      state: string;
-      title: string;
-    };
-  };
+  user: LeaderboardUserProfile;
+}
+
+export interface CurrentLeaderboardUser {
+  rank: number | null;
+  page: number | null;
+  user: LeaderboardUserProfile;
 }
 
 export interface WakaTimeLeaderboard {
   data: LeaderboardUser[];
-  current_user?: LeaderboardUser;
+  current_user?: CurrentLeaderboardUser;
   page: number;
   total_pages: number;
   range: {

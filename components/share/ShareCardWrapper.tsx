@@ -9,10 +9,16 @@ interface ShareCardWrapperProps {
   children: React.ReactNode;
   accentColor?: string;
   outerPadding?: number;
+  displayName?: string;
+  username?: string;
+  photo?: string | null;
 }
 
 export const ShareCardWrapper = forwardRef<View, ShareCardWrapperProps>(
-  ({ children, accentColor, outerPadding = 32 }, ref) => {
+  (
+    { children, accentColor, outerPadding = 32, displayName, username, photo },
+    ref,
+  ) => {
     const { theme, isDark } = useTheme();
     const { data: user } = useUser();
     const accent = accentColor || theme.colors.primary;
@@ -48,19 +54,37 @@ export const ShareCardWrapper = forwardRef<View, ShareCardWrapperProps>(
               <View style={styles.userRow}>
                 <Avatar
                   source={
-                    user?.data?.photo ? { uri: user.data.photo } : undefined
+                    photo || user?.data?.photo
+                      ? { uri: photo || user?.data?.photo || '' }
+                      : undefined
                   }
-                  initials={user?.data?.display_name || user?.data?.username}
+                  initials={
+                    displayName ||
+                    username ||
+                    user?.data?.display_name ||
+                    user?.data?.username
+                  }
                   size={36}
                 />
-                <View>
-                  <Typography variant="body" weight="bold" color={textColor}>
-                    {user?.data?.display_name ||
+                <View style={styles.userInfo}>
+                  <Typography
+                    variant="body"
+                    weight="bold"
+                    color={textColor}
+                    numberOfLines={1}
+                  >
+                    {displayName ||
+                      username ||
+                      user?.data?.display_name ||
                       user?.data?.username ||
                       'Developer'}
                   </Typography>
-                  <Typography variant="micro" color={mutedColor}>
-                    @{user?.data?.username || 'devpulse_user'}
+                  <Typography
+                    variant="micro"
+                    color={mutedColor}
+                    numberOfLines={1}
+                  >
+                    @{username || user?.data?.username || 'devpulse_user'}
                   </Typography>
                 </View>
               </View>
@@ -133,9 +157,17 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 10,
+    flex: 1,
+    minWidth: 0,
+  },
+  userInfo: {
+    flex: 1,
+    minWidth: 0,
   },
   headerLogo: {
     padding: 2,
+    marginLeft: 12,
+    flexShrink: 0,
   },
   logoImage: {
     width: 24,

@@ -1,6 +1,7 @@
 import { BottomSheet, Header, ListItem, Typography } from '@/components';
 import { LeaderboardShareCard } from '@/components/share';
 import { LeaderboardSkeleton } from '@/components/skeletons';
+import { COUNTRIES } from '@/constants/countries';
 import { useLeaderboardContext } from '@/contexts';
 import { CurrentUserRank, LeaderboardItem, TopThreePodium } from '@/features';
 import { useAllTime, useShareScreenshot, useTheme, useUser } from '@/hooks';
@@ -62,9 +63,13 @@ export default function LeaderboardScreen() {
     if (selectedOrganization) {
       return `${selectedOrganization.name} Leaderboard`;
     }
-    return selectedCountry && selectedCountry !== 'GLOBAL'
-      ? `${selectedCountry} Top Developers`
-      : 'Global Top Developers';
+    if (selectedCountry && selectedCountry !== 'GLOBAL') {
+      const countryLabel =
+        COUNTRIES.find((country) => country.value === selectedCountry)?.label ||
+        selectedCountry;
+      return `${countryLabel} Top Developers`;
+    }
+    return 'Global Top Developers';
   };
 
   const showCountrySelector = !selectedOrganization;
@@ -155,11 +160,9 @@ export default function LeaderboardScreen() {
           user?.data.username ||
           'Developer'
         }
+        username={currentUserRank?.user.username || user?.data.username}
         photo={currentUserRank?.user.photo || user?.data.photo}
-        totalTime={
-          currentUserRank?.running_total?.human_readable_total ||
-          allTime?.data.text
-        }
+        totalTime={allTime?.data.text}
         country={currentUserRank?.user.city?.title || user?.data.city?.title}
         scope={getSubtitle()}
         top3Users={topThree}
@@ -171,9 +174,7 @@ export default function LeaderboardScreen() {
         keyExtractor={(item) => item.user.id}
         contentContainerStyle={[
           styles.listContent,
-          currentUserRank &&
-            !selectedOrganization &&
-            styles.listContentWithFooter,
+          !selectedOrganization && styles.listContentWithFooter,
         ]}
         ListHeaderComponent={<TopThreePodium users={topThree} />}
         ListFooterComponent={

@@ -126,6 +126,7 @@ export const DailyStatsShareCard = forwardRef<View, DailyStatsShareCardProps>(
                 color={textColor}
                 numberOfLines={1}
                 adjustsFontSizeToFit
+                style={styles.sevenDayValue}
               >
                 {total7d}
               </Typography>
@@ -164,6 +165,7 @@ export const DailyStatsShareCard = forwardRef<View, DailyStatsShareCardProps>(
                       variant="micro"
                       weight="bold"
                       color={mutedColor}
+                      numberOfLines={1}
                     >
                       {Math.round(lang.percent)}%
                     </Typography>
@@ -203,6 +205,7 @@ export const DailyStatsShareCard = forwardRef<View, DailyStatsShareCardProps>(
                       variant="micro"
                       weight="bold"
                       color={mutedColor}
+                      numberOfLines={1}
                     >
                       {proj.text}
                     </Typography>
@@ -267,11 +270,16 @@ const styles = StyleSheet.create({
   sevenDayBadge: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center',
+    flexWrap: 'wrap',
     gap: 12,
     paddingHorizontal: 16,
     paddingVertical: 8,
     borderRadius: 20,
     borderWidth: 1,
+  },
+  sevenDayValue: {
+    flexShrink: 1,
   },
   statsGrid: {
     flexDirection: 'column',
@@ -296,6 +304,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
+    minWidth: 0,
   },
   statDot: {
     width: 6,
@@ -304,5 +313,6 @@ const styles = StyleSheet.create({
   },
   itemName: {
     flex: 1,
+    minWidth: 0,
   },
 });

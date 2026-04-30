@@ -2,19 +2,45 @@ import { Avatar } from '@/components';
 import { Card } from '@/components/Card';
 import { Typography } from '@/components/Typography';
 import { useLeaderboardContext } from '@/contexts/LeaderboardContext';
-import { useStats, useTheme } from '@/hooks';
+import { useStats, useTheme, useUser } from '@/hooks';
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
 
 export const CurrentUserRank = () => {
   const { theme } = useTheme();
-  const { currentUserRank, userCountry, selectedCountry } =
+  const { currentUserRank, userCountry, selectedCountry, userRanks } =
     useLeaderboardContext();
   const { data: weeklyStats } = useStats('last_7_days');
+  const { data: user } = useUser();
 
-  if (!currentUserRank) return null;
+  const isGlobalView = !selectedCountry || selectedCountry === 'GLOBAL';
+  const isOwnCountryView = selectedCountry === userCountry;
+  const fallbackRank = isGlobalView
+    ? userRanks.global
+    : isOwnCountryView
+      ? userRanks.country
+      : undefined;
+  const displayRank = currentUserRank?.rank ?? fallbackRank;
+  const displayUser = currentUserRank?.user ?? user?.data;
+  const displayTotal =
+    weeklyStats?.data.human_readable_total || 'No time logged';
+  const rankLabel = displayRank != null ? `#${displayRank}` : '#';
+  const statusText =
+    displayRank != null
+      ? displayTotal
+      : 'No leaderboard position available for this period.';
 
-  if (selectedCountry && selectedCountry !== userCountry) return null;
+  if (!displayUser) {
+    return null;
+  }
+
+  if (
+    selectedCountry &&
+    selectedCountry !== 'GLOBAL' &&
+    selectedCountry !== userCountry
+  ) {
+    return null;
+  }
 
   return (
     <View
@@ -39,19 +65,13 @@ export const CurrentUserRank = () => {
       >
         <View style={styles.rankContainer}>
           <Typography variant="body" weight="bold" color={theme.colors.primary}>
-            #{currentUserRank.rank}
+            {rankLabel}
           </Typography>
         </View>
         <View style={{ marginHorizontal: 12 }}>
           <Avatar
-            source={
-              currentUserRank.user.photo
-                ? { uri: currentUserRank.user.photo }
-                : undefined
-            }
-            initials={
-              currentUserRank.user.display_name || currentUserRank.user.username
-            }
+            source={displayUser.photo ? { uri: displayUser.photo } : undefined}
+            initials={displayUser.display_name || displayUser.username}
             size={40}
           />
         </View>
@@ -64,9 +84,7 @@ export const CurrentUserRank = () => {
             }}
           >
             <Typography variant="caption" weight="bold">
-              {currentUserRank.user.display_name ||
-                currentUserRank.user.username ||
-                'You'}
+              {displayUser.display_name || displayUser.username || 'You'}
             </Typography>
             <Typography
               variant="micro"
@@ -79,9 +97,7 @@ export const CurrentUserRank = () => {
           </View>
 
           <Typography variant="micro" color={theme.colors.textSecondary}>
-            {currentUserRank.running_total?.total_seconds > 0
-              ? currentUserRank.running_total.human_readable_total
-              : weeklyStats?.data.human_readable_total || 'No time logged'}
+            {statusText}
           </Typography>
         </View>
       </Card>

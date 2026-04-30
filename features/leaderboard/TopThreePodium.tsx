@@ -84,9 +84,13 @@ export const TopThreePodium = ({ users }: TopThreePodiumProps) => {
                   variant="micro"
                   weight="bold"
                   color="#FFFFFF"
-                  style={user.rank > 999 ? { fontSize: 8 } : undefined}
+                  style={
+                    user.rank != null && user.rank > 999
+                      ? { fontSize: 8 }
+                      : undefined
+                  }
                 >
-                  {user.rank}
+                  {user.rank ?? '-'}
                 </Typography>
               </View>
               {isFirst && (

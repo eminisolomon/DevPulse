@@ -1,11 +1,16 @@
 import { wakaService } from '@/services/waka.service';
 import { useLeaderboardStore, useOrganizationStore } from '@/stores';
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
+import { useUser } from './useUser';
 
 export function useLeaderboard() {
   const { selectedCountry } = useLeaderboardStore();
   const { selectedOrganization } = useOrganizationStore();
+  const { data: user } = useUser();
   const orgId = selectedOrganization?.id;
+  const countryCode =
+    selectedCountry === 'GLOBAL' ? undefined : selectedCountry;
+  const userCountry = user?.data?.city?.country_code;
 
   const leaderboardQuery = useInfiniteQuery({
     queryKey: ['leaderboard', selectedCountry, orgId],
@@ -17,8 +22,6 @@ export function useLeaderboard() {
           page: 1,
         } as any);
       }
-      const countryCode =
-        selectedCountry === 'GLOBAL' ? undefined : selectedCountry;
       return wakaService.getLeaderboard(undefined, countryCode, pageParam);
     },
     initialPageParam: 1,
@@ -33,28 +36,27 @@ export function useLeaderboard() {
   });
 
   const ranksQuery = useQuery({
-    queryKey: ['userRanks', selectedCountry],
+    queryKey: ['userRanks', userCountry, orgId],
     queryFn: async () => {
-      const countryCode =
-        selectedCountry === 'GLOBAL' ? undefined : selectedCountry;
-      const globalResponse = await wakaService.getLeaderboard(
-        undefined,
-        undefined,
-        1,
-      );
+      const globalResponse = await wakaService.getLeaderboard();
       const globalRank = globalResponse.current_user?.rank;
 
+      let countryResponse = undefined;
       let countryRank;
-      if (countryCode) {
-        const countryResponse = await wakaService.getLeaderboard(
+      if (userCountry) {
+        countryResponse = await wakaService.getLeaderboard(
           undefined,
-          countryCode,
-          1,
+          userCountry,
         );
         countryRank = countryResponse.current_user?.rank;
       }
 
-      return { global: globalRank, country: countryRank };
+      return {
+        global: globalRank,
+        country: countryRank,
+        globalCurrentUser: globalResponse.current_user,
+        countryCurrentUser: countryResponse?.current_user,
+      };
     },
     enabled: !orgId,
     staleTime: 30 * 60 * 1000,
@@ -68,6 +70,12 @@ export function useLeaderboard() {
       country: ranksQuery.data?.country,
       isLoading: ranksQuery.isLoading,
     },
+    currentUserRank:
+      selectedCountry === 'GLOBAL'
+        ? ranksQuery.data?.globalCurrentUser
+        : selectedCountry === userCountry
+          ? ranksQuery.data?.countryCurrentUser
+          : undefined,
     isLoading: leaderboardQuery.isLoading,
     isRefetching: leaderboardQuery.isRefetching,
     isFetchingNextPage: leaderboardQuery.isFetchingNextPage,
