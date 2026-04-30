@@ -6,7 +6,7 @@ import {
   SettingItem,
 } from '@/features/settings';
 import { useTheme, useUser } from '@/hooks';
-import { settingsService } from '@/services';
+import { settingsService, telemetryService } from '@/services';
 import { useAuthStore } from '@/stores';
 import { settingsStyles as styles } from '@/theme';
 import { Feather, MaterialIcons } from '@expo/vector-icons';
@@ -37,14 +37,21 @@ export default function SettingsScreen() {
         collectPerformance: s.collectPerformance,
         collectAnalytics: s.collectAnalytics,
       });
+      await telemetryService.applyTelemetryConsent({
+        collectCrashes: s.collectCrashes,
+        collectPerformance: s.collectPerformance,
+        collectAnalytics: s.collectAnalytics,
+      });
     };
     loadSettings();
   }, []);
 
   const toggleSetting = async (key: keyof typeof settingsState) => {
     const newValue = !settingsState[key];
-    setSettingsState((prev) => ({ ...prev, [key]: newValue }));
+    const nextSettings = { ...settingsState, [key]: newValue };
+    setSettingsState(nextSettings);
     await settingsService.updateSettings({ [key]: newValue });
+    await telemetryService.applyTelemetryConsent(nextSettings);
   };
 
   const currentAccentName =

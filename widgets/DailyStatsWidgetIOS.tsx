@@ -99,12 +99,17 @@ export const DailyStatsWidgetIOS = ({
             {stats.topProject && (
               <Voltra.HStack
                 style={{
-                  justifyContent: 'space-between',
                   alignItems: 'center',
                   marginBottom: stats.topLanguage ? 14 : 0,
                 }}
               >
-                <Voltra.HStack style={{ alignItems: 'center' }}>
+                <Voltra.HStack
+                  style={{
+                    alignItems: 'center',
+                    flex: 1,
+                    marginRight: 12,
+                  }}
+                >
                   <Voltra.View
                     style={{
                       width: 10,
@@ -118,6 +123,7 @@ export const DailyStatsWidgetIOS = ({
                   <Voltra.Text
                     numberOfLines={1}
                     style={{
+                      flex: 1,
                       color: stats.theme.text,
                       fontSize: 14,
                       fontWeight: '700',
@@ -127,10 +133,13 @@ export const DailyStatsWidgetIOS = ({
                   </Voltra.Text>
                 </Voltra.HStack>
                 <Voltra.Text
+                  numberOfLines={1}
                   style={{
+                    minWidth: 54,
                     color: stats.theme.textSecondary,
                     fontSize: 13,
                     fontWeight: '700',
+                    textAlign: 'right',
                   }}
                 >
                   {stats.topProject.text}
@@ -141,11 +150,16 @@ export const DailyStatsWidgetIOS = ({
             {stats.topLanguage && (
               <Voltra.VStack>
                 <Voltra.HStack
-                  style={{ justifyContent: 'space-between', marginBottom: 8 }}
+                  style={{
+                    alignItems: 'center',
+                    marginBottom: 8,
+                  }}
                 >
                   <Voltra.Text
                     numberOfLines={1}
                     style={{
+                      flex: 1,
+                      marginRight: 12,
                       color: stats.theme.text,
                       fontSize: 13,
                       fontWeight: '700',
@@ -154,10 +168,13 @@ export const DailyStatsWidgetIOS = ({
                     {stats.topLanguage.name}
                   </Voltra.Text>
                   <Voltra.Text
+                    numberOfLines={1}
                     style={{
+                      minWidth: 40,
                       color: stats.theme.textSecondary,
                       fontSize: 13,
                       fontWeight: '700',
+                      textAlign: 'right',
                     }}
                   >
                     {Math.round(stats.topLanguage.percent)}%

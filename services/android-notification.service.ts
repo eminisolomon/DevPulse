@@ -1,6 +1,7 @@
 import { StatsData } from '@/widgets/interface';
 import * as Notifications from 'expo-notifications';
 import { Platform } from 'react-native';
+import { telemetryService } from './telemetry.service';
 
 const STICKY_NOTIFICATION_ID = 'devpulse_daily_stats';
 const CHANNEL_ID = 'devpulse_live_stats';
@@ -17,16 +18,24 @@ class AndroidNotificationService {
   private async ensureChannel() {
     if (this.isChannelCreated || Platform.OS !== 'android') return;
 
-    await Notifications.setNotificationChannelAsync(CHANNEL_ID, {
-      name: 'Daily Stats (Live)',
-      importance: Notifications.AndroidImportance.MAX,
-      vibrationPattern: [0, 250, 250, 250],
-      lightColor: '#38BDF8',
-      lockscreenVisibility: Notifications.AndroidNotificationVisibility.PUBLIC,
-      showBadge: false,
-    });
+    try {
+      await Notifications.setNotificationChannelAsync(CHANNEL_ID, {
+        name: 'Daily Stats (Live)',
+        importance: Notifications.AndroidImportance.MAX,
+        vibrationPattern: [0, 250, 250, 250],
+        lightColor: '#38BDF8',
+        lockscreenVisibility:
+          Notifications.AndroidNotificationVisibility.PUBLIC,
+        showBadge: false,
+      });
 
-    this.isChannelCreated = true;
+      this.isChannelCreated = true;
+    } catch (error) {
+      telemetryService.captureException(error, {
+        area: 'notification_channel',
+      });
+      throw error;
+    }
   }
 
   /**
@@ -35,33 +44,40 @@ class AndroidNotificationService {
   async updateStickyNotification(stats: StatsData) {
     if (Platform.OS !== 'android') return;
 
-    await this.ensureChannel();
+    try {
+      await this.ensureChannel();
 
-    Notifications.setNotificationHandler({
-      handleNotification: async () => ({
-        shouldShowAlert: true,
-        shouldPlaySound: false,
-        shouldSetBadge: false,
-        shouldShowBanner: true,
-        shouldShowList: true,
-      }),
-    });
+      Notifications.setNotificationHandler({
+        handleNotification: async () => ({
+          shouldShowAlert: true,
+          shouldPlaySound: false,
+          shouldSetBadge: false,
+          shouldShowBanner: true,
+          shouldShowList: true,
+        }),
+      });
 
-    const content: Notifications.NotificationContentInput = {
-      title: "DevPulse: Today's Coding Time",
-      body: `You've coded for ${stats.todayTotalText} so far today.`,
-      color: stats.theme.primary,
-      autoDismiss: false,
-      sticky: true,
-      priority: 'max',
-      data: { url: 'devpulse://' },
-    };
+      const content: Notifications.NotificationContentInput = {
+        title: "DevPulse: Today's Coding Time",
+        body: `You've coded for ${stats.todayTotalText} so far today.`,
+        color: stats.theme.primary,
+        autoDismiss: false,
+        sticky: true,
+        priority: 'max',
+        data: { url: 'devpulse://' },
+      };
 
-    await Notifications.scheduleNotificationAsync({
-      identifier: STICKY_NOTIFICATION_ID,
-      content,
-      trigger: null,
-    });
+      await Notifications.scheduleNotificationAsync({
+        identifier: STICKY_NOTIFICATION_ID,
+        content,
+        trigger: null,
+      });
+    } catch (error) {
+      telemetryService.captureException(error, {
+        area: 'sticky_notification_update',
+      });
+      throw error;
+    }
   }
 
   /**
@@ -69,7 +85,15 @@ class AndroidNotificationService {
    */
   async dismissNotification() {
     if (Platform.OS !== 'android') return;
-    await Notifications.dismissNotificationAsync(STICKY_NOTIFICATION_ID);
+
+    try {
+      await Notifications.dismissNotificationAsync(STICKY_NOTIFICATION_ID);
+    } catch (error) {
+      telemetryService.captureException(error, {
+        area: 'sticky_notification_dismiss',
+      });
+      throw error;
+    }
   }
 }
 

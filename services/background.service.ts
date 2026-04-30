@@ -1,12 +1,13 @@
 import { darkTheme } from '@/theme/dark';
 import { lightTheme } from '@/theme/light';
-import { formatDuration } from '@/utilities';
+import { formatCompactDuration, formatDuration } from '@/utilities';
 import { syncDailyStats } from '@/widgets';
 import { format } from 'date-fns';
 import * as BackgroundTask from 'expo-background-task';
 import * as TaskManager from 'expo-task-manager';
 import { Appearance } from 'react-native';
 import { settingsService } from './settings.service';
+import { telemetryService } from './telemetry.service';
 import { wakaService } from './waka.service';
 
 const WAKATIME_WIDGET_SYNC_TASK = 'WAKATIME_WIDGET_SYNC';
@@ -69,7 +70,7 @@ TaskManager.defineTask(WAKATIME_WIDGET_SYNC_TASK, async () => {
       topProject: topProjectData
         ? {
             name: topProjectData.name,
-            text: formatDuration(topProjectData.total_seconds || 0),
+            text: formatCompactDuration(topProjectData.total_seconds || 0),
             color: widgetTheme.primary,
           }
         : undefined,
@@ -80,6 +81,9 @@ TaskManager.defineTask(WAKATIME_WIDGET_SYNC_TASK, async () => {
     return BackgroundTask.BackgroundTaskResult.Success;
   } catch (error) {
     console.error('[BackgroundSync] Task failed:', error);
+    telemetryService.captureException(error, {
+      area: 'background_widget_sync',
+    });
     return BackgroundTask.BackgroundTaskResult.Failed;
   }
 });
@@ -96,5 +100,9 @@ export const registerBackgroundSync = async (minimumInterval: number = 15) => {
     }
   } catch (err) {
     console.error('[BackgroundSync] Registration failed:', err);
+    telemetryService.captureException(err, {
+      area: 'background_sync_registration',
+      extra: { minimumInterval },
+    });
   }
 };

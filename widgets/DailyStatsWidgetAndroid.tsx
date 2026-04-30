@@ -94,13 +94,18 @@ export const DailyStatsWidgetAndroid = ({ stats }: { stats: StatsData }) => {
           {stats.topProject && (
             <VoltraAndroid.Row
               style={{
-                justifyContent: 'space-between',
                 alignItems: 'center',
                 marginBottom: stats.topLanguage ? 14 : 0,
                 width: '100%',
               }}
             >
-              <VoltraAndroid.Row style={{ alignItems: 'center' }}>
+              <VoltraAndroid.Row
+                style={{
+                  alignItems: 'center',
+                  flex: 1,
+                  marginRight: 12,
+                }}
+              >
                 <VoltraAndroid.Box
                   style={{
                     width: 10,
@@ -114,6 +119,7 @@ export const DailyStatsWidgetAndroid = ({ stats }: { stats: StatsData }) => {
                 <VoltraAndroid.Text
                   maxLines={1}
                   style={{
+                    flex: 1,
                     color: stats.theme.text,
                     fontSize: 14,
                     fontWeight: '700',
@@ -123,10 +129,13 @@ export const DailyStatsWidgetAndroid = ({ stats }: { stats: StatsData }) => {
                 </VoltraAndroid.Text>
               </VoltraAndroid.Row>
               <VoltraAndroid.Text
+                maxLines={1}
                 style={{
+                  minWidth: 54,
                   color: stats.theme.textSecondary,
                   fontSize: 13,
                   fontWeight: '700',
+                  textAlign: 'right',
                 }}
               >
                 {stats.topProject.text}
@@ -138,7 +147,7 @@ export const DailyStatsWidgetAndroid = ({ stats }: { stats: StatsData }) => {
             <VoltraAndroid.Column style={{ width: '100%' }}>
               <VoltraAndroid.Row
                 style={{
-                  justifyContent: 'space-between',
+                  alignItems: 'center',
                   marginBottom: 8,
                   width: '100%',
                 }}
@@ -146,6 +155,8 @@ export const DailyStatsWidgetAndroid = ({ stats }: { stats: StatsData }) => {
                 <VoltraAndroid.Text
                   maxLines={1}
                   style={{
+                    flex: 1,
+                    marginRight: 12,
                     color: stats.theme.text,
                     fontSize: 13,
                     fontWeight: '700',
@@ -154,10 +165,13 @@ export const DailyStatsWidgetAndroid = ({ stats }: { stats: StatsData }) => {
                   {stats.topLanguage.name}
                 </VoltraAndroid.Text>
                 <VoltraAndroid.Text
+                  maxLines={1}
                   style={{
+                    minWidth: 40,
                     color: stats.theme.textSecondary,
                     fontSize: 13,
                     fontWeight: '700',
+                    textAlign: 'right',
                   }}
                 >
                   {Math.round(stats.topLanguage.percent)}%

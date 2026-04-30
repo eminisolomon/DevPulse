@@ -105,7 +105,8 @@
           }
         }
       ],
-      "expo-background-task"
+      "expo-background-task",
+      "@sentry/react-native"
     ],
     "experiments": {
       "typedRoutes": true,

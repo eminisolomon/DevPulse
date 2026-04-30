@@ -22,7 +22,7 @@ import {
   useWidgetSync,
 } from '@/hooks';
 import { dashboardStyles as styles } from '@/theme/styles/dashboard';
-import { formatDuration } from '@/utilities';
+import { formatCompactDuration, formatDuration } from '@/utilities';
 import { getProjectColor } from '@/utilities/projectColors';
 import { endOfMonth, format, startOfMonth } from 'date-fns';
 import React, {
@@ -177,7 +177,9 @@ export default function Dashboard() {
     const topProject = projects[0]
       ? {
           name: projects[0].name,
-          text: formatDuration(todayData?.projects?.[0]?.total_seconds || 0),
+          text: formatCompactDuration(
+            todayData?.projects?.[0]?.total_seconds || 0,
+          ),
           color: projects[0].color,
         }
       : undefined;

@@ -1,5 +1,7 @@
 import { AppProviders, ThemedToaster } from '@/components';
-import { registerBackgroundSync } from '@/services';
+import { registerBackgroundSync, telemetryService } from '@/services';
+import { useUser } from '@/hooks';
+import { useAuthStore } from '@/stores';
 import {
   requestNotificationPermissions,
   scheduleSmartDailyReminders,
@@ -11,7 +13,7 @@ import {
   Outfit_700Bold,
 } from '@expo-google-fonts/outfit';
 import { useFonts } from 'expo-font';
-import { Stack } from 'expo-router';
+import { Stack, useGlobalSearchParams, usePathname } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import * as WebBrowser from 'expo-web-browser';
@@ -32,6 +34,67 @@ if (Platform.OS === 'web' && typeof window === 'undefined') {
 SplashScreen.preventAutoHideAsync();
 WebBrowser.maybeCompleteAuthSession();
 
+function TelemetryUserObserver() {
+  const { data: user } = useUser();
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const identify = async () => {
+      if (!user?.data) {
+        return;
+      }
+
+      await telemetryService.initTelemetry();
+
+      if (isMounted) {
+        telemetryService.identifyUser(user.data);
+      }
+    };
+
+    void identify();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [user]);
+
+  return null;
+}
+
+function TelemetryBridge() {
+  const pathname = usePathname();
+  const params = useGlobalSearchParams();
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  const serializedParams = JSON.stringify(params);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const trackScreen = async () => {
+      await telemetryService.initTelemetry();
+
+      if (isMounted) {
+        telemetryService.trackScreen(pathname, params);
+      }
+    };
+
+    void trackScreen();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [pathname, serializedParams]);
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      void telemetryService.clearTelemetryUser();
+    }
+  }, [isAuthenticated]);
+
+  return isAuthenticated ? <TelemetryUserObserver /> : null;
+}
+
 export default function RootLayout() {
   const [fontsLoaded] = useFonts({
     Outfit_400Regular,
@@ -44,6 +107,7 @@ export default function RootLayout() {
       SplashScreen.hideAsync();
 
       setupNotificationHandler();
+      void telemetryService.initTelemetry();
       requestNotificationPermissions().then((granted: boolean) => {
         if (granted) {
           scheduleSmartDailyReminders();
@@ -61,6 +125,7 @@ export default function RootLayout() {
   return (
     <AppProviders>
       <View style={{ flex: 1 }}>
+        <TelemetryBridge />
         <Stack screenOptions={{ headerShown: false }} />
         <StatusBar style="auto" />
         <ThemedToaster />

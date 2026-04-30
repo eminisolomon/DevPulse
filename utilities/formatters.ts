@@ -26,6 +26,20 @@ export const formatDuration = (totalSeconds: number): string => {
 };
 
 /**
+ * Format total seconds into a compact string like "5h23m" or "23m"
+ */
+export const formatCompactDuration = (totalSeconds: number): string => {
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+
+  if (hours > 0) {
+    return `${hours}h${minutes}m`;
+  }
+
+  return `${minutes}m`;
+};
+
+/**
  * Format total seconds into a decimal hours string like "5.2h"
  */
 export const formatHoursDecimal = (totalSeconds: number): string => {
