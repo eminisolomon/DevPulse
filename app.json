@@ -106,7 +106,13 @@
         }
       ],
       "expo-background-task",
-      "@sentry/react-native"
+      [
+        "@sentry/react-native",
+        {
+          "organization": "velox-x4",
+          "project": "devpulse-mobile"
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true,
